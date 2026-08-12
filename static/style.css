@@ -347,43 +347,54 @@ body {
   z-index: 9999 !important;
   max-width: 280px !important;
 }
-
-/* --- Professional Equal-Sized Navigation Buttons --- */
+/* --- Professional Full Vertical Stack Layout (Below OneEarth) --- */
 @media screen and (max-width: 768px) {
-  /* Create a strict 3-column grid to force equal button sizing */
-  .nav-links, .navbar-nav, .nav-container {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 10px !important;
-    padding: 10px !important;
+  /* Force the entire header/navbar wrapper to stack vertically */
+  header, .navbar, nav, .nav-container {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
     width: 100% !important;
     box-sizing: border-box !important;
+    padding: 12px 0 !important;
   }
 
-  /* Make every button uniform and attractive */
+  /* Force the navigation link container below the logo and clear any side floats */
+  .nav-links, .navbar-nav {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    width: 94% !important;
+    max-width: 420px !important;
+    margin: 12px auto 0 auto !important;
+    padding: 0 !important;
+    clear: both !important;
+  }
+
+  /* Uniform, attractive, clickable buttons */
   .nav-links a, .navbar-nav a, .nav-container a {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    height: 45px !important; /* Fixed height for uniformity */
-    padding: 5px !important;
-    background-color: #1a302a !important; /* Professional dark green */
-    border: 1px solid #27a745 !important; /* Emerald green border */
+    height: 42px !important;
+    padding: 4px !important;
+    background-color: #1a302a !important;
+    border: 1px solid #27a745 !important;
     border-radius: 8px !important;
     color: #ffffff !important;
-    font-size: 10px !important;
+    font-size: 9px !important;
     font-weight: 600 !important;
     text-align: center !important;
     text-decoration: none !important;
     text-transform: uppercase !important;
-    letter-spacing: 0.5px !important;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
-    transition: all 0.3s ease !important;
+    box-sizing: border-box !important;
   }
 
-  /* Clickable feedback effect */
+  /* Active tap feedback */
   .nav-links a:active {
-    transform: scale(0.95) !important;
+    transform: scale(0.96) !important;
     background-color: #27a745 !important;
   }
 }
