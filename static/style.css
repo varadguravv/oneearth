@@ -428,3 +428,49 @@ body {
     box-sizing: border-box !important;
   }
 }
+/* --- Professional Universal Stats Grid Fix (2 on top, 1 below) --- */
+@media screen and (max-width: 768px) {
+  /* Find any parent wrapper containing multiple boxed metric cards and turn them into a grid */
+  body index, main, .container, .home-container {
+    /* Safe containment */
+  }
+
+  /* Target groups of 3 cards stacking vertically right now */
+  .col-md-4, .col-lg-4, div[class*="col-"], section > div > div {
+    /* Keeps layout stable */
+  }
+
+  /* Force the first three major content boxes/cards in the main flow into a 2-column grid */
+  main > div > div:nth-of-type(-n+3), 
+  .container > div:nth-of-type(-n+3),
+  section:first-of-type > div > div {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  /* Force any sequence of 3 vertical white boxes on the home screen into 2-on-top, 1-centered below */
+  .container > div, main > div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+}
+
+/* Explicit layout styling for the three specific metric cards */
+@media screen and (max-width: 768px) {
+  /* Select the direct containers of your 1,250+, 45+, and 320+ cards */
+  div[style*="background"], .card, .stat-box, .metric-box, div > .card, section .card {
+    box-sizing: border-box !important;
+  }
+
+  /* Automatically map the first two cards side-by-side, and the third card centered underneath */
+  body:not(.internal-page) main .container > div:nth-child(1),
+  body:not(.internal-page) .home-content > div:nth-child(1) {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+}
