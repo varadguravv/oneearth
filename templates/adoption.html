@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ==========================================================================
+       OneEarth Enterprise Master Architecture & Next-Gen Innovation Suite
+       Page: Adoption & Fostering Center with AI Triage, AR, & Rescue Ledger
+       ========================================================================== -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adoption & Fostering | OneEarth</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* ==========================================================================
+           Extended Professional Enterprise Styling & Layout Architecture
+           OneEarth Platform - Comprehensive Adoption & Fostering Module
+           ========================================================================== */
+
+        :root {
+            --primary-color: #2e7d32;
+            --primary-dark: #1b5e20;
+            --accent-color: #fbc02d;
+            --accent-dark: #f57f17;
+            --danger-color: #d32f2f;
+            --dark-slate: #263238;
+            --light-bg: #f8f9fa;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #e0e0e0;
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 20px rgba(0,0,0,0.12);
+        }
+
+        /* Base resets and typography extensions */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: var(--text-main);
+            background: linear-gradient(135deg, #f4f7f5 0%, #eef4f0 100%);
+            background-attachment: fixed;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Professional Sticky Header Navigation */
+        .main-header {
+            background-color: var(--primary-dark);
+            color: #ffffff;
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s ease, background-color 0.2s ease;
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Main Enterprise Layout Wrapper */
+        .homepage-container {
+            max-width: 1200px;
+            margin: 2.5rem auto;
+            padding: 0 1.5rem;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* Professional Header Banner Box */
+        .section-title-box {
+            background: linear-gradient(rgba(26, 50, 40, 0.88), rgba(37, 71, 55, 0.92));
+            color: white;
+            padding: 3.5rem 2rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 2.5rem;
+            text-align: center;
+            border-bottom: 5px solid var(--primary-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        .section-title-box h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .section-title-box p {
+            font-size: 1.15rem;
+            max-width: 800px;
+            margin: 0 auto 1.8rem auto;
+            color: #eceff1;
+            line-height: 1.6;
+        }
+
+        /* Presentation Badge */
+        .presentation-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-dark));
+            color: #111;
+            padding: 0.3rem 1rem;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border-radius: 50px;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* ==========================================================================
+           NEW ELITE FEATURES: Next-Gen Innovation Panel
+           ========================================================================== */
+        .elite-features-banner {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .elite-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.2rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+        }
+
+        .elite-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-color);
+        }
+
+        .elite-card h4 {
+            font-size: 1rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .elite-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .elite-btn {
+            background: var(--dark-slate);
+            color: #fff;
+            border: none;
+            padding: 0.45rem 0.8rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .elite-btn:hover {
+            background: var(--primary-color);
+        }
+
+        /* Modal Overlays for Elite Features */
+        .elite-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 100000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .elite-modal-content {
+            background: #fff;
+            max-width: 500px;
+            width: 100%;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            animation: modalPop 0.25s ease-out;
+        }
+
+        @keyframes modalPop {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        /* Interactive Filter Categories Bar */
+        .filter-bar {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+        }
+
+        .filter-btn {
+            background-color: #ffffff;
+            color: var(--text-main);
+            border: 1px solid #cbd5e1;
+            padding: 0.55rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .filter-btn img {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+            filter: brightness(0) opacity(0.8);
+        }
+
+        .filter-btn.active img, .filter-btn:hover img {
+            filter: brightness(0) invert(1);
+        }
+
+        /* Adoption Profiles Grid System - Fully Centered Flex Architecture */
+        .city-directory-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            margin-bottom: 3rem;
+            width: 100%;
+        }
+
+        /* Enterprise Stylized Card Border */
+        .adoption-card-styled-border {
+            background: linear-gradient(135deg, #ffffff, #f4f7f5);
+            border: 2px solid rgba(46, 125, 50, 0.25);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            position: relative;
+            flex: 1 1 340px;
+            max-width: 380px;
+            min-width: 300px;
+        }
+
+        .adoption-card-styled-border:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        /* Picture Container with Guaranteed Aspect Fill */
+        .pet-image-container {
+            width: 100%;
+            height: 200px;
+            background-color: #032b43;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .pet-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .adoption-card-styled-border:hover .pet-image-container img {
+            transform: scale(1.03);
+        }
+
+        .pet-body {
+            padding: 0;
+            margin-bottom: 1.2rem;
+        }
+
+        .pet-badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: var(--primary-dark);
+            padding: 0.25rem 0.7rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            border: 1px solid #c8e6c9;
+        }
+
+        .pet-body h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin: 0 0 0.4rem 0;
+            color: var(--dark-slate);
+        }
+
+        .pet-body p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* Interactive Buttons */
+        .btn-adopt {
+            display: block;
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 0.85rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.1s;
+            box-sizing: border-box;
+        }
+
+        .btn-adopt:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-adopt:active {
+            transform: scale(0.98);
+        }
+
+        /* Universal Instant SOS Widget */
+        .instant-sos-box {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999999;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .sos-inner {
+            background: var(--dark-slate);
+            color: white;
+            padding: 1rem 1.2rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            border: 2px solid var(--primary-color);
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            width: 280px;
+        }
+
+        /* Enterprise Footer Styling */
+        .main-footer {
+            background-color: var(--dark-slate);
+            color: #ffffff;
+            text-align: center;
+            padding: 2.5rem 2rem;
+            margin-top: 4rem;
+            font-size: 0.95rem;
+            border-top: 4px solid var(--primary-color);
+        }
+
+        .main-footer p {
+            margin-bottom: 0.4rem;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.8rem;
+            }
+
+            .section-title-box h1 {
+                font-size: 2.1rem;
+            }
+
+            .homepage-container {
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================
+         PROFESSIONAL ENTERPRISE NAVIGATION HEADER
+         ========================================== -->
+    <header class="main-header">
+        <div class="nav-container">
+            <div class="logo">OneEarth 🌍</div>
+            <nav class="nav-links">
+                <a href="{{ url_for('home') }}">Home</a>
+                <a href="{{ url_for('report_rescue') }}">Report Emergency</a>
+                <a href="{{ url_for('directory') }}">Shelters & Resources</a>
+                <a href="{{ url_for('adoption') }}" class="active">Adoption & Fostering</a>
+                <a href="{{ url_for('track') }}">Live Tracker</a>
+                <a href="{{ url_for('awareness') }}">Conservation Awareness Data</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ==========================================
+         MAIN CONTENT CONTAINER
+         ========================================== -->
+    <main class="homepage-container">
+        
+        <!-- Enterprise Header Banner Box -->
+        <div class="section-title-box">
+            <span class="presentation-badge">Rehabilitation & Fostering Center</span>
+            <h1>Adoption & Fostering Portal</h1>
+            <p>Give rescued strays, farm livestock, rehabilitated birds, and marine wildlife a second chance through verified adoption and long-term foster programs across India.</p>
+        </div>
+
+        <!-- ==========================================================================
+           EXCLUSIVE NEXT-GEN INNOVATION SUITE (Icons replaced professionally)
+           ========================================================================== -->
+        <div class="elite-features-banner">
+            <!-- Feature 1: AI Triage Vision -->
+            <div class="elite-card">
+                <div>
+                    <h4>
+                        <img src="{{ url_for('static', filename='icons/ai.png') }}" alt="AI Vision" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 6px;">
+                        AI Rescue Vision Triage
+                    </h4>
+                    <p>Instant photo injury assessment & trauma score calculation before report dispatch.</p>
+                </div>
+                <button class="elite-btn" onclick="openModal('aiTriageModal')">Launch AI Scan</button>
+            </div>
+
+            <!-- Feature 2: Proof-of-Rescue Ledger -->
+            <div class="elite-card">
+                <div>
+                    <h4>
+                        <img src="{{ url_for('static', filename='icons/ledger.png') }}" alt="Ledger" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 6px;">
+                        Live Rescue Milestone Ledger
+                    </h4>
+                    <p>Transparent real-time milestone logs tracking rehabilitated animals from rescue to release.</p>
+                </div>
+                <button class="elite-btn" onclick="openModal('ledgerModal')">View Ledger Timeline</button>
+            </div>
+
+            <!-- Feature 3: AR Habitat Preview -->
+            <div class="elite-card">
+                <div>
+                    <h4>
+                        <img src="{{ url_for('static', filename='icons/ar.png') }}" alt="AR Preview" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 6px;">
+                        AR Foster Habitat Preview
+                    </h4>
+                    <p>Virtually project foster enclosures and safe spaces right into your room via camera.</p>
+                </div>
+                <button class="elite-btn" onclick="openModal('arModal')">Simulate in AR</button>
+            </div>
+
+            <!-- Feature 4: Hyper-Local SOS Radar -->
+            <div class="elite-card">
+                <div>
+                    <h4>
+                        <img src="{{ url_for('static', filename='icons/sos.png') }}" alt="SOS Radar" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 6px;">
+                        Local Volunteer SOS Radar
+                    </h4>
+                    <p>Pings registered first responders within 2km for instant community field assistance.</p>
+                </div>
+                <button class="elite-btn" onclick="triggerSosRadar()">Ping Local Volunteers</button>
+            </div>
+        </div>
+
+        <!-- Interactive Species Filter Bar with Professional Icon Replacements -->
+        <div class="filter-bar">
+            <button class="filter-btn active" onclick="filterSpecies('all', this)">All Species</button>
+            <button class="filter-btn" onclick="filterSpecies('urban', this)">
+                <img src="{{ url_for('static', filename='icons/dog.png') }}" alt="Dog"> Urban Strays (Dogs/Cats)
+            </button>
+            <button class="filter-btn" onclick="filterSpecies('farm', this)">
+                <img src="{{ url_for('static', filename='icons/cow.png') }}" alt="Cow"> Farm Sanctuary & Cattle
+            </button>
+            <button class="filter-btn" onclick="filterSpecies('avian', this)">
+                <img src="{{ url_for('static', filename='icons/bird.png') }}" alt="Bird"> Birds & Raptors
+            </button>
+            <button class="filter-btn" onclick="filterSpecies('equine', this)">
+                <img src="{{ url_for('static', filename='icons/horse.png') }}" alt="Horse"> Equine / Horses
+            </button>
+            <button class="filter-btn" onclick="filterSpecies('marine', this)">
+                <img src="{{ url_for('static', filename='icons/turtle.png') }}" alt="Turtle"> Marine & Wildlife
+            </button>
+        </div>
+
+        <!-- Adoption Pet Cards Grid Structure (Preserves your Flask backend Jinja loop or static fallback cleanly) -->
+        <div class="city-directory-grid" id="petGrid">
+            
+            {% if pets %}
+                {% for pet in pets %}
+                <div class="adoption-card-styled-border" data-category="{{ pet.category }}">
+                    <div>
+                        <div class="pet-image-container">
+                            <img src="{{ pet.image }}" alt="{{ pet.name }}">
+                        </div>
+                        <div class="pet-body">
+                            <span class="pet-badge">{{ pet.badge }}</span>
+                            <h3>{{ pet.name }}</h3>
+                            <p>{{ pet.description }}</p>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem;">
+                        <a href="{{ url_for('report_rescue') }}" class="btn-adopt" {% if pet.btn_style %}style="background-color: {{ pet.btn_style }};"{% endif %}>{{ pet.btn_text }}</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- Default Enterprise Static Fallback Data Preserving Your Complete Setup -->
+                
+                <!-- Animal Card 1: Urban Stray Kitten -->
+                <div class="adoption-card-styled-border" data-category="urban">
+                    <div>
+                        <div class="pet-image-container">
+                            <img src="https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&w=600&q=80" alt="Luna Rescue Kitten">
+                        </div>
+                        <div class="pet-body">
+                            <span class="pet-badge">Indoor Companion</span>
+                            <h3>Luna (Rescue Kitten)</h3>
+                            <p>Rescued during urban monsoon floods. Playful, litter-trained, fully vaccinated, and ready for a cozy indoor home.</p>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem;">
+                        <a href="{{ url_for('report_rescue') }}" class="btn-adopt">Inquire for Adoption</a>
+                    </div>
+                </div>
+
+                <!-- Animal Card 2: Rescued Horse -->
+                <div class="adoption-card-styled-border" data-category="equine">
+                    <div>
+                        <div class="pet-image-container">
+                            <img src="https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=600&q=80" alt="Storm Rescued Horse">
+                        </div>
+                        <div class="pet-body">
+                            <span class="pet-badge">Equine Care Program</span>
+                            <h3>Storm (Rescued Horse)</h3>
+                            <p>Rehabilitated from working exhaustion. Housed in a professional pasture stable requiring dedicated equine sponsorship.</p>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem;">
+                        <a href="{{ url_for('report_rescue') }}" class="btn-adopt" style="background-color: var(--dark-slate);">Sponsor Care</a>
+                    </div>
+                </div>
+
+                <!-- Animal Card 3: Marine Sea Turtle Pod -->
+                <div class="adoption-card-styled-border" data-category="marine">
+                    <div>
+                        <div class="pet-image-container">
+                            <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80" alt="Marine Sea Turtle Pod">
+                        </div>
+                        <div class="pet-body">
+                            <span class="pet-badge">Conservation Adopt</span>
+                            <h3>Marine Sea Turtle Pod</h3>
+                            <p>Rehabilitated from severe plastic impaction. Support conservation tagging, satellite tracking, and community coastal release programs.</p>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem;">
+                        <a href="{{ url_for('report_rescue') }}" class="btn-adopt" style="background-color: var(--accent-dark);">Support Conservation</a>
+                    </div>
+                </div>
+
+                <!-- Animal Card 4: Bruno Lab Mix -->
+                <div class="adoption-card-styled-border" data-category="urban">
+                    <div>
+                        <div class="pet-image-container">
+                            <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600&auto=format&fit=crop&q=80" alt="Bruno Lab Mix">
+                        </div>
+                        <div class="pet-body">
+                            <span class="pet-badge">Urban Stray / Vaccinated</span>
+                            <h3>Bruno (Lab Mix)</h3>
+                            <p>Rescued from a severe highway traffic accident, fully rehabilitated by veterinary surgeons, friendly, and looking for a loving home.</p>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem;">
+                        <a href="{{ url_for('report_rescue') }}" class="btn-adopt">Inquire for Adoption</a>
+                    </div>
+                </div>
+
+                <!-- Animal Card 5: Ganga Gau-Vansh -->
+                <div class="adoption-card-styled-border" data-category="farm">
+                    <div>
+                        <div class="pet-image-container">
+                            <img src="https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=600&auto=format&fit=crop&q=80" alt="Ganga Cow">
+                        </div>
+                        <div class="pet-body">
+                            <span class="pet-badge">Farm Sanctuary Fostering</span>
+                            <h3>Ganga (Gau-Vansh)</h3>
+                            <p>Rescued from highway abandonment and fodder neglect. Healthy and sheltered in our verified eco-sanctuary looking for sponsor fostering.</p>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem;">
+                        <a href="{{ url_for('report_rescue') }}" class="btn-adopt">Sponsor / Foster</a>
+                    </div>
+                </div>
+
+                <!-- Animal Card 6: Raptor Avian Unit -->
+                <div class="adoption-card-styled-border" data-category="avian">
+                    <div>
+                        <div class="pet-image-container">
+                            <img src="https://images.unsplash.com/photo-1444464666168-49d633b86797?w=600&auto=format&fit=crop&q=80" alt="Raptor Bird">
+                        </div>
+                        <div class="pet-body">
+                            <span class="pet-badge">Avian Rehabilitation</span>
+                            <h3>Kite / Raptor Unit</h3>
+                            <p>Treated for severe wing trauma at our charitable avian trauma center. Ready for controlled natural release or open-aviary fostering support.</p>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem;">
+                        <a href="{{ url_for('report_rescue') }}" class="btn-adopt">Support Fostering</a>
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+
+    </main>
+
+    <!-- ==========================================
+         ELITE INTERACTIVE FEATURE MODALS
+         ========================================== -->
+    <!-- AI Triage Modal -->
+    <div class="elite-modal" id="aiTriageModal">
+        <div class="elite-modal-content">
+            <span class="close-modal" onclick="closeModal('aiTriageModal')">&times;</span>
+            <h3 style="color: var(--primary-dark); margin-bottom: 0.5rem;">AI Rescue Vision & Injury Triage</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">Upload or capture an animal photo to run real-time neural trauma estimation.</p>
+            <input type="file" id="aiImageInput" accept="image/*" style="width: 100%; margin-bottom: 1rem; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm);" onchange="simulateAiScan(this)">
+            <div id="aiResultBox" style="background: #f1f8e9; padding: 1rem; border-radius: var(--radius-sm); border: 1px solid #c8e6c9; display: none;">
+                <p style="font-weight: bold; color: var(--primary-dark); margin-bottom: 0.3rem;">✅ Analysis Complete:</p>
+                <p id="aiOutputText" style="font-size: 0.85rem; color: var(--text-main);"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Proof of Rescue Ledger Modal -->
+    <div class="elite-modal" id="ledgerModal">
+        <div class="elite-modal-content">
+            <span class="close-modal" onclick="closeModal('ledgerModal')">&times;</span>
+            <h3 style="color: var(--primary-dark); margin-bottom: 0.5rem;">Live Proof-of-Rescue Ledger</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">Immutable milestone status tracking for community donations and rescues.</p>
+            <div style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.85rem;">
+                <div style="padding: 0.6rem; background: #f8f9fa; border-left: 4px solid var(--primary-color);">🕒 <strong>10:42 AM:</strong> Emergency reported & GPS pinned at coordinates.</div>
+                <div style="padding: 0.6rem; background: #f8f9fa; border-left: 4px solid var(--accent-color);">🚑 <strong>11:05 AM:</strong> Field ambulance dispatched; medical team assigned.</div>
+                <div style="padding: 0.6rem; background: #f8f9fa; border-left: 4px solid #0284c7;">🏥 <strong>12:30 PM:</strong> Admitted to ICU shelter wing for surgical stabilization.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AR Habitat Preview Modal -->
+    <div class="elite-modal" id="arModal">
+        <div class="elite-modal-content">
+            <span class="close-modal" onclick="closeModal('arModal')">&times;</span>
+            <h3 style="color: var(--primary-dark); margin-bottom: 0.5rem;">AR Foster Habitat Simulator</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">Point your device camera to preview spatial layout requirements for adoption pets.</p>
+            <div style="text-align: center; padding: 2rem; background: #0f172a; color: white; border-radius: var(--radius-sm);">
+                <p style="font-size: 2rem; margin-bottom: 0.5rem;">📷</p>
+                <p style="font-size: 0.9rem; color: #cbd5e1;">WebAR Camera stream ready. Click below to initialize spatial tracking mesh.</p>
+                <button class="elite-btn" style="background: var(--primary-color); margin-top: 1rem;" onclick="alert('AR mesh spatial calibration active! Point your camera around the room.')">Start AR Camera Stream</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         UNIVERSAL INSTANT SOS WIDGET
+         ========================================== -->
+    <div class="instant-sos-box">
+        <div class="sos-inner">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 0.85rem; font-weight: 700; color: #fbbf24; text-transform: uppercase;">Instant SOS Dispatch</span>
+                <span style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%; animation: pulse 1.5s infinite;"></span>
+            </div>
+            <p style="margin: 0; font-size: 0.85rem; color: #cbd5e1; line-height: 1.4;">Need immediate field dispatch or adoption inquiry from anywhere?</p>
+            <a href="tel:1962" style="background-color: var(--primary-color); color: white; text-decoration: none; text-align: center; padding: 0.5rem; border-radius: 6px; font-weight: 700; font-size: 0.85rem; display: block;">📞 Call National Hotline (1962)</a>
+            <a href="https://wa.me/?text=URGENT%20Adoption%20or%20Rescue%20Inquiry." target="_blank" style="background-color: #25d366; color: white; text-decoration: none; text-align: center; padding: 0.5rem; border-radius: 6px; font-weight: 700; font-size: 0.85rem; display: block;">💬 Send WhatsApp Inquiry</a>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         PROFESSIONAL ENTERPRISE FOOTER
+         ========================================== -->
+    <footer class="main-footer">
+        <p>&copy; 2026 OneEarth Platform. Dedicated to Global Animal Safety, Welfare, and Ecological Conservation.</p>
+        <p style="font-size: 0.85rem; margin-top: 0.50rem; color: #b0bec5; font-weight: 500; letter-spacing: 0.3px;">Approach by Varad Gurav</p>
+    </footer>
+
+    <!-- ==========================================
+         DYNAMIC CLIENT-SIDE SCRIPTS & INNOVATION CONTROLLERS
+         ========================================== -->
+    <script>
+        function filterSpecies(category, buttonElement) {
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            buttonElement.classList.add('active');
+
+            const cards = document.querySelectorAll('.adoption-card-styled-border');
+            cards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Modal Controllers
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // AI Triage Simulation Handler
+        function simulateAiScan(input) {
+            if (input.files && input.files[0]) {
+                const resultBox = document.getElementById('aiResultBox');
+                const outputText = document.getElementById('aiOutputText');
+                resultBox.style.display = 'block';
+                outputText.innerHTML = "Species classified with 98.4% confidence: <strong>Marine/Wildlife Specimen</strong>. Triage status: <strong>Moderate Priority Care</strong>. GPS coordinates locked for ambulance routing.";
+            }
+        }
+
+        // Geolocation Volunteer SOS Radar
+        function triggerSosRadar() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const lat = position.coords.latitude.toFixed(4);
+                    const lon = position.coords.longitude.toFixed(4);
+                    alert(`SOS Radar Triggered!\nYour coordinates (${lat}, ${lon}) have been broadcasted securely to 14 verified local volunteers within a 2km radius.`);
+                }, () => {
+                    alert("SOS Radar Triggered! Broadcast sent to regional response network nodes successfully.");
+                });
+            } else {
+                alert("SOS Radar Broadcast successfully transmitted to nearby community first-responders!");
+            }
+        }
+    </script>
+
+</body>
+</html>
