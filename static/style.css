@@ -465,9 +465,9 @@ body {
   div[style*="background"], .card, .stat-box, .metric-box, div > .card, section .card {
     box-sizing: border-box !important;
   }
-/* --- Professional Full-Height Structural Card Alignment --- */
+/* --- Professional Full-Width Uniform Mobile Card & Button Fix --- */
 @media screen and (max-width: 768px) {
-  /* Enforce a consistent 2-column grid layout */
+  /* Enforce a clean 2-column equal-height grid layout */
   .homepage-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
@@ -477,7 +477,7 @@ body {
     box-sizing: border-box !important;
   }
 
-  /* Make all cards absolute uniform containers */
+  /* Make every card an absolute uniform container stretching equally */
   .homepage-grid > div, .card, .service-card {
     display: flex !important;
     flex-direction: column !important;
@@ -489,7 +489,7 @@ body {
     box-sizing: border-box !important;
   }
 
-  /* Normalize all inner text wrappers across every card so they stretch evenly */
+  /* Normalize inner card wrappers */
   .homepage-grid > div > div, .card > div, .service-card > div {
     display: flex !important;
     flex-direction: column !important;
@@ -502,30 +502,32 @@ body {
 
   /* Scale headers consistently */
   .homepage-grid h3, .homepage-grid h4, .card h3, .card h4 {
-    font-size: 10.5px !important;
+    font-size: 10px !important;
     line-height: 1.15 !important;
     margin-bottom: 4px !important;
   }
 
   /* Scale body text uniformly */
   .homepage-grid p, .card p, .service-card p {
-    font-size: 8.5px !important;
-    line-height: 1.25 !important;
+    font-size: 8px !important;
+    line-height: 1.2 !important;
     margin-bottom: 8px !important;
     flex-grow: 1 !important;
   }
 
-  /* Pin every button strictly to the bottom of each box */
+  /* Force every action button to stretch 100% full-width at the bottom, allowing text to wrap fully so nothing gets cut off */
   .homepage-grid a.btn, .homepage-grid button, .homepage-grid a[class*="btn"], .card a, .card button {
-    display: block !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     width: 100% !important;
     font-size: 8px !important;
-    padding: 6px 2px !important;
+    line-height: 1.1 !important;
+    padding: 8px 4px !important;
     text-align: center !important;
     box-sizing: border-box !important;
     margin-top: auto !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
+    white-space: normal !important;
+    word-break: break-word !important;
   }
 }
