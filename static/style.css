@@ -320,24 +320,24 @@ button:active,
     .homepage-container {
         padding: 0 1rem;
     }
-}
-/* --- Professional Non-Overlapping Header Fix --- */
+/* --- Professional Header & Mobile Layout Fix --- */
 
-/* 1. Let the header flow naturally at the top without overlapping content */
+/* 1. Ensure the header wrapper flows correctly without overlapping */
 header, .navbar, nav {
   position: relative !important;
   top: auto !important;
   width: 100% !important;
-  z-index: 1000 !important;
+  z-index: 100 !important;
+  background-color: var(--primary-dark, #12201c) !important;
 }
 
-/* 2. Remove forced body top padding so content aligns normally */
+/* 2. Clear any unwanted body padding */
 body {
   padding-top: 0 !important;
   overflow-x: hidden !important;
 }
 
-/* 3. Keep Instant SOS pinned cleanly at the bottom left */
+/* 3. Securely pin Instant SOS at the bottom left */
 .instant-sos, .sos-widget, #instant-sos {
   position: fixed !important;
   bottom: 20px !important;
@@ -348,8 +348,15 @@ body {
   max-width: 280px !important;
 }
 
-/* 4. Ensure smooth mobile scaling */
+/* 4. Professional mobile scaling for grid tags and buttons */
 @media screen and (max-width: 768px) {
+  .nav-links, .navbar-nav, .nav-container {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 8px !important;
+  }
+  
   .container, main, .content-wrap {
     width: 100% !important;
     box-sizing: border-box !important;
