@@ -465,25 +465,22 @@ body {
   div[style*="background"], .card, .stat-box, .metric-box, div > .card, section .card {
     box-sizing: border-box !important;
   }
-/* --- Professional Equal-Height Uniform Mobile Card Layout --- */
+/* --- Professional Full-Fill Uniform Mobile Card Layout --- */
 @media screen and (max-width: 768px) {
-  /* Force uniform grid layout with equal row heights */
+  /* Enforce a clean 2-column equal-row grid */
   .homepage-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
-    grid-auto-rows: 1fr !important;
     gap: 8px !important;
     width: 100% !important;
     padding: 4px 6px !important;
     box-sizing: border-box !important;
   }
 
-  /* Make every card an absolute uniform flex container filling its grid cell */
+  /* Make every card stretch equally to match its grid cell */
   .homepage-grid > div, .card, .service-card {
     height: 100% !important;
-    min-height: 100% !important;
     width: 100% !important;
-    max-width: 100% !important;
     margin: 0 !important;
     padding: 10px 8px !important;
     box-sizing: border-box !important;
@@ -491,36 +488,32 @@ body {
     flex-direction: column !important;
     justify-content: space-between !important;
     text-align: left !important;
-    word-wrap: break-word !important;
-    overflow-wrap: break-word !important;
   }
 
-  /* Clear any internal side-by-side or wrapper splits inside the cards */
+  /* Force internal divs to fill the vertical space so text fills the card uniformly */
   .homepage-grid > div > div, .card > div {
     display: flex !important;
     flex-direction: column !important;
-    height: 100% !important;
+    flex-grow: 1 !important;
+    justify-content: flex-start !important;
     width: 100% !important;
-    justify-content: space-between !important;
   }
 
-  /* Scale headers smoothly so titles never break awkwardly */
+  /* Scale headers smoothly */
   .homepage-grid h3, .homepage-grid h4, .card h3, .card h4 {
     font-size: 10.5px !important;
     line-height: 1.15 !important;
     margin-bottom: 4px !important;
-    letter-spacing: -0.2px !important;
   }
 
-  /* Scale description text uniformly */
+  /* Allow description text to distribute remaining vertical space naturally */
   .homepage-grid p, .card p, .service-card p {
     font-size: 8.5px !important;
     line-height: 1.25 !important;
     margin-bottom: 8px !important;
-    flex-grow: 1 !important;
   }
 
-  /* Force every action button/box to anchor uniformly at the absolute bottom of the card */
+  /* Lock every button neatly to the bottom of the card block */
   .homepage-grid a.btn, .homepage-grid button, .homepage-grid a[class*="btn"], .card a, .card button {
     display: block !important;
     width: 100% !important;
