@@ -362,3 +362,51 @@ body {
     box-sizing: border-box !important;
   }
 }
+/* --- Professional 3x2 Grid Navigation Button Styling --- */
+@media screen and (max-width: 768px) {
+  /* Force the navigation container to stack below the OneEarth logo */
+  header .navbar, header nav, .nav-container {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    padding: 10px 0 !important;
+  }
+
+  /* Target the link container so it wraps into a neat grid */
+  .nav-links, .navbar-nav {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    width: 94% !important;
+    max-width: 400px !important;
+    margin: 10px auto 0 auto !important;
+    padding: 0 !important;
+  }
+
+  /* Style each navigation link to look like a clean, clickable button */
+  .nav-links a, .navbar-nav a, .nav-container a {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 6px !important;
+    padding: 8px 4px !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    color: #ffffff !important;
+    text-align: center !important;
+    text-decoration: none !important;
+    box-sizing: border-box !important;
+    transition: background-color 0.2s ease !important;
+    min-height: 36px !important;
+  }
+
+  /* Active or hover feedback for professional touch */
+  .nav-links a:hover, .nav-links a:active, .navbar-nav a.active {
+    background-color: #27a745 !important;
+    border-color: #27a745 !important;
+  }
+}
