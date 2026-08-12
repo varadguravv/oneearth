@@ -536,3 +536,42 @@ body {
     white-space: normal !important;
   }
 }
+/* --- Professional Absolute Stacked Mobile Override --- */
+@media screen and (max-width: 768px) {
+  /* Force all card body containers to ignore horizontal flex and stack fully */
+  .homepage-grid .card, 
+  .homepage-grid .service-card,
+  .homepage-grid > div {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: stretch !important;
+  }
+
+  /* Target any inner row/flex containers within the cards and force them to stack */
+  .homepage-grid .card *, 
+  .homepage-grid .service-card * {
+    max-width: 100% !important;
+  }
+
+  .homepage-grid .card div, 
+  .homepage-grid .service-card div {
+    display: flex !important;
+    flex-direction: column !important;
+    float: none !important;
+  }
+
+  /* Force every button to take full width and appear strictly below text */
+  .homepage-grid .card a.btn, 
+  .homepage-grid .card button,
+  .homepage-grid .service-card a,
+  .homepage-grid .service-card button {
+    display: block !important;
+    width: 100% !important;
+    margin-top: 10px !important;
+    position: relative !important;
+    float: none !important;
+    clear: both !important;
+    text-align: center !important;
+  }
+}
