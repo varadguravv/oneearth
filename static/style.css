@@ -465,7 +465,7 @@ body {
   div[style*="background"], .card, .stat-box, .metric-box, div > .card, section .card {
     box-sizing: border-box !important;
   }
-/* --- Professional Full-Width Uniform Mobile Card & Button Fix --- */
+/* --- Professional Full-Width Bottom-Stacked Mobile Cards --- */
 @media screen and (max-width: 768px) {
   /* Enforce a clean 2-column equal-height grid layout */
   .homepage-grid {
@@ -477,7 +477,7 @@ body {
     box-sizing: border-box !important;
   }
 
-  /* Make every card an absolute uniform container stretching equally */
+  /* Make every single card a strict vertical flex container */
   .homepage-grid > div, .card, .service-card {
     display: flex !important;
     flex-direction: column !important;
@@ -489,15 +489,16 @@ body {
     box-sizing: border-box !important;
   }
 
-  /* Normalize inner card wrappers */
-  .homepage-grid > div > div, .card > div, .service-card > div {
+  /* Force all internal card content wrappers to stack vertically and block side floats */
+  .homepage-grid > div > div, .card > div, .service-card > div, 
+  .card div[style*="flex"], .card div[class*="flex"] {
     display: flex !important;
     flex-direction: column !important;
-    flex-grow: 1 !important;
-    justify-content: flex-start !important;
+    align-items: stretch !important;
     width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
+    float: none !important;
   }
 
   /* Scale headers consistently */
@@ -505,6 +506,7 @@ body {
     font-size: 10px !important;
     line-height: 1.15 !important;
     margin-bottom: 4px !important;
+    width: 100% !important;
   }
 
   /* Scale body text uniformly */
@@ -512,22 +514,25 @@ body {
     font-size: 8px !important;
     line-height: 1.2 !important;
     margin-bottom: 8px !important;
-    flex-grow: 1 !important;
+    width: 100% !important;
   }
 
-  /* Force every action button to stretch 100% full-width at the bottom, allowing text to wrap fully so nothing gets cut off */
-  .homepage-grid a.btn, .homepage-grid button, .homepage-grid a[class*="btn"], .card a, .card button {
+  /* Force every single button/action box to clear any side floats and span 100% width cleanly below the content */
+  .homepage-grid a.btn, .homepage-grid button, .homepage-grid a[class*="btn"], .card a, .card button,
+  .card div > a, .card div > button {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     width: 100% !important;
+    max-width: 100% !important;
     font-size: 8px !important;
     line-height: 1.1 !important;
-    padding: 8px 4px !important;
+    padding: 7px 4px !important;
     text-align: center !important;
     box-sizing: border-box !important;
     margin-top: auto !important;
+    clear: both !important;
+    float: none !important;
     white-space: normal !important;
-    word-break: break-word !important;
   }
 }
