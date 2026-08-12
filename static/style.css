@@ -398,3 +398,33 @@ body {
     background-color: #27a745 !important;
   }
 }
+/* --- Professional Stats Cards Layout Fix (2 on top, 1 below) --- */
+@media screen and (max-width: 768px) {
+  /* Target the container holding these statistic/impact cards */
+  .stats-container, .metrics-container, .counter-section, .row:has(.stat-card), .row:has(.card) {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 0 10px !important;
+  }
+
+  /* Make the third/last card stretch across both columns or center nicely below */
+  .stats-container > *:nth-child(3), 
+  .metrics-container > *:nth-child(3), 
+  .counter-section > *:nth-child(3),
+  .stat-card:nth-child(3),
+  .card:nth-child(3) {
+    grid-column: span 2 !important;
+    max-width: 85% !important;
+    margin: 0 auto !important;
+  }
+
+  /* Ensure the cards themselves scale cleanly */
+  .stat-card, .metric-card, .card {
+    width: 100% !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+}
