@@ -474,28 +474,45 @@ body {
     align-items: center !important;
   }
 /* --- Professional Two-Column Cards Grid Fix --- */
-/* --- Absolute Failsafe 2-Column Mobile Grid --- */
+/* --- Professional Content-Targeted Mobile 2-Column Grid --- */
 @media screen and (max-width: 768px) {
-  /* Force all container elements on the homepage to arrange cards side-by-side */
-  main, .container, section {
-    display: block !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Target the specific block wrapping the feature cards and convert to 2 columns */
-  main .container, .row {
+  /* Find the section holding the feature blocks and force them into a 2-column grid */
+  main .container, section .container, .home-features {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
     gap: 8px !important;
+    width: 100% !important;
     padding: 4px !important;
+    box-sizing: border-box !important;
   }
 
-  /* Ensure cards never stretch full width */
-  .card, .service-card, div[class*="col-"] {
+  /* Force every white box card to fit its grid slot cleanly */
+  main .container > div, section .container > div, .card, .service-card {
     width: 100% !important;
     max-width: 100% !important;
-    margin: 0 0 8px 0 !important;
-    float: none !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Optimize padding and fonts so text doesn't overflow in 2 columns */
+  .card, .service-card {
+    padding: 10px 6px !important;
+  }
+  .card h3, .card h4 {
+    font-size: 11px !important;
+    margin-bottom: 4px !important;
+  }
+  .card p {
+    font-size: 9px !important;
+    line-height: 1.2 !important;
+    margin-bottom: 8px !important;
+  }
+  .card a.btn, .card button, .service-card a {
+    font-size: 9px !important;
+    padding: 6px 2px !important;
+    text-align: center !important;
   }
 }
