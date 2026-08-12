@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ==========================================================================
+       OneEarth Enterprise Master Architecture
+       Page: Ultimate Conservation Awareness Data & Global Ecological Intelligence Hub
+       ========================================================================== -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conservation Awareness Data & Intelligence Hub | OneEarth</title>
+    <!-- Leaflet CSS for Global Deforestation & Habitat Monitoring Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-dark: #1b5e20;
+            --accent-color: #fbc02d;
+            --accent-dark: #f57f17;
+            --danger-color: #d32f2f;
+            --dark-slate: #263238;
+            --light-bg: #f8f9fa;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #e0e0e0;
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 20px rgba(0,0,0,0.12);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: var(--text-main);
+            background: linear-gradient(135deg, #f4f7f5 0%, #eef4f0 100%);
+            background-attachment: fixed;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-header {
+            background-color: var(--primary-dark);
+            color: #ffffff;
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 800; color: #ffffff; }
+
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-links a { color: rgba(255, 255, 255, 0.85); text-decoration: none; font-weight: 500; font-size: 0.95rem; padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); transition: 0.2s; }
+        .nav-links a:hover, .nav-links a.active { color: #ffffff; background-color: rgba(255, 255, 255, 0.15); }
+
+        .homepage-container { max-width: 1200px; margin: 2.5rem auto; padding: 0 1.5rem; flex: 1; width: 100%; }
+
+        .section-title-box {
+            background: linear-gradient(rgba(26, 50, 40, 0.88), rgba(37, 71, 55, 0.92));
+            color: white;
+            padding: 3.5rem 2rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 2.5rem;
+            text-align: center;
+            border-bottom: 5px solid var(--primary-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        .section-title-box h1 { font-size: 2.8rem; margin-bottom: 1rem; font-weight: 800; }
+        .section-title-box p { font-size: 1.15rem; max-width: 800px; margin: 0 auto; color: #eceff1; }
+
+        .presentation-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-dark));
+            color: #111;
+            padding: 0.3rem 1rem;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border-radius: 50px;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        /* Real-Time Metrics Banner Tile Matrix */
+        .metrics-banner {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .metric-tile {
+            background: #ffffff;
+            border-left: 5px solid var(--primary-color);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .metric-tile h5 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+
+        .metric-tile .stat-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--dark-slate);
+        }
+
+        /* Interactive Hub Grid: Calculator + Guardian Pledge */
+        .interactive-hub-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 850px) {
+            .interactive-hub-grid { grid-template-columns: 1fr; }
+        }
+
+        .hub-card {
+            background: #ffffff;
+            border: 2px solid rgba(46, 125, 50, 0.25);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .hub-card h3 {
+            font-size: 1.3rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .hub-card p {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .calculator-input-group {
+            margin-bottom: 1rem;
+        }
+
+        .calculator-input-group label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--dark-slate);
+            margin-bottom: 0.4rem;
+        }
+
+        .calculator-input-group input, .calculator-input-group select {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            outline: none;
+            background: #fdfefe;
+        }
+
+        .calc-result-box {
+            background: #f1f8e9;
+            border: 1px solid #c8e6c9;
+            padding: 1.2rem;
+            border-radius: var(--radius-md);
+            margin-top: 1.2rem;
+            text-align: center;
+        }
+
+        /* Full Width Interactive Map Section */
+        .map-section-box {
+            background: #ffffff;
+            border: 2px solid rgba(46, 125, 50, 0.25);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 3rem;
+        }
+
+        #conservationMap {
+            width: 100%;
+            height: 380px;
+            border-radius: var(--radius-md);
+            margin-top: 1rem;
+            border: 1px solid #334155;
+        }
+
+        /* Awareness Cards Grid */
+        .awareness-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .awareness-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .awareness-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .awareness-card h4 {
+            font-size: 1.25rem;
+            color: var(--dark-slate);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 700;
+        }
+
+        .awareness-card p {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            margin-bottom: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .awareness-card ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .awareness-card ul li {
+            font-size: 0.88rem;
+            color: var(--text-main);
+            margin-bottom: 0.6rem;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        .awareness-card ul li::before {
+            content: "•";
+            color: var(--primary-color);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .action-btn {
+            background: var(--dark-slate);
+            color: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: background 0.2s;
+            display: block;
+        }
+
+        .action-btn:hover { background: var(--primary-color); }
+
+        .instant-sos-box { position: fixed; bottom: 20px; right: 20px; z-index: 999999; }
+        .sos-inner { background: var(--dark-slate); color: white; padding: 1rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); border: 2px solid var(--primary-color); width: 280px; display: flex; flex-direction: column; gap: 0.6rem; }
+
+        .main-footer { background-color: var(--dark-slate); color: #ffffff; text-align: center; padding: 2.5rem 2rem; margin-top: 4rem; border-top: 4px solid var(--primary-color); }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="nav-container">
+            <div class="logo">OneEarth 🌍</div>
+            <nav class="nav-links">
+                <a href="{{ url_for('home') }}">Home</a>
+                <a href="{{ url_for('report_rescue') }}">Report Emergency</a>
+                <a href="{{ url_for('directory') }}">Shelters & Resources</a>
+                <a href="{{ url_for('adoption') }}">Adoption & Fostering</a>
+                <a href="{{ url_for('track') }}">Live Tracker</a>
+                <a href="{{ url_for('awareness') }}" class="active">Conservation Awareness Data</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="homepage-container">
+        
+        <div class="section-title-box">
+            <span class="presentation-badge">Ecological Intelligence & Impact Hub</span>
+            <h1>Conservation Awareness Data</h1>
+            <p>Empowering local communities and conservationists with actionable insights, anti-poaching telemetry metrics, and biodiversity restoration calculators.</p>
+        </div>
+
+        <!-- Real-Time Metrics Banner Tile Matrix -->
+        <div class="metrics-banner">
+            <div class="metric-tile">
+                <h5>Protected Habitats</h5>
+                <div class="stat-value">1,420 Acres</div>
+            </div>
+            <div class="metric-tile">
+                <h5>Animals Rescued YTD</h5>
+                <div class="stat-value">3,892 Nodes</div>
+            </div>
+            <div class="metric-tile">
+                <h5>Active Local Guardians</h5>
+                <div class="stat-value">840 Registered</div>
+            </div>
+            <div class="metric-tile">
+                <h5>Carbon Offset Metric</h5>
+                <div class="stat-value">45.2 Tons</div>
+            </div>
+        </div>
+
+        <!-- Interactive Hub: Calculator & Guardian Pledge -->
+        <div class="interactive-hub-grid">
+            
+            <!-- Calculator Card -->
+            <div class="hub-card">
+                <h3>🌱 Community Biodiversity & Carbon Offset Calculator</h3>
+                <p>Estimate how your local community volunteering and stray animal welfare contributions scale into ecological recovery.</p>
+                
+                <div class="calculator-input-group">
+                    <label for="treesPlanted">Monthly Neighborhood Tree Plantings / Feedings:</label>
+                    <input type="number" id="treesPlanted" value="10" min="1" oninput="calculateImpact()">
+                </div>
+
+                <div class="calculator-input-group">
+                    <label for="strayCare">Stray Animals Vaccinated & Sterilized:</label>
+                    <input type="number" id="strayCare" value="5" min="0" oninput="calculateImpact()">
+                </div>
+
+                <div class="calc-result-box">
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">Estimated Annual Regional Impact:</p>
+                    <p style="font-size: 1.1rem; font-weight: 800; color: var(--primary-dark); margin-top: 0.3rem;" id="impactResult">🌿 ~1.2 Tons Carbon Offset | 🐾 140 Biodiversity Recovery Units</p>
+                </div>
+            </div>
+
+            <!-- Pledge & Certification Card -->
+            <div class="hub-card">
+                <h3>🛡️ OneEarth Local Guardian Pledge</h3>
+                <p>Take the digital oath to protect local flora and fauna, report poachers securely, and foster stray animal coexistence.</p>
+                
+                <div class="calculator-input-group">
+                    <label for="guardianName">Your Full Name / Volunteer Handle:</label>
+                    <input type="text" id="guardianName" placeholder="e.g., Varad Gurav">
+                </div>
+
+                <div class="calculator-input-group">
+                    <label for="guardianSector">Your Local Sector / City Zone:</label>
+                    <input type="text" id="guardianSector" placeholder="e.g., Pune / Mumbai Zone">
+                </div>
+
+                <button class="action-btn" style="background: var(--primary-color); margin-top: 1.2rem;" onclick="generateCertificate()">Generate Verified Guardian Badge</button>
+            </div>
+
+        </div>
+
+        <!-- Interactive Global Conservation & Habitat Radar Map -->
+        <div class="map-section-box">
+            <h3 style="color: var(--primary-dark); font-size: 1.3rem; font-weight: 700; margin-bottom: 0.3rem;">Interactive Habitat & Wildlife Sanctuary Radar</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted);">Inspect protected zones, reforestation nodes, and active ecological monitoring sectors.</p>
+            <div id="conservationMap"></div>
+        </div>
+
+        <!-- Conservation Data Cards Grid: Expanded with Illegal Business Info & Behavioral Safety Guidelines -->
+        <div class="awareness-grid">
+            
+            <!-- Card 1: Illegal Wildlife Trade & Commercial Exploitation -->
+            <div class="awareness-card">
+                <div>
+                    <h4>
+                        <img src="{{ url_for('static', filename='icons/warning.png') }}" alt="Warning" style="width: 22px; height: 22px; object-fit: contain;">
+                        Illegal Wildlife Trade & Black Markets
+                    </h4>
+                    <p>Organized commercial networks profit heavily from exploiting wild species, reptiles, and marine ecosystems through illegal poaching and underground smuggling rings.</p>
+                    <ul>
+                        <li><strong>Reptile & Exotic Skins:</strong> Poachers illegally harvest pythons, monitor lizards, and rare snakes for luxury leather handbags, boots, and traditional medicine markets.</li>
+                        <li><strong>Aquatic & Marine Smuggling:</strong> Illegal commercial trawling and poaching target sea turtles (for shell artifacts and eggs), rare sharks (for fins), and marine mammals.</li>
+                        <li><strong>Terrestrial Cartels:</strong> Big cats and pangolins are hunted for pelts, bones, and scales, severely disrupting global ecological food webs.</li>
+                        <li><strong>Anti-Poaching Safeguards:</strong> Implementing anonymous community whistleblowing channels, strict supply chain tracking, and localized ranger patrols drastically reduces illegal trafficking.</li>
+                    </ul>
+                </div>
+                <a href="{{ url_for('report_rescue') }}" class="action-btn">Report Illegal Activity Securely</a>
+            </div>
+
+            <!-- Card 2: Deforestation & Habitat Protection -->
+            <div class="awareness-card">
+                <div>
+                    <h4>
+                        <img src="{{ url_for('static', filename='icons/tree.png') }}" alt="Tree" style="width: 22px; height: 22px; object-fit: contain;">
+                        Saving Forests & Deforestation Mitigation
+                    </h4>
+                    <p>Forests are the vital life support systems of OneEarth, offering core habitats for endangered wildlife while regulating global climate stability.</p>
+                    <ul>
+                        <li><strong>Support Reforestation:</strong> Engage directly in community-led sapling plantation drives and urban green corridor initiatives.</li>
+                        <li><strong>Sustainable Consumer Choices:</strong> Prioritize certified recycled paper goods and avoid timber products sourced from unprotected clear-cutting.</li>
+                        <li><strong>Wildfire Prevention:</strong> Strictly avoid open campfires or unattended flames in dry forestry sectors during high-risk summer months.</li>
+                        <li><strong>Habitat Safeguards:</strong> Establishing legal buffer zones around national parks shields native species from human-encroachment pressures.</li>
+                    </ul>
+                </div>
+                <a href="{{ url_for('directory') }}" class="action-btn">Explore Forest Sanctuaries</a>
+            </div>
+
+            <!-- Card 3: Animal Behavior & Survival Safety Protocols -->
+            <div class="awareness-card">
+                <div>
+                    <h4>
+                        <img src="{{ url_for('static', filename='icons/tiger.png') }}" alt="Tiger" style="width: 22px; height: 22px; object-fit: contain;">
+                        Animal Behavior & Attack Survival Protocols
+                    </h4>
+                    <p>Wild and stray animals rarely attack unprovoked; attacks usually result from surprise, territorial defense, or provocation. Knowing proper reactions saves lives.</p>
+                    <ul>
+                        <li><strong>What TO Do During an Encounter:</strong> Stand your ground calmly, avoid direct eye contact with apex predators, and back away slowly while making yourself look larger.</li>
+                        <li><strong>What NOT To Do:</strong> Never run, scream, turn your back abruptly, or throw objects, as fleeing triggers a predatory chase response.</li>
+                        <li><strong>Stray & Canine Safety:</strong> If approached by an aggressive stray dog, avoid sudden arm movements, do not stare, and offer a sideways stance until it retreats.</li>
+                        <li><strong>Emergency Preparedness:</strong> Keep emergency helpline numbers handy to instantly alert veterinary rescue units when distressed animals exhibit dangerous behavior.</li>
+                    </ul>
+                </div>
+                <a href="{{ url_for('track') }}" class="action-btn">View Live Sector Safety Map</a>
+            </div>
+
+        </div>
+
+    </main>
+
+    <div class="instant-sos-box">
+        <div class="sos-inner">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 0.8rem; font-weight: 700; color: #fbbf24; text-transform: uppercase;">Instant SOS</span>
+                <span style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%;"></span>
+            </div>
+            <a href="tel:1962" style="background-color: var(--primary-color); color: white; text-decoration: none; text-align: center; padding: 0.4rem; border-radius: 6px; font-weight: 700; font-size: 0.8rem; display: block;">📞 Call Helpline (1962)</a>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <p>&copy; 2026 OneEarth Platform. Dedicated to Global Animal Safety, Welfare, and Ecological Conservation.</p>
+        <p style="font-size: 0.85rem; margin-top: 0.4rem; color: #b0bec5;">Approach by Varad Gurav</p>
+    </footer>
+
+    <!-- Leaflet JS for Interactive Habitat Map -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        // Initialize Conservation Map Hub
+        let conMap = L.map('conservationMap').setView([18.5204, 73.8567], 11);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            maxZoom: 19,
+            subdomains: 'abcd'
+        }).addTo(conMap);
+
+        // Add Sample Protection Zones
+        L.circle([18.5504, 73.8127], {
+            color: '#2e7d32',
+            fillColor: '#4caf50',
+            fillOpacity: 0.5,
+            radius: 2500
+        }).addTo(conMap).bindPopup("<b>Protected Wildlife Corridor</b><br>Active reforestation & anti-poaching patrol zone.");
+
+        L.circle([18.4904, 73.9127], {
+            color: '#f57f17',
+            fillColor: '#fbc02d',
+            fillOpacity: 0.5,
+            radius: 2000
+        }).addTo(conMap).bindPopup("<b>Community Animal Rescue Zone</b><br>High stray welfare and vaccination node.");
+
+        function calculateImpact() {
+            let trees = parseInt(document.getElementById('treesPlanted').value) || 0;
+            let strays = parseInt(document.getElementById('strayCare').value) || 0;
+            
+            let carbon = (trees * 0.12 + strays * 0.05).toFixed(1);
+            let units = (trees * 1.4 + strays * 2.2).toFixed(0);
+            
+            document.getElementById('impactResult').innerText = `🌿 ~${carbon} Tons Carbon Offset | 🐾 ${units} Biodiversity Recovery Units`;
+        }
+
+        function generateCertificate() {
+            let name = document.getElementById('guardianName').value.trim();
+            let sector = document.getElementById('guardianSector').value.trim();
+
+            if (!name || !sector) {
+                alert("Please enter both your name and local sector to generate your Verified Guardian Badge.");
+                return;
+            }
+
+            alert(`🎉 Congratulations ${name}!\nYour digital OneEarth Local Guardian Badge for sector '${sector}' has been successfully generated and registered into your local community node!`);
+        }
+    </script>
+</body>
+</html>
