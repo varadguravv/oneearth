@@ -516,3 +516,21 @@ body {
     text-align: center !important;
   }
 }
+/* --- Professional Mobile Grid Rule for Homepage Cards --- */
+@media screen and (max-width: 768px) {
+  .homepage-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 0 8px !important;
+  }
+
+  .homepage-grid > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+}
