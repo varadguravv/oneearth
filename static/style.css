@@ -321,3 +321,35 @@ button:active,
         padding: 0 1rem;
     }
 }
+/* --- Professional Mobile & Desktop Alignment Fix --- */
+
+/* 1. Lock the top navigation bar so it stays fixed and doesn't scroll away */
+header, .navbar, nav {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
+  width: 100% !important;
+}
+
+/* 2. Pin the Instant SOS box securely to the bottom left */
+.instant-sos, .sos-widget, #instant-sos {
+  position: fixed !important;
+  bottom: 20px !important;
+  left: 20px !important;
+  right: auto !important;
+  top: auto !important;
+  z-index: 9999 !important;
+  max-width: 280px !important;
+}
+
+/* 3. Ensure all containers, grids, and tags retain laptop layout structure on mobile */
+@media screen and (max-width: 768px) {
+  body {
+    overflow-x: hidden;
+  }
+  
+  .container, main, .content-wrap {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
