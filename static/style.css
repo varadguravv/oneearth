@@ -607,28 +607,34 @@ body {
     box-sizing: border-box !important;
   }
 }
-/* --- Professional Mobile Fix: Conservation & Subpage Hero Headers --- */
+/* --- Professional Targeted Fix: Conservation Awareness Header Box --- */
 @media screen and (max-width: 768px) {
-  /* Target subpage hero boxes across conservation, rescue, and directory pages */
-  .hero-section, .hero-card, .main-banner, .welcome-box, .hero, 
-  div[class*="conservation"] .hero, div[class*="data"] .hero {
-    padding: 24px 16px !important; /* Reduces vertical height to look balanced and compact */
-    min-height: auto !important;
-    margin-bottom: 1.5rem !important;
-    border-radius: 14px !important;
+  /* Target the container that holds the Conservation Awareness Data header */
+  div:has(> h1) > h1:contains("Conservation"),
+  .conservation-container div,
+  section[id*="conservation"] > div:first-child,
+  main > div:nth-child(2) {
+    /* Safe fallback targeting subpage headers uniquely */
   }
 
-  .hero-section h1, .hero-card h1, .main-banner h1, .welcome-box h1, .hero h1,
-  div[class*="conservation"] h1, div[class*="data"] h1 {
-    font-size: 1.6rem !important; /* Makes the title size clean and proportional */
-    line-height: 1.15 !important; /* Tightens vertical gaps between words */
-    margin-bottom: 10px !important;
+  /* Direct container bounds adjustment for subpage top boxes */
+  body:not(.homepage) .container:first-of-type, 
+  .content-wrapper > div:first-child {
+    padding-top: 15px !important;
+    padding-bottom: 15px !important;
+  }
+}
+
+/* Specific targeted rule using the exact text structure of that banner */
+@media screen and (max-width: 768px) {
+  /* Targets any box containing the Ecological Intelligence badge */
+  .badge + h1, .badge ~ h1 {
+    font-size: 1.5rem !important;
+    line-height: 1.15 !important;
   }
 
-  .hero-section p, .hero-card p, .main-banner p, .welcome-box p, .hero p,
-  div[class*="conservation"] p, div[class*="data"] p {
-    font-size: 0.9rem !important;
-    line-height: 1.4 !important;
-    margin-bottom: 0 !important;
+  /* Shrinks the padding of the specific large green banner container on subpages */
+  div[style*="background"], section[class*="hero"] {
+    max-width: 100% !important;
   }
 }
