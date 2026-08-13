@@ -607,34 +607,25 @@ body {
     box-sizing: border-box !important;
   }
 }
-/* --- Professional Targeted Fix: Conservation Awareness Header Box --- */
+/* --- Professional Precise Subpage Header Fix --- */
 @media screen and (max-width: 768px) {
-  /* Target the container that holds the Conservation Awareness Data header */
-  div:has(> h1) > h1:contains("Conservation"),
-  .conservation-container div,
-  section[id*="conservation"] > div:first-child,
-  main > div:nth-child(2) {
-    /* Safe fallback targeting subpage headers uniquely */
+  /* Targets the primary container box of the conservation page */
+  body:has(.conservation-container, .data-container, [class*="conservation"]) .hero-section,
+  body:has([class*="conservation"]) .main-banner,
+  .container-fluid > div.bg-success,
+  main > .card:first-child,
+  main > div:first-of-type {
+    padding: 20px 14px !important;
+    min-height: auto !important;
+    height: auto !important;
+    margin-bottom: 1.5rem !important;
   }
 
-  /* Direct container bounds adjustment for subpage top boxes */
-  body:not(.homepage) .container:first-of-type, 
-  .content-wrapper > div:first-child {
-    padding-top: 15px !important;
-    padding-bottom: 15px !important;
-  }
-}
-
-/* Specific targeted rule using the exact text structure of that banner */
-@media screen and (max-width: 768px) {
-  /* Targets any box containing the Ecological Intelligence badge */
-  .badge + h1, .badge ~ h1 {
+  /* Force the header text inside that specific section to be compact */
+  body:has([class*="conservation"]) h1,
+  body:has([class*="data"]) h1 {
     font-size: 1.5rem !important;
     line-height: 1.15 !important;
-  }
-
-  /* Shrinks the padding of the specific large green banner container on subpages */
-  div[style*="background"], section[class*="hero"] {
-    max-width: 100% !important;
+    margin-bottom: 8px !important;
   }
 }
