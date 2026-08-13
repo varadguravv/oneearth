@@ -465,23 +465,26 @@ body {
   div[style*="background"], .card, .stat-box, .metric-box, div > .card, section .card {
     box-sizing: border-box !important;
   }
-/* --- Professional Mobile Layout: Complete Optimization --- */
+/* --- Professional OneEarth Mobile Precision Layout --- */
 @media screen and (max-width: 768px) {
 
-  /* 1. Top Welcome Banner: Make it properly proportioned and more square */
-  .hero-section, .hero-card, .main-banner, .welcome-box, .hero {
-    padding: 28px 16px !important; /* Reduces vertical empty space */
-    min-height: auto !important;
-    border-radius: 16px !important;
+  /* 1. Top Welcome Banner: Perfectly proportioned, less tall, clean and square */
+  .homepage-hero-box {
+    padding: 30px 16px !important;
+    margin-bottom: 2rem !important;
+    border-radius: 14px !important;
   }
 
-  .hero-section h1, .hero-card h1, .main-banner h1, .welcome-box h1, .hero h1 {
-    line-height: 1.15 !important; /* Tightens the vertical gap between heading words */
-    margin-bottom: 12px !important;
+  .homepage-hero-box h1 {
+    font-size: 1.8rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 10px !important;
   }
-  
-  .hero-section p, .hero-card p, .main-banner p, .welcome-box p, .hero p {
-    margin-bottom: 20px !important;
+
+  .homepage-hero-box p {
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+    margin-bottom: 1.5rem !important;
   }
 
   /* 2. Impact Counters: Clean 3-column row */
@@ -511,7 +514,7 @@ body {
     text-transform: uppercase !important;
   }
 
-  /* 3. Core Platform Services: Beautiful, comfortably large 2-column cards */
+  /* 3. Core Platform Services: Larger, taller, spacious 2-column cards */
   .homepage-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
@@ -525,10 +528,10 @@ body {
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
-    height: 100% !important;
+    min-height: 220px !important; /* Forces the boxes to be nice, tall, and large */
     width: 100% !important;
     margin: 0 !important;
-    padding: 16px 12px !important; 
+    padding: 18px 14px !important; /* Generous padding for a premium look */
     box-sizing: border-box !important;
     border-radius: 14px !important;
   }
@@ -541,16 +544,16 @@ body {
   }
 
   .homepage-card-styled h3 {
-    font-size: 12.5px !important; 
+    font-size: 13.5px !important; /* Larger, prominent heading text */
     line-height: 1.25 !important;
     margin-bottom: 8px !important;
     font-weight: 700 !important;
   }
 
   .homepage-card-styled p {
-    font-size: 10px !important; 
-    line-height: 1.4 !important;
-    margin-bottom: 12px !important;
+    font-size: 10.5px !important; /* Clear, comfortable, readable body size */
+    line-height: 1.45 !important;
+    margin-bottom: 14px !important;
     flex-grow: 1 !important;
   }
 
@@ -559,8 +562,8 @@ body {
     align-items: center !important;
     justify-content: center !important;
     width: 100% !important;
-    font-size: 9.5px !important; 
-    padding: 9px 6px !important;
+    font-size: 10px !important; /* Standardized button text */
+    padding: 10px 6px !important;
     text-align: center !important;
     box-sizing: border-box !important;
     margin-top: auto !important;
