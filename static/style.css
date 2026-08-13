@@ -645,3 +645,56 @@ body {
     margin-bottom: 0 !important;
   }
 }
+/* --- Professional Mobile Grid Fix: Emergency Guidelines Cards --- */
+@media screen and (max-width: 768px) {
+  
+  /* Target the container wrapping these guideline steps */
+  .guidelines-container, .steps-container, .emergency-steps, 
+  div[class*="guideline"], div[class*="instructions"], div[class*="steps"] {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 0 4px !important;
+  }
+
+  /* Target the 3 individual guideline cards/boxes */
+  .guidelines-container > div, .steps-container > div, 
+  .emergency-steps > div, div[class*="guideline"] > div, 
+  div[class*="instruction-card"], div[class*="step-card"] {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 14px 10px !important;
+    box-sizing: border-box !important;
+    min-height: unset !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    border-radius: 10px !important;
+  }
+
+  /* Force the 3rd guideline card to span full width at the bottom */
+  .guidelines-container > div:nth-child(3), 
+  .steps-container > div:nth-child(3), 
+  .emergency-steps > div:nth-child(3),
+  div[class*="guideline"] > div:nth-child(3),
+  div[class*="instruction-card"]:nth-child(3),
+  div[class*="step-card"]:nth-child(3) {
+    grid-column: span 2 !important;
+  }
+
+  /* Fix text spacing inside these cards so it isn't awkwardly vertical */
+  div[class*="guideline"] h3, div[class*="step"] h3, div[class*="instruction"] h3 {
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+    margin-bottom: 6px !important;
+  }
+
+  div[class*="guideline"] p, div[class*="step"] p, div[class*="instruction"] p {
+    font-size: 9px !important;
+    line-height: 1.35 !important;
+    margin-bottom: 0 !important;
+  }
+}
