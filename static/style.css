@@ -465,9 +465,9 @@ body {
   div[style*="background"], .card, .stat-box, .metric-box, div > .card, section .card {
     box-sizing: border-box !important;
   }
-/* --- Professional Homepage-Only 2-Column Mobile Fix --- */
+/* --- Professional Homepage & Tracker Layout Correction --- */
 @media screen and (max-width: 768px) {
-  /* Strictly target the homepage features grid only */
+  /* 1. Homepage Grid: Strict 2-column layout */
   .homepage-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
@@ -477,26 +477,25 @@ body {
     box-sizing: border-box !important;
   }
 
-  /* Style homepage cards so they fit the 2-column layout neatly */
   .homepage-card-styled {
     display: flex !important;
     flex-direction: column !important;
-    justify-content: space-between !important.
+    justify-content: space-between !important;
     height: 100% !important;
     width: 100% !important.
     margin: 0 !important;
-    padding: 8px 6px !important;
+    padding: 10px 8px !important;
     box-sizing: border-box !important;
   }
 
   .homepage-card-styled h3 {
     font-size: 10px !important;
-    line-height: 1.15 !important.
+    line-height: 1.15 !important;
     margin-bottom: 4px !important;
   }
 
   .homepage-card-styled p {
-    font-size: 7.5px !important;
+    font-size: 8px !important;
     line-height: 1.2 !important;
     margin-bottom: 6px !important;
   }
@@ -505,9 +504,32 @@ body {
     display: block !important;
     width: 100% !important;
     font-size: 7.5px !important;
-    padding: 5px 2px !important.
+    padding: 6px 2px !important;
     text-align: center !important;
     box-sizing: border-box !important;
-    margin-top: auto !important.
+    margin-top: auto !important;
+  }
+
+  /* 2. Live Tracker & Directory Cards: Force normal vertical stacking with buttons at the bottom */
+  .track-card, .tracker-card, .directory-card, .service-card, 
+  div[class*="track"], div[class*="rescue"], div[class*="unit"] {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    float: none !important;
+  }
+
+  /* Force tracking action buttons/call options to drop below the card content cleanly */
+  .track-card a, .tracker-card a, .directory-card a, 
+  .track-card button, .tracker-card button, 
+  div[class*="track"] a, div[class*="rescue"] a {
+    display: block !important;
+    width: 100% !important;
+    clear: both !important;
+    float: none !important;
+    margin-top: 10px !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
   }
 }
