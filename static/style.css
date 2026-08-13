@@ -465,9 +465,26 @@ body {
   div[style*="background"], .card, .stat-box, .metric-box, div > .card, section .card {
     box-sizing: border-box !important;
   }
-/* --- Professional Balanced Mobile 2-Column Grid --- */
+/* --- Professional Mobile Layout: Complete Optimization --- */
 @media screen and (max-width: 768px) {
-  /* 1. Impact Counters: Clean 3-column row */
+
+  /* 1. Top Welcome Banner: Make it properly proportioned and more square */
+  .hero-section, .hero-card, .main-banner, .welcome-box, .hero {
+    padding: 28px 16px !important; /* Reduces vertical empty space */
+    min-height: auto !important;
+    border-radius: 16px !important;
+  }
+
+  .hero-section h1, .hero-card h1, .main-banner h1, .welcome-box h1, .hero h1 {
+    line-height: 1.15 !important; /* Tightens the vertical gap between heading words */
+    margin-bottom: 12px !important;
+  }
+  
+  .hero-section p, .hero-card p, .main-banner p, .welcome-box p, .hero p {
+    margin-bottom: 20px !important;
+  }
+
+  /* 2. Impact Counters: Clean 3-column row */
   .impact-counter-grid {
     display: grid !important;
     grid-template-columns: repeat(3, 1fr) !important;
@@ -494,7 +511,7 @@ body {
     text-transform: uppercase !important;
   }
 
-  /* 2. Core Platform Services: Beautiful, comfortably large 2-column cards (2 top, 2 middle, 2 bottom) */
+  /* 3. Core Platform Services: Beautiful, comfortably large 2-column cards */
   .homepage-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
@@ -511,7 +528,7 @@ body {
     height: 100% !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 16px 12px !important; /* Larger, spacious padding */
+    padding: 16px 12px !important; 
     box-sizing: border-box !important;
     border-radius: 14px !important;
   }
@@ -524,14 +541,14 @@ body {
   }
 
   .homepage-card-styled h3 {
-    font-size: 12.5px !important; /* Standard, highly readable title size */
+    font-size: 12.5px !important; 
     line-height: 1.25 !important;
     margin-bottom: 8px !important;
     font-weight: 700 !important;
   }
 
   .homepage-card-styled p {
-    font-size: 10px !important; /* Comfortable body font size */
+    font-size: 10px !important; 
     line-height: 1.4 !important;
     margin-bottom: 12px !important;
     flex-grow: 1 !important;
@@ -542,7 +559,7 @@ body {
     align-items: center !important;
     justify-content: center !important;
     width: 100% !important;
-    font-size: 9.5px !important; /* Clean, standard button text */
+    font-size: 9.5px !important; 
     padding: 9px 6px !important;
     text-align: center !important;
     box-sizing: border-box !important;
@@ -551,7 +568,7 @@ body {
     border-radius: 8px !important;
   }
 
-  /* 3. Keep all other pages and tracking elements standard and vertical */
+  /* 4. Keep all other pages and tracking elements standard and vertical */
   .track-card, .tracker-card, .directory-card, .service-card, 
   div[class*="track"], div[class*="rescue"], div[class*="unit"] {
     display: flex !important;
