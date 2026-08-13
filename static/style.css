@@ -465,9 +465,38 @@ body {
   div[style*="background"], .card, .stat-box, .metric-box, div > .card, section .card {
     box-sizing: border-box !important;
   }
-/* --- Professional OneEarth Final Layout Correction --- */
+/* --- Professional Mobile Layout: Impact Counter Grid & Homepage Cards --- */
 @media screen and (max-width: 768px) {
-  /* 1. Homepage Grid: Strict 2-column layout */
+  /* 1. Make the 3 Impact Counter boxes sit side-by-side or in a neat 3-column micro grid */
+  .impact-counter-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px !important;
+    width: 100% !important;
+    margin-bottom: 2rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .impact-counter-card {
+    padding: 10px 4px !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+  }
+
+  .impact-counter-card h3 {
+    font-size: 1.1rem !important;
+    font-weight: 800 !important;
+    margin: 0 0 0.2rem 0 !important;
+  }
+
+  .impact-counter-card p {
+    font-size: 6.5px !important;
+    letter-spacing: 0.2px !important;
+    line-height: 1.1 !important;
+    margin: 0 !important;
+  }
+
+  /* 2. Homepage Grid: Strict 2-column layout for core services */
   .homepage-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
@@ -510,9 +539,9 @@ body {
     margin-top: auto !important;
   }
 
-  /* 2. Live Tracker, Directory, & Unit Cards: Full-width normal vertical stacking */
+  /* 3. Ensure tracker and other cards stack normally from top to bottom */
   .track-card, .tracker-card, .directory-card, .service-card, 
-  div[class*="track"], div[class*="rescue"], div[class*="unit"], div[class*="card"] {
+  div[class*="track"], div[class*="rescue"], div[class*="unit"] {
     display: flex !important;
     flex-direction: column !important;
     width: 100% !important;
@@ -520,10 +549,8 @@ body {
     float: none !important;
   }
 
-  /* Force tracking action buttons/call options to drop below the card content cleanly */
-  .track-card a, .tracker-card a, .directory-card a, .service-card a,
-  .track-card button, .tracker-card button, .service-card button,
-  div[class*="track"] a, div[class*="rescue"] a, div[class*="unit"] a {
+  .track-card a, .tracker-card a, .directory-card a, 
+  .track-card button, .tracker-card button {
     display: block !important;
     width: 100% !important;
     clear: both !important;
