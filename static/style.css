@@ -645,38 +645,40 @@ body {
     margin-bottom: 0 !important;
   }
 }
-/* --- Professional Squarical Grid Fix for Emergency Protocols --- */
+/* --- Professional Final Fix: Emergency Grid Overflow & Proportions --- */
 @media screen and (max-width: 768px) {
   
-  /* Make the outer parent container a clean 2-column grid layout */
+  /* Ensure parent container fits cleanly within mobile screen boundaries */
   .guidelines-container, .steps-container, .emergency-steps, 
   div[class*="guideline"], div[class*="instructions"], div[class*="steps"] {
     display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 12px !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
     width: 100% !important;
+    max-width: 100% !important;
     box-sizing: border-box !important;
-    padding: 0 4px !important;
-    align-items: stretch !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0 8px !important;
   }
 
-  /* Force each card into a balanced, compact shape */
+  /* Prevent cards from stretching tall and ensure they stay contained */
   .guidelines-container > div, .steps-container > div, 
   .emergency-steps > div, div[class*="guideline"] > div, 
   div[class*="instruction-card"], div[class*="step-card"] {
     width: 100% !important;
+    max-width: 100% !important;
     margin: 0 !important;
-    padding: 12px 10px !important;
+    padding: 10px 8px !important;
     box-sizing: border-box !important;
-    min-height: 150px !important; /* Gives them a neat balanced height */
+    min-height: auto !important;
     height: auto !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: flex-start !important;
-    border-radius: 12px !important;
+    border-radius: 8px !important;
   }
 
-  /* Make card 3 take up the full width smoothly on the row below */
+  /* Card 3 spans across both columns nicely at the bottom */
   .guidelines-container > div:nth-child(3), 
   .steps-container > div:nth-child(3), 
   .emergency-steps > div:nth-child(3),
@@ -684,19 +686,18 @@ body {
   div[class*="instruction-card"]:nth-child(3),
   div[class*="step-card"]:nth-child(3) {
     grid-column: span 2 !important;
-    max-width: 100% !important;
   }
 
-  /* Scale font and title styling to fit the squarical cards cleanly */
+  /* Compact text sizing so content fits neatly inside balanced boxes */
   div[class*="guideline"] h3, div[class*="step"] h3, div[class*="instruction"] h3 {
-    font-size: 12px !important;
-    line-height: 1.2 !important;
-    margin-bottom: 6px !important;
+    font-size: 11px !important;
+    line-height: 1.15 !important;
+    margin-bottom: 4px !important;
   }
 
   div[class*="guideline"] p, div[class*="step"] p, div[class*="instruction"] p {
-    font-size: 10px !important;
-    line-height: 1.35 !important;
+    font-size: 9px !important;
+    line-height: 1.3 !important;
     margin-bottom: 0 !important;
   }
 }
