@@ -465,42 +465,40 @@ body {
   div[style*="background"], .card, .stat-box, .metric-box, div > .card, section .card {
     box-sizing: border-box !important;
   }
-/* --- Professional Mobile Layout: Impact Counter Grid & Homepage Cards --- */
+/* --- Professional Balanced Mobile 2-Column Grid --- */
 @media screen and (max-width: 768px) {
-  /* 1. Make the 3 Impact Counter boxes sit side-by-side or in a neat 3-column micro grid */
+  /* 1. Impact Counters: Clean 3-column row */
   .impact-counter-grid {
     display: grid !important;
     grid-template-columns: repeat(3, 1fr) !important;
-    gap: 6px !important;
+    gap: 8px !important;
     width: 100% !important;
     margin-bottom: 2rem !important;
     box-sizing: border-box !important;
   }
 
   .impact-counter-card {
-    padding: 10px 4px !important;
+    padding: 12px 6px !important;
     text-align: center !important;
-    box-sizing: border-box !important;
   }
 
   .impact-counter-card h3 {
-    font-size: 1.1rem !important;
+    font-size: 1.2rem !important;
     font-weight: 800 !important;
     margin: 0 0 0.2rem 0 !important;
   }
 
   .impact-counter-card p {
-    font-size: 6.5px !important;
+    font-size: 7px !important;
     letter-spacing: 0.2px !important;
-    line-height: 1.1 !important;
-    margin: 0 !important;
+    text-transform: uppercase !important;
   }
 
-  /* 2. Homepage Grid: Strict 2-column layout for core services */
+  /* 2. Core Platform Services: Beautiful, comfortably large 2-column cards (2 top, 2 middle, 2 bottom) */
   .homepage-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 8px !important;
+    gap: 12px !important;
     width: 100% !important;
     padding: 0 4px !important;
     box-sizing: border-box !important;
@@ -513,33 +511,47 @@ body {
     height: 100% !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 10px 8px !important;
+    padding: 16px 12px !important; /* Larger, spacious padding */
     box-sizing: border-box !important;
+    border-radius: 14px !important;
+  }
+
+  .homepage-card-styled > div:first-child {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-grow: 1 !important;
+    width: 100% !important;
   }
 
   .homepage-card-styled h3 {
-    font-size: 10px !important;
-    line-height: 1.15 !important;
-    margin-bottom: 4px !important;
+    font-size: 12.5px !important; /* Standard, highly readable title size */
+    line-height: 1.25 !important;
+    margin-bottom: 8px !important;
+    font-weight: 700 !important;
   }
 
   .homepage-card-styled p {
-    font-size: 8px !important;
-    line-height: 1.2 !important;
-    margin-bottom: 6px !important;
+    font-size: 10px !important; /* Comfortable body font size */
+    line-height: 1.4 !important;
+    margin-bottom: 12px !important;
+    flex-grow: 1 !important;
   }
 
   .homepage-card-styled .card-action-btn {
-    display: block !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     width: 100% !important;
-    font-size: 7.5px !important;
-    padding: 6px 2px !important;
+    font-size: 9.5px !important; /* Clean, standard button text */
+    padding: 9px 6px !important;
     text-align: center !important;
     box-sizing: border-box !important;
     margin-top: auto !important;
+    white-space: normal !important;
+    border-radius: 8px !important;
   }
 
-  /* 3. Ensure tracker and other cards stack normally from top to bottom */
+  /* 3. Keep all other pages and tracking elements standard and vertical */
   .track-card, .tracker-card, .directory-card, .service-card, 
   div[class*="track"], div[class*="rescue"], div[class*="unit"] {
     display: flex !important;
