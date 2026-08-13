@@ -465,7 +465,7 @@ body {
   div[style*="background"], .card, .stat-box, .metric-box, div > .card, section .card {
     box-sizing: border-box !important;
   }
-/* --- Professional Homepage & Tracker Layout Correction --- */
+/* --- Professional OneEarth Final Layout Correction --- */
 @media screen and (max-width: 768px) {
   /* 1. Homepage Grid: Strict 2-column layout */
   .homepage-grid {
@@ -482,7 +482,7 @@ body {
     flex-direction: column !important;
     justify-content: space-between !important;
     height: 100% !important;
-    width: 100% !important.
+    width: 100% !important;
     margin: 0 !important;
     padding: 10px 8px !important;
     box-sizing: border-box !important;
@@ -510,9 +510,9 @@ body {
     margin-top: auto !important;
   }
 
-  /* 2. Live Tracker & Directory Cards: Force normal vertical stacking with buttons at the bottom */
+  /* 2. Live Tracker, Directory, & Unit Cards: Full-width normal vertical stacking */
   .track-card, .tracker-card, .directory-card, .service-card, 
-  div[class*="track"], div[class*="rescue"], div[class*="unit"] {
+  div[class*="track"], div[class*="rescue"], div[class*="unit"], div[class*="card"] {
     display: flex !important;
     flex-direction: column !important;
     width: 100% !important;
@@ -521,9 +521,9 @@ body {
   }
 
   /* Force tracking action buttons/call options to drop below the card content cleanly */
-  .track-card a, .tracker-card a, .directory-card a, 
-  .track-card button, .tracker-card button, 
-  div[class*="track"] a, div[class*="rescue"] a {
+  .track-card a, .tracker-card a, .directory-card a, .service-card a,
+  .track-card button, .tracker-card button, .service-card button,
+  div[class*="track"] a, div[class*="rescue"] a, div[class*="unit"] a {
     display: block !important;
     width: 100% !important;
     clear: both !important;
