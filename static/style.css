@@ -465,72 +465,69 @@ body {
   div[style*="background"], .card, .stat-box, .metric-box, div > .card, section .card {
     box-sizing: border-box !important;
   }
-/* --- Professional Final Layout: Emergency Page & Stats Correction --- */
+/* --- Professional Final Layout & Spacing Correction --- */
 @media screen and (max-width: 768px) {
 
-  /* 1. Fix "Report Animal Emergency" Header Stretched Height */
-  .emergency-hero-box, .hero-section-emergency, .hero-card, div[class*="emergency"] > .hero, .hero {
-    padding: 22px 14px !important;
-    margin-bottom: 1.2rem !important;
+  /* 1. Top Welcome Banner */
+  .homepage-hero-box {
+    padding: 24px 14px !important;
+    margin-bottom: 1.5rem !important;
     border-radius: 12px !important;
   }
 
-  .emergency-hero-box h1, .hero-section-emergency h1, .hero-card h1, div[class*="emergency"] h1 {
-    font-size: 1.5rem !important;
+  .homepage-hero-box h1 {
+    font-size: 1.6rem !important;
     line-height: 1.15 !important;
     margin-bottom: 8px !important;
   }
 
-  .emergency-hero-box p, .hero-section-emergency p, .hero-card p {
-    font-size: 0.85rem !important;
-    line-height: 1.35 !important;
-    margin-bottom: 0 !important;
-  }
-
-  /* 2. Arrange the 3 Stat Boxes into a 2-up, 1-down Grid */
-  .stats-grid-container, .emergency-stats-grid, div[class*="stats"], div[class*="metrics"] {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 8px !important;
-    width: 100% !important;
+  .homepage-hero-box p {
+    font-size: 0.9rem !important;
+    line-height: 1.4 !important;
     margin-bottom: 1rem !important;
   }
 
-  /* Force the 3rd stat box to span full width below the first two */
-  .stats-grid-container > div:nth-child(3), 
-  .emergency-stats-grid > div:nth-child(3),
-  div[class*="stats"] > div:nth-child(3),
-  div[class*="metrics"] > div:nth-child(3) {
-    grid-column: span 2 !important;
-  }
-
-  /* Stat card container inner styling */
-  .stat-card-box, .stats-grid-container > div, .emergency-stats-grid > div {
-    padding: 10px 8px !important;
+  /* 2. Impact Counters */
+  .impact-counter-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px !important;
+    width: 100% !important;
+    margin-bottom: 1.5rem !important;
     box-sizing: border-box !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
   }
 
-  .stat-card-box h3, .stats-grid-container h3, .emergency-stats-grid h3 {
-    font-size: 10px !important;
-    margin-bottom: 2px !important;
+  .impact-counter-card {
+    padding: 10px 4px !important;
+    text-align: center !important;
   }
 
-  .stat-card-box p, .stats-grid-container p, .emergency-stats-grid p {
-    font-size: 13px !important;
-    font-weight: 700 !important;
-    line-height: 1.2 !important;
-    margin: 0 !important;
+  .impact-counter-card h3 {
+    font-size: 1.1rem !important;
+    font-weight: 800 !important;
+    margin: 0 0 0.1rem 0 !important;
   }
 
-  /* 3. Keep Homepage and Global Settings intact */
+  .impact-counter-card p {
+    font-size: 6.5px !important;
+    letter-spacing: 0.1px !important;
+    text-transform: uppercase !important;
+  }
+
+  /* 3. Core Platform Services Grid & Removal of Extra Bottom Space */
+  .homepage-container {
+    margin-bottom: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+
   .homepage-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px !important;
     width: 100% !important;
+    margin-bottom: 1rem !important;
+    padding: 0 4px !important;
+    box-sizing: border-box !important;
   }
 
   .homepage-card-styled {
@@ -538,16 +535,75 @@ body {
     flex-direction: column !important;
     justify-content: space-between !important;
     min-height: 220px !important;
+    width: 100% !important;
+    margin: 0 !important;
     padding: 14px 10px !important; 
+    box-sizing: border-box !important;
     border-radius: 12px !important;
   }
 
+  /* Unify inner content layout for all 6 cards so buttons behave identically */
+  .homepage-card-styled > div {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-grow: 1 !important;
+    width: 100% !important;
+  }
+
+  .homepage-card-styled h3 {
+    font-size: 12px !important; 
+    line-height: 1.2 !important;
+    margin-bottom: 6px !important;
+    font-weight: 700 !important;
+  }
+
+  .homepage-card-styled p {
+    font-size: 9px !important; 
+    line-height: 1.3 !important;
+    margin-bottom: 10px !important;
+    flex-grow: 1 !important;
+  }
+
+  /* FORCE EXACT UNIFORM BUTTON STRUCTURE MATCHING THE LAST CARDS */
   .homepage-card-styled .card-action-btn {
     display: block !important;
     width: 100% !important;
+    max-width: 100% !important;
+    float: none !important;
+    clear: both !important;
     font-size: 9px !important; 
     padding: 8px 4px !important;
     text-align: center !important;
+    box-sizing: border-box !important;
     margin-top: auto !important;
+    white-space: normal !important;
+    border-radius: 6px !important;
+  }
+
+  /* 4. Footer Spacing Tightener */
+  .main-footer {
+    margin-top: 1.5rem !important;
+    padding: 1.5rem 1rem !important;
+  }
+
+  /* 5. Keep all other tracking elements standard and vertical */
+  .track-card, .tracker-card, .directory-card, .service-card, 
+  div[class*="track"], div[class*="rescue"], div[class*="unit"] {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    float: none !important;
+  }
+
+  .track-card a, .tracker-card a, .directory-card a, 
+  .track-card button, .tracker-card button {
+    display: block !important;
+    width: 100% !important;
+    clear: both !important;
+    float: none !important;
+    margin-top: 10px !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
   }
 }
