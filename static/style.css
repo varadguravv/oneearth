@@ -465,10 +465,10 @@ body {
   div[style*="background"], .card, .stat-box, .metric-box, div > .card, section .card {
     box-sizing: border-box !important;
   }
-/* --- Professional OneEarth Mobile Precision Layout --- */
+/* --- Professional Card Button Uniformity Fix --- */
 @media screen and (max-width: 768px) {
 
-  /* 1. Top Welcome Banner: Perfectly proportioned, less tall, clean and square */
+  /* 1. Top Welcome Banner */
   .homepage-hero-box {
     padding: 30px 16px !important;
     margin-bottom: 2rem !important;
@@ -487,7 +487,7 @@ body {
     margin-bottom: 1.5rem !important;
   }
 
-  /* 2. Impact Counters: Clean 3-column row */
+  /* 2. Impact Counters */
   .impact-counter-grid {
     display: grid !important;
     grid-template-columns: repeat(3, 1fr) !important;
@@ -514,7 +514,7 @@ body {
     text-transform: uppercase !important;
   }
 
-  /* 3. Core Platform Services: Larger, taller, spacious 2-column cards */
+  /* 3. Core Platform Services Grid */
   .homepage-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
@@ -528,10 +528,10 @@ body {
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
-    min-height: 220px !important; /* Forces the boxes to be nice, tall, and large */
+    min-height: 230px !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 18px 14px !important; /* Generous padding for a premium look */
+    padding: 18px 14px !important; 
     box-sizing: border-box !important;
     border-radius: 14px !important;
   }
@@ -544,26 +544,30 @@ body {
   }
 
   .homepage-card-styled h3 {
-    font-size: 13.5px !important; /* Larger, prominent heading text */
+    font-size: 13px !important; 
     line-height: 1.25 !important;
     margin-bottom: 8px !important;
     font-weight: 700 !important;
   }
 
   .homepage-card-styled p {
-    font-size: 10.5px !important; /* Clear, comfortable, readable body size */
-    line-height: 1.45 !important;
+    font-size: 10px !important; 
+    line-height: 1.4 !important;
     margin-bottom: 14px !important;
     flex-grow: 1 !important;
   }
 
+  /* FORCE ALL ACTION BUTTONS TO BE UNIFORM FULL-WIDTH RECTANGLES AT THE BOTTOM */
   .homepage-card-styled .card-action-btn {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     width: 100% !important;
-    font-size: 10px !important; /* Standardized button text */
-    padding: 10px 6px !important;
+    max-width: 100% !important;
+    float: none !important;
+    clear: both !important;
+    font-size: 10px !important; 
+    padding: 10px 8px !important;
     text-align: center !important;
     box-sizing: border-box !important;
     margin-top: auto !important;
