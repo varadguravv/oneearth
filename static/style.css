@@ -465,7 +465,7 @@ body {
   div[style*="background"], .card, .stat-box, .metric-box, div > .card, section .card {
     box-sizing: border-box !important;
   }
-/* --- Professional Card Button Uniformity Fix --- */
+/* --- Professional Uniform Card Structure & Alignment --- */
 @media screen and (max-width: 768px) {
 
   /* 1. Top Welcome Banner */
@@ -531,12 +531,13 @@ body {
     min-height: 230px !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 18px 14px !important; 
+    padding: 16px 12px !important; 
     box-sizing: border-box !important;
     border-radius: 14px !important;
   }
 
-  .homepage-card-styled > div:first-child {
+  /* Synchronize inner wrappers so all cards handle content identically */
+  .homepage-card-styled > div {
     display: flex !important;
     flex-direction: column !important;
     flex-grow: 1 !important;
@@ -544,20 +545,20 @@ body {
   }
 
   .homepage-card-styled h3 {
-    font-size: 13px !important; 
+    font-size: 12.5px !important; 
     line-height: 1.25 !important;
-    margin-bottom: 8px !important;
+    margin-bottom: 6px !important;
     font-weight: 700 !important;
   }
 
   .homepage-card-styled p {
-    font-size: 10px !important; 
-    line-height: 1.4 !important;
-    margin-bottom: 14px !important;
+    font-size: 9.5px !important; 
+    line-height: 1.35 !important;
+    margin-bottom: 12px !important;
     flex-grow: 1 !important;
   }
 
-  /* FORCE ALL ACTION BUTTONS TO BE UNIFORM FULL-WIDTH RECTANGLES AT THE BOTTOM */
+  /* UNIFORM FULL-WIDTH RECTANGULAR BUTTONS FOR ALL 6 CARDS */
   .homepage-card-styled .card-action-btn {
     display: flex !important;
     align-items: center !important;
@@ -566,8 +567,8 @@ body {
     max-width: 100% !important;
     float: none !important;
     clear: both !important;
-    font-size: 10px !important; 
-    padding: 10px 8px !important;
+    font-size: 9.5px !important; 
+    padding: 9px 6px !important;
     text-align: center !important;
     box-sizing: border-box !important;
     margin-top: auto !important;
