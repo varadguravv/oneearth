@@ -645,37 +645,38 @@ body {
     margin-bottom: 0 !important;
   }
 }
-/* --- Professional Mobile Grid Fix: Emergency Guidelines Cards --- */
+/* --- Professional Squarical Grid Fix for Emergency Protocols --- */
 @media screen and (max-width: 768px) {
   
-  /* Target the container wrapping these guideline steps */
+  /* Make the outer parent container a clean 2-column grid layout */
   .guidelines-container, .steps-container, .emergency-steps, 
   div[class*="guideline"], div[class*="instructions"], div[class*="steps"] {
     display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
     width: 100% !important;
     box-sizing: border-box !important;
     padding: 0 4px !important;
+    align-items: stretch !important;
   }
 
-  /* Target the 3 individual guideline cards/boxes */
+  /* Force each card into a balanced, compact shape */
   .guidelines-container > div, .steps-container > div, 
   .emergency-steps > div, div[class*="guideline"] > div, 
   div[class*="instruction-card"], div[class*="step-card"] {
     width: 100% !important;
     margin: 0 !important;
-    padding: 14px 10px !important;
+    padding: 12px 10px !important;
     box-sizing: border-box !important;
-    min-height: unset !important;
+    min-height: 150px !important; /* Gives them a neat balanced height */
     height: auto !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: flex-start !important;
-    border-radius: 10px !important;
+    border-radius: 12px !important;
   }
 
-  /* Force the 3rd guideline card to span full width at the bottom */
+  /* Make card 3 take up the full width smoothly on the row below */
   .guidelines-container > div:nth-child(3), 
   .steps-container > div:nth-child(3), 
   .emergency-steps > div:nth-child(3),
@@ -683,17 +684,18 @@ body {
   div[class*="instruction-card"]:nth-child(3),
   div[class*="step-card"]:nth-child(3) {
     grid-column: span 2 !important;
+    max-width: 100% !important;
   }
 
-  /* Fix text spacing inside these cards so it isn't awkwardly vertical */
+  /* Scale font and title styling to fit the squarical cards cleanly */
   div[class*="guideline"] h3, div[class*="step"] h3, div[class*="instruction"] h3 {
-    font-size: 11px !important;
+    font-size: 12px !important;
     line-height: 1.2 !important;
     margin-bottom: 6px !important;
   }
 
   div[class*="guideline"] p, div[class*="step"] p, div[class*="instruction"] p {
-    font-size: 9px !important;
+    font-size: 10px !important;
     line-height: 1.35 !important;
     margin-bottom: 0 !important;
   }
