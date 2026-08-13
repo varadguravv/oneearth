@@ -98,7 +98,6 @@
             text-transform: uppercase;
         }
 
-        /* Live Telemetry Status Ticker */
         .dispatch-status-bar {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -128,7 +127,6 @@
             color: var(--dark-slate);
         }
 
-        /* Enterprise Form Panel */
         .report-panel {
             background: #ffffff;
             border: 2px solid rgba(46, 125, 50, 0.25);
@@ -184,7 +182,6 @@
             box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
         }
 
-        /* GPS Toolbar */
         .gps-toolbar {
             display: flex;
             justify-content: space-between;
@@ -243,7 +240,6 @@
 
         .submit-btn:hover { opacity: 0.95; transform: translateY(-1px); }
 
-        /* Triage Guidelines */
         .triage-guidelines-box {
             background: #ffffff;
             border: 2px solid rgba(211, 47, 47, 0.2);
@@ -289,16 +285,47 @@
         .sos-inner { background: var(--dark-slate); color: white; padding: 1rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); border: 2px solid var(--primary-color); width: 280px; display: flex; flex-direction: column; gap: 0.6rem; }
 
         .main-footer { background-color: var(--dark-slate); color: #ffffff; text-align: center; padding: 2.5rem 2rem; margin-top: 4rem; border-top: 4px solid var(--primary-color); }
+
+        .skip-link {
+            position: absolute;
+            top: -60px;
+            left: 0;
+            background: var(--primary-color);
+            color: #ffffff;
+            padding: 0.75rem 1.25rem;
+            z-index: 999999999;
+            border-radius: 0 0 6px 0;
+            text-decoration: none;
+            font-weight: 700;
+            transition: top 0.2s ease;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        .form-trust-note {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1rem;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
-    <header class="main-header">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header class="main-header" role="banner">
         <div class="nav-container">
             <div class="logo">OneEarth 🌍</div>
-            <nav class="nav-links">
+            <nav class="nav-links" aria-label="Main navigation">
                 <a href="{{ url_for('home') }}">Home</a>
-                <a href="{{ url_for('report_rescue') }}" class="active">Report Emergency</a>
+                <a href="{{ url_for('report_rescue') }}" class="active" aria-current="page">Report Emergency</a>
                 <a href="{{ url_for('directory') }}">Shelters & Resources</a>
                 <a href="{{ url_for('adoption') }}">Adoption & Fostering</a>
                 <a href="{{ url_for('track') }}">Live Tracker</a>
@@ -307,7 +334,7 @@
         </div>
     </header>
 
-    <main class="homepage-container">
+    <main class="homepage-container" id="main-content">
         
         <div class="section-title-box">
             <span class="presentation-badge">Priority Incident Dispatch Node</span>
@@ -315,7 +342,6 @@
             <p>Complete this secure triage form to instantly alert our regional paramedic ambulances, wildlife handlers, and veterinary response units.</p>
         </div>
 
-        <!-- Telemetry Status Bar -->
         <div class="dispatch-status-bar">
             <div class="dispatch-tile">
                 <h5>Active Ambulances</h5>
@@ -331,16 +357,14 @@
             </div>
         </div>
 
-        <!-- Main Form Panel -->
         <div class="report-panel">
             <form action="{{ url_for('report_rescue') }}" method="POST" enctype="multipart/form-data">
                 
                 <div class="form-grid">
                     
-                    <!-- Species Selection -->
                     <div class="form-group">
                         <label for="species">Species Category *</label>
-                        <select id="species" name="species" required>
+                        <select id="species" name="species" required aria-required="true">
                             <option value="" disabled selected>Select emergency animal genre...</option>
                             <option value="wildlife">Wildlife / Venomous Snake</option>
                             <option value="urban">Urban Stray Dog / Cat</option>
@@ -349,10 +373,9 @@
                         </select>
                     </div>
 
-                    <!-- Urgency Level -->
                     <div class="form-group">
                         <label for="urgency">Incident Severity Level *</label>
-                        <select id="urgency" name="urgency" required>
+                        <select id="urgency" name="urgency" required aria-required="true">
                             <option value="" disabled selected>Select triage severity...</option>
                             <option value="critical">Critical / Life-Threatening Trauma</option>
                             <option value="urgent">Urgent / Injured & Trapped</option>
@@ -360,36 +383,31 @@
                         </select>
                     </div>
 
-                    <!-- Reporter Name -->
                     <div class="form-group">
                         <label for="reporter_name">Your Name / Contact Person *</label>
-                        <input type="text" id="reporter_name" name="reporter_name" placeholder="e.g., Varad Gurav" required>
+                        <input type="text" id="reporter_name" name="reporter_name" placeholder="e.g., Varad Gurav" required aria-required="true">
                     </div>
 
-                    <!-- Contact Phone -->
                     <div class="form-group">
                         <label for="phone">Emergency Phone Number *</label>
-                        <input type="tel" id="phone" name="phone" placeholder="e.g., +91 98765 43210" required>
+                        <input type="tel" id="phone" name="phone" placeholder="e.g., +91 98765 43210" required aria-required="true">
                     </div>
 
-                    <!-- Location Coordinates / Address with Live GPS auto-detect -->
                     <div class="form-group full-width">
                         <div class="gps-toolbar">
                             <label for="location" style="margin-bottom:0;">Exact Incident Location / Landmark *</label>
                             <button type="button" class="gps-detect-btn" onclick="fetchUserLocation()">📍 Auto-Detect My Current GPS</button>
                         </div>
-                        <input type="text" id="location" name="location" placeholder="e.g., Near Sector 4 Junction, Main Road" required style="margin-top:0.4rem;">
-                        <div class="helper-text">💡 Click directly on the sector map below or use auto-detect to pinpoint rescue coordinates accurately.</div>
-                        <div id="mapPicker" class="map-picker-container"></div>
+                        <input type="text" id="location" name="location" placeholder="e.g., Near Sector 4 Junction, Main Road" required aria-required="true" aria-describedby="location-helper" style="margin-top:0.4rem;">
+                        <div class="helper-text" id="location-helper">💡 Click directly on the sector map below or use auto-detect to pinpoint rescue coordinates accurately. You can also simply type the address or landmark directly into the field above — the map is optional.</div>
+                        <div id="mapPicker" class="map-picker-container" role="application" aria-label="Interactive map to pin incident location. Optional — you can type the location in the field above instead."></div>
                     </div>
 
-                    <!-- Description -->
                     <div class="form-group full-width">
                         <label for="description">Detailed Description of Situation *</label>
-                        <textarea id="description" name="description" rows="4" placeholder="Describe the animal's physical condition, exact surroundings, and immediate hazards..." required></textarea>
+                        <textarea id="description" name="description" rows="4" placeholder="Describe the animal's physical condition, exact surroundings, and immediate hazards..." required aria-required="true"></textarea>
                     </div>
 
-                    <!-- Media Upload -->
                     <div class="form-group full-width">
                         <label for="image">Upload Photographic Evidence (Optional)</label>
                         <input type="file" id="image" name="image" accept="image/*">
@@ -400,10 +418,13 @@
 
                 <button type="submit" class="submit-btn">🚨 Dispatch Emergency Rescue Team Now</button>
 
+                <div class="form-trust-note">
+                    🔒 Your report goes directly to verified rescue coordinators. Please only submit genuine emergencies — false reports delay real ones.
+                </div>
+
             </form>
         </div>
 
-        <!-- Pre-Dispatch Triage Guidelines -->
         <div class="triage-guidelines-box">
             <h3>🛡️ Emergency Pre-Dispatch Protocols (While Ambulance En Route)</h3>
             <div class="triage-grid">
@@ -442,7 +463,6 @@
     <!-- Leaflet JS for Interactive Form Map Pinning -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
-        // Initialize Map Picker with custom interactive tile layers
         let reportMap = L.map('mapPicker').setView([18.5204, 73.8567], 13);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
