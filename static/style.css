@@ -465,58 +465,89 @@ body {
   div[style*="background"], .card, .stat-box, .metric-box, div > .card, section .card {
     box-sizing: border-box !important;
   }
-/* --- Professional Mobile Layout: Emergency Reporting Page --- */
+/* --- Professional Final Layout: Emergency Page & Stats Correction --- */
 @media screen and (max-width: 768px) {
-  
+
   /* 1. Fix "Report Animal Emergency" Header Stretched Height */
-  .emergency-hero-box, .hero-section-emergency {
-    padding: 20px 16px !important; /* Reduces vertical stretch */
-    margin-bottom: 1.5rem !important;
+  .emergency-hero-box, .hero-section-emergency, .hero-card, div[class*="emergency"] > .hero, .hero {
+    padding: 22px 14px !important;
+    margin-bottom: 1.2rem !important;
     border-radius: 12px !important;
   }
 
-  .emergency-hero-box h1, .hero-section-emergency h1 {
-    font-size: 1.6rem !important; /* Smaller, more balanced */
-    line-height: 1.1 !important;
+  .emergency-hero-box h1, .hero-section-emergency h1, .hero-card h1, div[class*="emergency"] h1 {
+    font-size: 1.5rem !important;
+    line-height: 1.15 !important;
     margin-bottom: 8px !important;
   }
 
-  .emergency-hero-box p, .hero-section-emergency p {
+  .emergency-hero-box p, .hero-section-emergency p, .hero-card p {
     font-size: 0.85rem !important;
-    line-height: 1.4 !important;
+    line-height: 1.35 !important;
+    margin-bottom: 0 !important;
   }
 
   /* 2. Arrange the 3 Stat Boxes into a 2-up, 1-down Grid */
-  .stats-grid-container, .emergency-stats-grid {
+  .stats-grid-container, .emergency-stats-grid, div[class*="stats"], div[class*="metrics"] {
     display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important; /* 2 columns */
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 8px !important;
     width: 100% !important;
     margin-bottom: 1rem !important;
   }
 
-  /* Make the 3rd box span full width at the bottom */
-  .stats-grid-container > div:last-child, 
-  .emergency-stats-grid > div:last-child {
+  /* Force the 3rd stat box to span full width below the first two */
+  .stats-grid-container > div:nth-child(3), 
+  .emergency-stats-grid > div:nth-child(3),
+  div[class*="stats"] > div:nth-child(3),
+  div[class*="metrics"] > div:nth-child(3) {
     grid-column: span 2 !important;
   }
 
-  .stat-card-box {
-    padding: 12px 8px !important;
-    min-height: 80px !important;
+  /* Stat card container inner styling */
+  .stat-card-box, .stats-grid-container > div, .emergency-stats-grid > div {
+    padding: 10px 8px !important;
+    box-sizing: border-box !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
   }
 
-  .stat-card-box h3 {
-    font-size: 11px !important; /* Label size */
+  .stat-card-box h3, .stats-grid-container h3, .emergency-stats-grid h3 {
+    font-size: 10px !important;
     margin-bottom: 2px !important;
   }
 
-  .stat-card-box p {
-    font-size: 14px !important; /* Value size */
+  .stat-card-box p, .stats-grid-container p, .emergency-stats-grid p {
+    font-size: 13px !important;
     font-weight: 700 !important;
     line-height: 1.2 !important;
+    margin: 0 !important;
+  }
+
+  /* 3. Keep Homepage and Global Settings intact */
+  .homepage-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .homepage-card-styled {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    min-height: 220px !important;
+    padding: 14px 10px !important; 
+    border-radius: 12px !important;
+  }
+
+  .homepage-card-styled .card-action-btn {
+    display: block !important;
+    width: 100% !important;
+    font-size: 9px !important; 
+    padding: 8px 4px !important;
+    text-align: center !important;
+    margin-top: auto !important;
   }
 }
