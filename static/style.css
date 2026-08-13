@@ -1,366 +1,336 @@
-/* ==========================================================================
+* ==========================================================================
    OneEarth Professional Master Stylesheet
    Enhanced with an attractive, professional background atmosphere
    ========================================================================== */
-
+ 
 :root {
-    --primary-color: #2e7d32;
-    --primary-dark: #1b5e20;
-    --accent-color: #fbc02d;
-    --accent-dark: #f57f17;
-    --danger-color: #d32f2f;
-    --dark-slate: #263238;
-    --light-bg: #f8f9fa;
-    --text-main: #333333;
-    --text-muted: #666666;
-    --border-color: #e0e0e0;
-    --radius-sm: 6px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
-    --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
-    --shadow-lg: 0 10px 20px rgba(0,0,0,0.12);
+  --primary-color: #2e7d32;
+  --primary-dark: #1b5e20;
+  --accent-color: #fbc02d;
+  --accent-dark: #f57f17;
+  --danger-color: #d32f2f;
+  --dark-slate: #263238;
+  --light-bg: #f8f9fa;
+  --text-main: #333333;
+  --text-muted: #666666;
+  --border-color: #e0e0e0;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+  --shadow-lg: 0 10px 20px rgba(0,0,0,0.12);
 }
-
+ 
 /* Reset & Base Styles */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-
+ 
 body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    color: var(--text-main);
-    /* Replaced plain white with a sophisticated, subtle natural gradient backdrop */
-    background: linear-gradient(135deg, #f4f7f5 0%, #eef4f0 100%);
-    background-attachment: fixed;
-    line-height: 1.6;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: var(--text-main);
+  background: linear-gradient(135deg, #f4f7f5 0%, #eef4f0 100%);
+  background-attachment: fixed;
+  line-height: 1.6;
 }
-
+ 
 /* Header & Navigation Layout */
 .main-header {
-    background-color: var(--primary-dark);
-    color: #ffffff;
-    padding: 1rem 2rem;
-    box-shadow: var(--shadow-sm);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+  background-color: var(--primary-dark);
+  color: #ffffff;
+  padding: 1rem 2rem;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
-
+ 
 .nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-
+ 
 .logo {
-    font-size: 1.5rem;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-    color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #ffffff;
 }
-
+ 
 .nav-links {
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
 }
-
+ 
 .nav-links a {
-    color: rgba(255, 255, 255, 0.85);
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.95rem;
-    transition: color 0.2s ease, background-color 0.2s ease;
-    padding: 0.4rem 0.8rem;
-    border-radius: var(--radius-sm);
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: color 0.2s ease, background-color 0.2s ease;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-sm);
 }
-
+ 
 .nav-links a:hover,
 .nav-links a.active {
-    color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.15);
 }
-
+ 
 /* Main Layout Wrapper */
 .homepage-container {
-    max-width: 1200px;
-    margin: 2.5rem auto;
-    padding: 0 1.5rem;
+  max-width: 1200px;
+  margin: 2.5rem auto;
+  padding: 0 1.5rem;
 }
-
+ 
 /* Section Title Boxes & Banners with Professional Wildlife Background Support */
 .section-title-box {
-    background: linear-gradient(rgba(26, 50, 40, 0.88), rgba(37, 71, 55, 0.92)), url('/static/wildlife-bg.jpg');
-    background-size: cover;
-    background-position: center;
-    color: white;
-    padding: 3.5rem 2rem;
-    border-radius: var(--radius-lg);
-    margin-bottom: 2.5rem;
-    text-align: center;
-    border-bottom: 5px solid var(--primary-color);
-    box-shadow: var(--shadow-md);
+  background: linear-gradient(rgba(26, 50, 40, 0.88), rgba(37, 71, 55, 0.92)), url('/static/wildlife-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 3.5rem 2rem;
+  border-radius: var(--radius-lg);
+  margin-bottom: 2.5rem;
+  text-align: center;
+  border-bottom: 5px solid var(--primary-color);
+  box-shadow: var(--shadow-md);
 }
-
+ 
 .section-title-box h1 {
-    font-size: 2.8rem;
-    margin-bottom: 1rem;
-    color: #ffffff;
-    font-weight: 800;
+  font-size: 2.8rem;
+  margin-bottom: 1rem;
+  color: #ffffff;
+  font-weight: 800;
 }
-
+ 
 .section-title-box p {
-    font-size: 1.15rem;
-    max-width: 800px;
-    margin: 0 auto 1.8rem auto;
-    color: #eceff1;
-    line-height: 1.6;
+  font-size: 1.15rem;
+  max-width: 800px;
+  margin: 0 auto 1.8rem auto;
+  color: #eceff1;
+  line-height: 1.6;
 }
-
+ 
 /* Directory & Content Grid Systems */
 .directory-section {
-    margin-bottom: 3rem;
+  margin-bottom: 3rem;
 }
-
+ 
 .directory-section h2 {
-    font-size: 2rem;
-    color: var(--dark-slate);
-    margin-bottom: 0.5rem;
-    font-weight: 700;
+  font-size: 2rem;
+  color: var(--dark-slate);
+  margin-bottom: 0.5rem;
+  font-weight: 700;
 }
-
+ 
 .city-directory-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 2rem;
-    margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-top: 1.5rem;
 }
-
+ 
 .city-card {
-    background: #ffffff;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border-color);
-    overflow: hidden;
-    box-shadow: var(--shadow-sm);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-    padding: 1.5rem;
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  padding: 1.5rem;
 }
-
+ 
 .city-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
 }
-
+ 
 .city-card h3 {
-    color: var(--dark-slate);
-    font-size: 1.35rem;
-    margin-bottom: 0.8rem;
-    font-weight: 700;
+  color: var(--dark-slate);
+  font-size: 1.35rem;
+  margin-bottom: 0.8rem;
+  font-weight: 700;
 }
-
+ 
 .city-card p {
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin-bottom: 1.2rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
 }
-
+ 
 .city-card ul {
-    list-style-type: none;
-    padding: 0;
+  list-style-type: none;
+  padding: 0;
 }
-
+ 
 .city-card ul li {
-    position: relative;
-    padding-left: 1.2rem;
-    margin-bottom: 0.6rem;
-    font-size: 0.92rem;
-    color: var(--text-muted);
+  position: relative;
+  padding-left: 1.2rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.92rem;
+  color: var(--text-muted);
 }
-
+ 
 .city-card ul li::before {
-    content: "•";
-    position: absolute;
-    left: 0;
-    color: var(--primary-color);
-    font-weight: bold;
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
+  font-weight: bold;
 }
-
+ 
 /* Image Card Enhancements */
 .card-img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    border-top-left-radius: var(--radius-md);
-    border-top-right-radius: var(--radius-md);
-    display: block;
-    margin: -1.5rem -1.5rem 1.2rem -1.5rem;
-    width: calc(100% + 3rem);
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-top-left-radius: var(--radius-md);
+  border-top-right-radius: var(--radius-md);
+  display: block;
+  margin: -1.5rem -1.5rem 1.2rem -1.5rem;
+  width: calc(100% + 3rem);
 }
-
+ 
 /* Interactive Elements & Buttons */
 .pulse-btn {
-    animation: pulseGlow 2s infinite;
+  animation: pulseGlow 2s infinite;
 }
-
+ 
 @keyframes pulseGlow {
-    0% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.4); }
-    70% { box-shadow: 0 0 0 15px rgba(46, 125, 50, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.4); }
+  70% { box-shadow: 0 0 0 15px rgba(46, 125, 50, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0); }
 }
-
+ 
 .presentation-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, var(--accent-color), var(--accent-dark));
-    color: #111;
-    padding: 0.3rem 1rem;
-    font-size: 0.85rem;
-    font-weight: bold;
-    border-radius: 50px;
-    margin-bottom: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    box-shadow: var(--shadow-sm);
+  display: inline-block;
+  background: linear-gradient(135deg, var(--accent-color), var(--accent-dark));
+  color: #111;
+  padding: 0.3rem 1rem;
+  font-size: 0.85rem;
+  font-weight: bold;
+  border-radius: 50px;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: var(--shadow-sm);
 }
-
+ 
 .hover-lift {
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-
+ 
 .hover-lift:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
 }
-
+ 
 /* Footer Design */
 .main-footer {
-    background-color: var(--dark-slate);
-    color: #ffffff;
-    text-align: center;
-    padding: 2rem;
-    margin-top: 4rem;
-    font-size: 0.95rem;
-    border-top: 4px solid var(--primary-color);
+  background-color: var(--dark-slate);
+  color: #ffffff;
+  text-align: center;
+  padding: 2rem;
+  margin-top: 4rem;
+  font-size: 0.95rem;
+  border-top: 4px solid var(--primary-color);
 }
-
+ 
 /* Form & Input Components (Universal Support) */
 input[type="text"],
 input[type="email"],
 input[type="tel"],
 select,
 textarea {
-    width: 100%;
-    padding: 0.85rem 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    font-size: 1rem;
-    font-family: inherit;
-    color: var(--text-main);
-    background-color: #fff;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    margin-bottom: 1.2rem;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--text-main);
+  background-color: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  margin-bottom: 1.2rem;
 }
-
+ 
 input:focus,
 select:focus,
 textarea:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
 }
-
+ 
 button,
 .btn-primary {
-    background-color: var(--primary-color);
-    color: #ffffff;
-    font-weight: 600;
-    padding: 0.85rem 1.8rem;
-    border: none;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    display: inline-block;
-    text-decoration: none;
-    text-align: center;
+  background-color: var(--primary-color);
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.85rem 1.8rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
 }
-
+ 
 button:hover,
 .btn-primary:hover {
-    background-color: var(--primary-dark);
+  background-color: var(--primary-dark);
 }
-
+ 
 button:active,
 .btn-primary:active {
-    transform: scale(0.98);
+  transform: scale(0.98);
 }
-
-/* Responsive Breakpoints */
-@media (max-width: 768px) {
-    .nav-container {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .nav-links {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 0.8rem;
-    }
-
-    .section-title-box h1 {
-        font-size: 2.1rem;
-    }
-
-    .homepage-container {
-        padding: 0 1rem;
-    }
-/* --- Professional Header & Mobile Layout Fix --- */
-
-/* 1. Ensure the header wrapper flows correctly without overlapping */
-header, .navbar, nav {
-  position: relative !important;
-  top: auto !important;
-  width: 100% !important;
-  z-index: 100 !important;
-  background-color: var(--primary-dark, #12201c) !important;
-}
-
-/* 2. Clear any unwanted body padding */
-body {
-  padding-top: 0 !important;
-  overflow-x: hidden !important;
-}
-
-/* 3. Securely pin Instant SOS at the bottom left */
-.instant-sos, .sos-widget, #instant-sos {
-  position: fixed !important;
-  bottom: 20px !important;
-  left: 20px !important;
-  right: auto !important;
-  top: auto !important;
-  z-index: 9999 !important;
-  max-width: 280px !important;
-}
-/* --- Professional Full Vertical Stack Layout (Below OneEarth) --- */
+ 
+/* ==========================================================================
+   Responsive Breakpoints — Mobile (clean, de-duplicated version)
+   ========================================================================== */
+ 
 @media screen and (max-width: 768px) {
-  /* Force the entire header/navbar wrapper to stack vertically */
+ 
+  /* ---------- 1. Global page behavior ---------- */
+  body {
+    padding-top: 0 !important;
+    overflow-x: hidden !important;
+  }
+ 
+  .homepage-container {
+    padding: 0 1rem !important;
+    margin: 1.5rem auto !important;
+  }
+ 
+  /* ---------- 2. Header & Navigation ---------- */
   header, .navbar, nav, .nav-container {
+    position: relative !important;
+    top: auto !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    background-color: var(--primary-dark, #1b5e20) !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     text-align: center !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
     padding: 12px 0 !important;
+    z-index: 100 !important;
   }
-
-  /* Force the navigation link container below the logo and clear any side floats */
+ 
   .nav-links, .navbar-nav {
     display: grid !important;
     grid-template-columns: repeat(3, 1fr) !important;
@@ -369,21 +339,19 @@ body {
     max-width: 420px !important;
     margin: 12px auto 0 auto !important;
     padding: 0 !important;
-    clear: both !important;
   }
-
-  /* Uniform, attractive, clickable buttons */
+ 
   .nav-links a, .navbar-nav a, .nav-container a {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     height: 42px !important;
-    padding: 4px !important;
+    padding: 4px 6px !important;
     background-color: #1a302a !important;
-    border: 1px solid #27a745 !important;
+    border: 1px solid var(--primary-color, #2e7d32) !important;
     border-radius: 8px !important;
     color: #ffffff !important;
-    font-size: 9px !important;
+    font-size: 10px !important;
     font-weight: 600 !important;
     text-align: center !important;
     text-decoration: none !important;
@@ -391,328 +359,200 @@ body {
     box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
     box-sizing: border-box !important;
   }
-
-  /* Active tap feedback */
-  .nav-links a:active {
+ 
+  .nav-links a:active, .navbar-nav a:active {
     transform: scale(0.96) !important;
-    background-color: #27a745 !important;
+    background-color: var(--primary-color, #2e7d32) !important;
   }
-}
-/* --- Professional Stats Cards Layout Fix (2 on top, 1 below) --- */
-@media screen and (max-width: 768px) {
-  /* Target the container holding these statistic/impact cards */
-  .stats-container, .metrics-container, .counter-section, .row:has(.stat-card), .row:has(.card) {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 12px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    padding: 0 10px !important;
-  }
-
-  /* Make the third/last card stretch across both columns or center nicely below */
-  .stats-container > *:nth-child(3), 
-  .metrics-container > *:nth-child(3), 
-  .counter-section > *:nth-child(3),
-  .stat-card:nth-child(3),
-  .card:nth-child(3) {
-    grid-column: span 2 !important;
-    max-width: 85% !important;
-    margin: 0 auto !important;
-  }
-
-  /* Ensure the cards themselves scale cleanly */
-  .stat-card, .metric-card, .card {
-    width: 100% !important;
-    margin: 0 !important;
-    box-sizing: border-box !important;
-  }
-}
-/* --- Professional Universal Stats Grid Fix (2 on top, 1 below) --- */
-@media screen and (max-width: 768px) {
-  /* Find any parent wrapper containing multiple boxed metric cards and turn them into a grid */
-  body index, main, .container, .home-container {
-    /* Safe containment */
-  }
-
-  /* Target groups of 3 cards stacking vertically right now */
-  .col-md-4, .col-lg-4, div[class*="col-"], section > div > div {
-    /* Keeps layout stable */
-  }
-
-  /* Force the first three major content boxes/cards in the main flow into a 2-column grid */
-  main > div > div:nth-of-type(-n+3), 
-  .container > div:nth-of-type(-n+3),
-  section:first-of-type > div > div {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 12px !important;
-    width: 100% !important;
-  }
-
-  /* Force any sequence of 3 vertical white boxes on the home screen into 2-on-top, 1-centered below */
-  .container > div, main > div {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-  }
-}
-
-/* Explicit layout styling for the three specific metric cards */
-@media screen and (max-width: 768px) {
-  /* Select the direct containers of your 1,250+, 45+, and 320+ cards */
-  div[style*="background"], .card, .stat-box, .metric-box, div > .card, section .card {
-    box-sizing: border-box !important;
-  }
-/* --- Professional Final Layout & Spacing Correction --- */
-@media screen and (max-width: 768px) {
-
-  /* 1. Top Welcome Banner */
+ 
+  /* ---------- 3. Hero / Welcome Banner ---------- */
+  .section-title-box,
   .homepage-hero-box {
-    padding: 24px 14px !important;
+    padding: 24px 16px !important;
     margin-bottom: 1.5rem !important;
     border-radius: 12px !important;
   }
-
+ 
+  .section-title-box h1,
   .homepage-hero-box h1 {
-    font-size: 1.6rem !important;
-    line-height: 1.15 !important;
+    font-size: 1.7rem !important;
+    line-height: 1.2 !important;
     margin-bottom: 8px !important;
   }
-
+ 
+  .section-title-box p,
   .homepage-hero-box p {
     font-size: 0.9rem !important;
-    line-height: 1.4 !important;
+    line-height: 1.45 !important;
     margin-bottom: 1rem !important;
   }
-
-  /* 2. Impact Counters */
-  .impact-counter-grid {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 6px !important;
-    width: 100% !important;
-    margin-bottom: 1.5rem !important;
-    box-sizing: border-box !important;
-  }
-
-  .impact-counter-card {
-    padding: 10px 4px !important;
-    text-align: center !important;
-  }
-
-  .impact-counter-card h3 {
-    font-size: 1.1rem !important;
-    font-weight: 800 !important;
-    margin: 0 0 0.1rem 0 !important;
-  }
-
-  .impact-counter-card p {
-    font-size: 6.5px !important;
-    letter-spacing: 0.1px !important;
-    text-transform: uppercase !important;
-  }
-
-  /* 3. Core Platform Services Grid & Removal of Extra Bottom Space */
-  .homepage-container {
-    margin-bottom: 1rem !important;
-    padding-bottom: 1rem !important;
-  }
-
-  .homepage-grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
-    width: 100% !important;
-    margin-bottom: 1rem !important;
-    padding: 0 4px !important;
-    box-sizing: border-box !important;
-  }
-
-  .homepage-card-styled {
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-    min-height: 220px !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 14px 10px !important; 
-    box-sizing: border-box !important;
-    border-radius: 12px !important;
-  }
-
-  /* Unify inner content layout for all 6 cards so buttons behave identically */
-  .homepage-card-styled > div {
-    display: flex !important;
-    flex-direction: column !important;
-    flex-grow: 1 !important;
-    width: 100% !important;
-  }
-
-  .homepage-card-styled h3 {
-    font-size: 12px !important; 
-    line-height: 1.2 !important;
-    margin-bottom: 6px !important;
-    font-weight: 700 !important;
-  }
-
-  .homepage-card-styled p {
-    font-size: 9px !important; 
-    line-height: 1.3 !important;
-    margin-bottom: 10px !important;
-    flex-grow: 1 !important;
-  }
-
-  /* FORCE EXACT UNIFORM BUTTON STRUCTURE MATCHING THE LAST CARDS */
-  .homepage-card-styled .card-action-btn {
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    float: none !important;
-    clear: both !important;
-    font-size: 9px !important; 
-    padding: 8px 4px !important;
-    text-align: center !important;
-    box-sizing: border-box !important;
-    margin-top: auto !important;
-    white-space: normal !important;
-    border-radius: 6px !important;
-  }
-
-  /* 4. Footer Spacing Tightener */
-  .main-footer {
-    margin-top: 1.5rem !important;
-    padding: 1.5rem 1rem !important;
-  }
-
-  /* 5. Keep all other tracking elements standard and vertical */
-  .track-card, .tracker-card, .directory-card, .service-card, 
-  div[class*="track"], div[class*="rescue"], div[class*="unit"] {
-    display: flex !important;
-    flex-direction: column !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    float: none !important;
-  }
-
-  .track-card a, .tracker-card a, .directory-card a, 
-  .track-card button, .tracker-card button {
-    display: block !important;
-    width: 100% !important;
-    clear: both !important;
-    float: none !important;
-    margin-top: 10px !important;
-    text-align: center !important;
-    box-sizing: border-box !important;
-  }
-}
-/* --- Professional Compact Subpage Banner Fix --- */
-@media screen and (max-width: 768px) {
-  /* Aggressively reduce top/bottom padding on subpage hero wrappers */
+ 
+  /* Subpage hero banners (Report, Adoption, Track, Awareness) */
   body:not(.homepage) div[class*="hero"],
   body:not(.homepage) section[class*="hero"],
-  body:not(.homepage) .card,
   .conservation-hero, .data-hero, .emergency-hero {
-    padding: 12px 10px !important;
+    padding: 16px 12px !important;
     min-height: unset !important;
     height: auto !important;
     margin-bottom: 1rem !important;
   }
-
-  /* Shrink the orange badge */
-  body:not(.homepage) div[class*="hero"] span,
-  body:not(.homepage) section[class*="hero"] span {
-    padding: 3px 8px !important;
-    font-size: 8.5px !important;
-    margin-bottom: 4px !important;
-  }
-
-  /* Make title compact so it doesn't stretch the box */
+ 
   body:not(.homepage) div[class*="hero"] h1,
   body:not(.homepage) section[class*="hero"] h1 {
-    font-size: 1.15rem !important;
-    line-height: 1.05 !important;
-    margin-top: 2px !important;
-    margin-bottom: 4px !important;
+    font-size: 1.3rem !important;
+    line-height: 1.15 !important;
+    margin-bottom: 6px !important;
   }
-
-  /* Make paragraph concise and tight */
+ 
   body:not(.homepage) div[class*="hero"] p,
   body:not(.homepage) section[class*="hero"] p {
-    font-size: 0.75rem !important;
-    line-height: 1.25 !important;
-    margin-bottom: 0 !important;
+    font-size: 0.85rem !important;
+    line-height: 1.35 !important;
   }
-/* --- Professional Final Layout: Square Emergency Cards & Border Removal --- */
-@media screen and (max-width: 768px) {
-
-  /* 1. Force the main parent container to stay neatly within mobile screen limits */
-  .emergency-protocols-section, div[class*="emergency-container"], .container, div[class*="protocols"] {
-    max-width: 100% !important;
-    overflow-x: hidden !important;
-    box-sizing: border-box !important;
-    padding-left: 10px !important;
-    padding-right: 10px !important;
-    margin: 0 auto !important;
-  }
-
-  /* 2. Setup a strict, perfectly balanced 2-column grid layout */
-  .guidelines-container, .steps-container, .emergency-steps, 
-  div[class*="guideline"], div[class*="instructions"], div[class*="steps"] {
+ 
+  /* ---------- 4. Impact Counters (1,250+ / 45+ / 320+) ---------- */
+  .impact-counter-grid {
     display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(3, 1fr) !important;
     gap: 8px !important;
     width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-    padding: 0 !important;
-    margin: 0 !important;
+    margin-bottom: 1.5rem !important;
   }
-
-  /* 3. Shape individual boxes into compact square-like cards and remove the left red line */
-  .guidelines-container > div, .steps-container > div, 
-  .emergency-steps > div, div[class*="guideline"] > div, 
-  div[class*="instruction-card"], div[class*="step-card"] {
+ 
+  .impact-counter-card {
+    padding: 12px 6px !important;
+    text-align: center !important;
+  }
+ 
+  .impact-counter-card h3 {
+    font-size: 1.2rem !important;
+    font-weight: 800 !important;
+    margin-bottom: 2px !important;
+  }
+ 
+  .impact-counter-card p {
+    font-size: 0.65rem !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0.2px !important;
+    text-transform: uppercase !important;
+  }
+ 
+  /* ---------- 5. Core Platform Services Grid ---------- */
+  .homepage-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
     width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 10px 8px !important;
-    box-sizing: border-box !important;
-    min-height: 125px !important;
-    height: auto !important;
+    margin-bottom: 1rem !important;
+  }
+ 
+  .homepage-card-styled {
     display: flex !important;
     flex-direction: column !important;
-    justify-content: flex-start !important;
-    border-radius: 10px !important;
-    
-    /* Remove the left-hand red line completely */
-    border-left: none !important;
-    border-left-width: 0 !important;
-    border-left-style: none !important;
-  }
-
-  /* 4. Ensure the 3rd box sits smoothly centered spanning both columns at the bottom */
-  .guidelines-container > div:nth-child(3), 
-  .steps-container > div:nth-child(3), 
-  .emergency-steps > div:nth-child(3),
-  div[class*="guideline"] > div:nth-child(3),
-  div[class*="instruction-card"]:nth-child(3),
-  div[class*="step-card"]:nth-child(3) {
-    grid-column: span 2 !important;
+    justify-content: space-between !important;
+    min-height: 210px !important;
     width: 100% !important;
+    margin: 0 !important;
+    padding: 14px 12px !important;
+    border-radius: 12px !important;
+    box-sizing: border-box !important;
   }
-
-  /* 5. Scale text to fit inside the square cards cleanly */
-  div[class*="guideline"] h3, div[class*="step"] h3, div[class*="instruction"] h3 {
-    font-size: 11px !important;
-    line-height: 1.15 !important;
+ 
+  .homepage-card-styled h3 {
+    font-size: 0.85rem !important;
+    line-height: 1.25 !important;
+    margin-bottom: 6px !important;
+  }
+ 
+  .homepage-card-styled p {
+    font-size: 0.72rem !important;
+    line-height: 1.35 !important;
+    margin-bottom: 10px !important;
+    flex-grow: 1 !important;
+  }
+ 
+  .homepage-card-styled .card-action-btn {
+    display: block !important;
+    width: 100% !important;
+    font-size: 0.72rem !important;
+    padding: 8px 4px !important;
+    text-align: center !important;
+    border-radius: 6px !important;
+    margin-top: auto !important;
+    box-sizing: border-box !important;
+  }
+ 
+  /* ---------- 6. Shelter / City Directory Cards ---------- */
+  .city-directory-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.2rem !important;
+  }
+ 
+  /* ---------- 7. Live Tracker Cards ---------- */
+  .track-card, .tracker-card, .directory-card, .service-card {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+ 
+  .track-card a, .tracker-card a,
+  .track-card button, .tracker-card button {
+    display: block !important;
+    width: 100% !important;
+    margin-top: 10px !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+  }
+ 
+  /* ---------- 8. Emergency Guidelines / Steps ---------- */
+  .guidelines-container, .steps-container, .emergency-steps {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+ 
+  .guidelines-container > div,
+  .steps-container > div,
+  .emergency-steps > div {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 12px 10px !important;
+    min-height: 120px !important;
+    border-radius: 10px !important;
+    box-sizing: border-box !important;
+  }
+ 
+  .guidelines-container > div h3,
+  .steps-container > div h3 {
+    font-size: 0.75rem !important;
+    line-height: 1.2 !important;
     margin-bottom: 4px !important;
   }
-
-  div[class*="guideline"] p, div[class*="step"] p, div[class*="instruction"] p {
-    font-size: 9px !important;
+ 
+  .guidelines-container > div p,
+  .steps-container > div p {
+    font-size: 0.68rem !important;
     line-height: 1.3 !important;
-    margin-bottom: 0 !important;
+  }
+ 
+  /* ---------- 9. Emergency SOS floating widget ---------- */
+  .instant-sos, .sos-widget, #instant-sos {
+    position: fixed !important;
+    bottom: 20px !important;
+    left: 20px !important;
+    right: auto !important;
+    max-width: 260px !important;
+    z-index: 9999 !important;
+  }
+ 
+  /* ---------- 10. Footer ---------- */
+  .main-footer {
+    margin-top: 1.5rem !important;
+    padding: 1.5rem 1rem !important;
+    font-size: 0.8rem !important;
   }
 }
+ 
