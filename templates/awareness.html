@@ -6,7 +6,7 @@
        Page: Ultimate Conservation Awareness Data & Global Ecological Intelligence Hub
        ========================================================================== -->
     <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conservation Awareness Data & Intelligence Hub | OneEarth</title>
     <!-- Leaflet CSS for Global Deforestation & Habitat Monitoring Map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
@@ -295,6 +295,44 @@
         .sos-inner { background: var(--dark-slate); color: white; padding: 1rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); border: 2px solid var(--primary-color); width: 280px; display: flex; flex-direction: column; gap: 0.6rem; }
 
         .main-footer { background-color: var(--dark-slate); color: #ffffff; text-align: center; padding: 2.5rem 2rem; margin-top: 4rem; border-top: 4px solid var(--primary-color); }
+
+        /* ADDED — Take Action section (styling only, reuses .awareness-card) */
+        .action-section-heading {
+            margin: 3rem 0 1.5rem 0;
+        }
+
+        .action-section-heading h2 {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin: 0 0 0.4rem 0;
+            display: inline-block;
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 0.3rem;
+        }
+
+        .action-section-heading p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .species-tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .species-tag {
+            background: #fdf6e3;
+            border: 1px solid rgba(251, 192, 45, 0.5);
+            color: var(--accent-dark);
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 0.3rem 0.7rem;
+            border-radius: 50px;
+        }
     </style>
 </head>
 <body>
@@ -447,6 +485,81 @@
                     </ul>
                 </div>
                 <a href="{{ url_for('track') }}" class="action-btn">View Live Sector Safety Map</a>
+            </div>
+
+        </div>
+
+        <!-- ADDED — Take Action: Protect Our Planet's Guardians -->
+        <div class="action-section-heading">
+            <h2>🌍 Take Action: Protect Our Planet's Guardians</h2>
+            <p>Small, consistent steps — from planting a tree to joining a local group — add up to real ecological change.</p>
+        </div>
+
+        <div class="awareness-grid">
+
+            <!-- Card A: Plant Trees & Stop Deforestation -->
+            <div class="awareness-card">
+                <div>
+                    <h4>🌳 Plant Trees, Stop Deforestation</h4>
+                    <p>Every tree planted restores oxygen production, stabilizes soil, and rebuilds habitat corridors that wildlife depend on to move safely between fragmented forests.</p>
+                    <ul>
+                        <li><strong>Start Small:</strong> Plant native saplings in your neighborhood, society compound, or school — native species need less water and support local insects and birds.</li>
+                        <li><strong>Join Plantation Drives:</strong> Local forest departments and NGOs regularly organize weekend plantation events — a great low-commitment way to start.</li>
+                        <li><strong>Say No to Unnecessary Timber:</strong> Choose certified/recycled wood and paper products over those sourced from unregulated clear-cutting.</li>
+                        <li><strong>Track Your Impact:</strong> Use the Carbon Offset Calculator above to see how your tree-planting adds up over a year.</li>
+                    </ul>
+                </div>
+                <a href="{{ url_for('directory') }}" class="action-btn">Find Local Plantation Drives</a>
+            </div>
+
+            <!-- Card B: Endangered Species -->
+            <div class="awareness-card">
+                <div>
+                    <h4>🐘 Why Rhinos, Elephants & Tigers Matter</h4>
+                    <div class="species-tag-row">
+                        <span class="species-tag">🦏 Rhino</span>
+                        <span class="species-tag">🐘 Elephant</span>
+                        <span class="species-tag">🐅 Tiger</span>
+                    </div>
+                    <p>These are keystone species — their presence keeps entire ecosystems in balance. Losing them causes effects that ripple through forests for generations.</p>
+                    <ul>
+                        <li><strong>Rhinos</strong> graze and shape grasslands, maintaining the habitat structure other grazing species rely on.</li>
+                        <li><strong>Elephants</strong> are "ecosystem engineers" — they disperse seeds across huge distances and create water holes used by countless other species.</li>
+                        <li><strong>Tigers</strong> sit at the top of the food chain, keeping herbivore populations balanced so forests aren't overgrazed.</li>
+                        <li><strong>Join a Community:</strong> Local wildlife trusts and conservation groups welcome volunteers for habitat monitoring, awareness drives, and citizen reporting — even a few hours a month helps.</li>
+                    </ul>
+                </div>
+                <a href="{{ url_for('awareness') }}" class="action-btn">Join a Local Conservation Group</a>
+            </div>
+
+            <!-- Card C: Beef Reduction & Injured Cattle -->
+            <div class="awareness-card">
+                <div>
+                    <h4>🐄 Reduce Beef Demand, Help Injured Cattle</h4>
+                    <p>Large-scale beef production drives significant deforestation for grazing land and contributes heavily to greenhouse gas emissions. Cutting back — even partially — has a real environmental effect.</p>
+                    <ul>
+                        <li><strong>Start With "Less," Not "Never":</strong> Reducing beef consumption a few days a week already lowers land and water demand meaningfully.</li>
+                        <li><strong>Choose Local, Plant-Forward Meals:</strong> Supporting plant-based or locally-sourced alternatives reduces pressure on cleared grazing land.</li>
+                        <li><strong>Report Injured or Abandoned Cattle:</strong> Stray and injured cattle are common on Indian roads — use OneEarth's Emergency SOS to get them veterinary help quickly.</li>
+                        <li><strong>Support Verified Goshalas:</strong> Cattle shelters (goshalas) in our directory provide long-term care for injured, elderly, or abandoned cattle.</li>
+                    </ul>
+                </div>
+                <a href="{{ url_for('report_rescue') }}" class="action-btn">Report an Injured Cow</a>
+            </div>
+
+            <!-- Card D: Low-Cost Stray Dog Rescue -->
+            <div class="awareness-card">
+                <div>
+                    <h4>🐕 Low-Cost Stray Dog Rescue Movement</h4>
+                    <p>You don't need a large budget to make a real difference for stray dogs — small, consistent, low-cost actions save lives every day.</p>
+                    <ul>
+                        <li><strong>Basic First Aid Kit:</strong> A simple kit (antiseptic, saline, gauze) costs very little and helps stabilize an injured dog until a rescue team arrives.</li>
+                        <li><strong>Feed & Water Stations:</strong> A community water bowl or feeding point costs almost nothing and builds trust with local strays, making rescue easier when needed.</li>
+                        <li><strong>Volunteer Transport:</strong> If you have a vehicle, offering occasional rides to the nearest vet or shelter is one of the highest-impact, lowest-cost ways to help.</li>
+                        <li><strong>Report Instead of Ignoring:</strong> Reporting an injured stray through OneEarth costs nothing and connects them directly to verified rescue teams.</li>
+                    </ul>
+                </div>
+                <a href="{{ url_for('report_rescue') }}" class="action-btn">Report a Stray in Need</a>
             </div>
 
         </div>
