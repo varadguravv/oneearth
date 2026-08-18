@@ -97,7 +97,6 @@
             text-transform: uppercase;
         }
 
-        /* Tracker Telemetry Matrix */
         .tracker-metrics {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -127,7 +126,6 @@
             color: var(--dark-slate);
         }
 
-        /* Main Live Map Section */
         .tracker-map-panel {
             background: #ffffff;
             border: 2px solid rgba(46, 125, 50, 0.25);
@@ -145,7 +143,6 @@
             border: 1px solid #cbd5e1;
         }
 
-        /* Active Units Grid */
         .units-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -227,7 +224,6 @@
 
         .unit-details-list li:last-child { margin-bottom: 0; }
 
-        /* Professional Live Telemetry Status Banner */
         .live-status-tracker-box {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -292,7 +288,6 @@
         .action-btn.secondary { background: #475569; }
         .action-btn.secondary:hover { background: #334155; }
 
-        /* Professional Secure Modal Dialog */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -393,7 +388,6 @@
             <p>Monitor real-time positions of active rescue ambulances, wildlife tracking collars, and emergency mobile veterinary units in the field.</p>
         </div>
 
-        <!-- Telemetry Matrix -->
         <div class="tracker-metrics">
             <div class="metric-tile">
                 <h5>Active Ambulances</h5>
@@ -409,17 +403,14 @@
             </div>
         </div>
 
-        <!-- Main Live Tracking Map Container -->
         <div class="tracker-map-panel">
             <h3 style="color: var(--primary-dark); font-size: 1.25rem; font-weight: 700; margin-bottom: 0.3rem;">📡 Real-Time Sector GPS Telemetry Radar</h3>
             <p style="font-size: 0.9rem; color: var(--text-muted);">Interactive live positioning of emergency response ambulances and wildlife corridors.</p>
             <div id="liveTrackerMap"></div>
         </div>
 
-        <!-- Active Units & Teams Grid with Precise Live Status & ETA Features -->
         <div class="units-grid">
             
-            <!-- Unit 1 -->
             <div class="unit-card">
                 <div>
                     <h4>Ambulance Unit #Alpha-1</h4>
@@ -448,7 +439,6 @@
                 </div>
             </div>
 
-            <!-- Unit 2 -->
             <div class="unit-card">
                 <div>
                     <h4>Wildlife Rescue Team #Beta</h4>
@@ -477,7 +467,6 @@
                 </div>
             </div>
 
-            <!-- Unit 3 -->
             <div class="unit-card">
                 <div>
                     <h4>Stray Care & Vaccination Van #3</h4>
@@ -506,11 +495,66 @@
                 </div>
             </div>
 
+            <div class="unit-card">
+                <div>
+                    <h4>Livestock & Cattle Rescue Unit #Gamma</h4>
+                    <span class="unit-meta">Southern Agricultural Belt • Farm Animal Response</span>
+                    
+                    <div class="live-status-tracker-box">
+                        <div class="status-row-top">
+                            <span>Live Status:</span>
+                            <span class="live-status-pill pill-ontheway">🟡 On The Way</span>
+                        </div>
+                        <div class="eta-display-text">
+                            ⏳ Estimated Arrival: <span>Arriving in ~18 Minutes</span>
+                        </div>
+                    </div>
+
+                    <p>Specialized heavy-duty rescue vehicle for injured or stranded cattle, goats, and farm livestock, equipped with loading ramps and large-animal veterinary support.</p>
+                    <ul class="unit-details-list">
+                        <li>📞 <strong>Crew Lead:</strong> +91 (020) 5554-2277</li>
+                        <li>📍 <strong>Current Position:</strong> Southern Agricultural Belt Road</li>
+                        <li>🟢 <strong>Telemetry Status:</strong> Active & Responsive</li>
+                    </ul>
+                </div>
+                <div class="card-actions-row">
+                    <button onclick="openDispatchModal('Livestock & Cattle Rescue Unit #Gamma', '+9102055542277')" class="action-btn" style="border:none; cursor:pointer;">📞 Call Unit</button>
+                    <a href="https://maps.google.com/?q=Southern+Agricultural+Belt+Pune" target="_blank" class="action-btn secondary">🗺️ Track Route</a>
+                </div>
+            </div>
+
+            <div class="unit-card">
+                <div>
+                    <h4>Aquatic & Exotic Rescue Unit #Delta</h4>
+                    <span class="unit-meta">Riverside Zone • Turtles, Birds & Small Exotic Species</span>
+                    
+                    <div class="live-status-tracker-box">
+                        <div class="status-row-top">
+                            <span>Live Status:</span>
+                            <span class="live-status-pill pill-dispatched">🔵 Ambulance Dispatched</span>
+                        </div>
+                        <div class="eta-display-text" style="color: #0369a1;">
+                            ⏳ Estimated Arrival: <span>Arriving in ~9 Minutes</span>
+                        </div>
+                    </div>
+
+                    <p>Compact rapid-response unit for rescued turtles, injured waterbirds, and small exotic or pocket pets, equipped with aquatic holding tanks and species-specific first aid.</p>
+                    <ul class="unit-details-list">
+                        <li>📞 <strong>Team Lead:</strong> +91 (020) 5555-6633</li>
+                        <li>📍 <strong>Current Position:</strong> Riverside Conservation Path</li>
+                        <li>🟢 <strong>Telemetry Status:</strong> Active & Responsive</li>
+                    </ul>
+                </div>
+                <div class="card-actions-row">
+                    <button onclick="openDispatchModal('Aquatic & Exotic Rescue Unit #Delta', '+9102055556633')" class="action-btn" style="border:none; cursor:pointer;">📞 Call Unit</button>
+                    <a href="https://maps.google.com/?q=Riverside+Conservation+Path+Pune" target="_blank" class="action-btn secondary">🗺️ Track Route</a>
+                </div>
+            </div>
+
         </div>
 
     </main>
 
-    <!-- Professional Secure Dispatch Modal Dialog -->
     <div id="dispatchModal" class="modal-overlay">
         <div class="modal-card">
             <div class="modal-header-box">
@@ -561,7 +605,6 @@
         let selectedUnitName = "";
         let selectedPhoneNumber = "";
 
-        // Initialize Live Tracker Map
         let trackerMap = L.map('liveTrackerMap').setView([18.5204, 73.8567], 12);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -569,10 +612,12 @@
             subdomains: 'abcd'
         }).addTo(trackerMap);
 
-        // Add Markers for Live Units with prominent status and ETA details
         L.marker([18.5304, 73.8467]).addTo(trackerMap).bindPopup("<b>Ambulance Unit #Alpha-1</b><br>Status: <span style='color:#b45309; font-weight:bold;'>On The Way</span><br><b>ETA: 5 Minutes</b>");
         L.marker([18.5604, 73.8127]).addTo(trackerMap).bindPopup("<b>Wildlife Rescue Team #Beta</b><br>Status: <span style='color:#0369a1; font-weight:bold;'>Dispatched</span><br><b>ETA: 12 Minutes</b>");
         L.marker([18.4904, 73.9027]).addTo(trackerMap).bindPopup("<b>Stray Care Van #3</b><br>Status: <span style='color:#15803d; font-weight:bold;'>Arrived On Site</span>");
+
+        L.marker([18.4404, 73.8267]).addTo(trackerMap).bindPopup("<b>Livestock & Cattle Rescue Unit #Gamma</b><br>Status: <span style='color:#b45309; font-weight:bold;'>On The Way</span><br><b>ETA: 18 Minutes</b>");
+        L.marker([18.5754, 73.8827]).addTo(trackerMap).bindPopup("<b>Aquatic & Exotic Rescue Unit #Delta</b><br>Status: <span style='color:#0369a1; font-weight:bold;'>Dispatched</span><br><b>ETA: 9 Minutes</b>");
 
         function openDispatchModal(unitName, phoneNumber) {
             selectedUnitName = unitName;
