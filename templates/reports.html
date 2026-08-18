@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submitted Reports | OneEarth</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-dark: #1b5e20;
+            --dark-slate: #263238;
+            --text-muted: #666666;
+            --border-color: #e0e0e0;
+            --radius-md: 8px;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #f4f7f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .main-header {
+            background-color: var(--primary-dark);
+            color: #fff;
+            padding: 1rem 2rem;
+        }
+        .main-header a { color: #fff; text-decoration: none; font-weight: 700; }
+        .wrap { max-width: 1000px; margin: 2rem auto; padding: 0 1.5rem; }
+        h1 { color: var(--primary-dark); margin-bottom: 1.5rem; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+        th {
+            background: var(--primary-color);
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+        }
+        tr:last-child td { border-bottom: none; }
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <a href="{{ url_for('home') }}">← Back to OneEarth</a>
+    </header>
+    <div class="wrap">
+        <h1>Submitted Emergency Reports</h1>
+        {% if reports %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Species</th>
+                    <th>Urgency</th>
+                    <th>Reporter</th>
+                    <th>Phone</th>
+                    <th>Location</th>
+                    <th>Submitted</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in reports %}
+                <tr>
+                    <td>{{ r['id'] }}</td>
+                    <td>{{ r['species'] }}</td>
+                    <td>{{ r['urgency'] }}</td>
+                    <td>{{ r['reporter_name'] }}</td>
+                    <td>{{ r['phone'] }}</td>
+                    <td>{{ r['location'] }}</td>
+                    <td>{{ r['submitted_at'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">No reports submitted yet.</div>
+        {% endif %}
+    </div>
+</body>
+</html>
