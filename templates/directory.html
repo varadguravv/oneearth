@@ -480,6 +480,8 @@
                 <option value="hospital">Veterinary Trauma Hospitals</option>
                 <option value="wildlife">Wildlife Rescue Sanctuaries</option>
                 <option value="stray">Stray Animal Shelters</option>
+                <option value="farm">Farm Animal & Cattle Sanctuaries (Goshalas)</option>
+                <option value="aquatic">Aquatic & Exotic Species Centers</option>
             </select>
         </div>
 
@@ -537,6 +539,42 @@
                 <div class="card-actions-row">
                     <button onclick="openDispatchModal('OneEarth Community Stray Sanctuary', '+9102029934455')" class="action-btn" style="border:none; cursor:pointer;">📞 Call Desk</button>
                     <a href="https://maps.google.com/?q=OneEarth+Community+Stray+Sanctuary" target="_blank" class="action-btn secondary">🗺️ Directions</a>
+                </div>
+            </div>
+
+            <!-- ADDED: Shelter 4 - Farm Animal & Cattle Sanctuary -->
+            <div class="shelter-card" data-type="farm" data-name="shanti goshala farm animal sanctuary">
+                <div>
+                    <h4>Shanti Goshala Farm Animal Sanctuary</h4>
+                    <span class="shelter-meta">Rural Southern Belt • Cattle, Goat & Livestock Care</span>
+                    <p>Long-term care facility for injured, elderly, or abandoned cattle, goats, and farm livestock, with grazing land and dedicated veterinary support.</p>
+                    <ul class="shelter-details-list">
+                        <li>📞 <strong>Helpline:</strong> +91 (020) 2662-3311</li>
+                        <li>📍 <strong>Address:</strong> Village Road, Southern Agricultural Belt</li>
+                        <li>🟢 <strong>Status:</strong> Accepting Admissions (28 Slots)</li>
+                    </ul>
+                </div>
+                <div class="card-actions-row">
+                    <button onclick="openDispatchModal('Shanti Goshala Farm Animal Sanctuary', '+9102026623311')" class="action-btn" style="border:none; cursor:pointer;">📞 Call Desk</button>
+                    <a href="https://maps.google.com/?q=Shanti+Goshala+Farm+Animal+Sanctuary" target="_blank" class="action-btn secondary">🗺️ Directions</a>
+                </div>
+            </div>
+
+            <!-- ADDED: Shelter 5 - Aquatic & Exotic Species Center -->
+            <div class="shelter-card" data-type="aquatic" data-name="riverline aquatic and exotic species center">
+                <div>
+                    <h4>Riverline Aquatic & Exotic Species Center</h4>
+                    <span class="shelter-meta">Riverside Zone • Turtles, Birds & Small Exotic Species</span>
+                    <p>Dedicated facility for rescued turtles, injured waterbirds, and small exotic or pocket pets requiring specialized housing and rehabilitation.</p>
+                    <ul class="shelter-details-list">
+                        <li>📞 <strong>Helpline:</strong> +91 (020) 2887-6644</li>
+                        <li>📍 <strong>Address:</strong> Riverside Conservation Path, Gate 2</li>
+                        <li>🟢 <strong>Status:</strong> Open & Staffed (16 Slots Free)</li>
+                    </ul>
+                </div>
+                <div class="card-actions-row">
+                    <button onclick="openDispatchModal('Riverline Aquatic & Exotic Species Center', '+9102028876644')" class="action-btn" style="border:none; cursor:pointer;">📞 Call Desk</button>
+                    <a href="https://maps.google.com/?q=Riverline+Aquatic+Exotic+Species+Center" target="_blank" class="action-btn secondary">🗺️ Directions</a>
                 </div>
             </div>
 
@@ -607,6 +645,10 @@
         L.marker([18.5304, 73.8467]).addTo(shelterMap).bindPopup("<b>Apex Veterinary Trauma Center</b><br>Sector 2 - 24/7 ICU<br><i>14 Beds Free</i>");
         L.marker([18.5604, 73.8127]).addTo(shelterMap).bindPopup("<b>Green Corridor Wildlife Wing</b><br>North Forest Buffer<br><i>6 Enclosures Free</i>");
         L.marker([18.4904, 73.9027]).addTo(shelterMap).bindPopup("<b>OneEarth Stray Sanctuary</b><br>East Industrial Zone<br><i>42 Kennels Free</i>");
+
+        // ADDED: Markers for new farm animal and aquatic/exotic centers
+        L.marker([18.4404, 73.8267]).addTo(shelterMap).bindPopup("<b>Shanti Goshala Farm Animal Sanctuary</b><br>Southern Agricultural Belt<br><i>28 Slots Free</i>");
+        L.marker([18.5754, 73.8827]).addTo(shelterMap).bindPopup("<b>Riverline Aquatic & Exotic Species Center</b><br>Riverside Zone<br><i>16 Slots Free</i>");
 
         function openDispatchModal(facilityName, phoneNumber) {
             selectedFacilityName = facilityName;
