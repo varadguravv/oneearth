@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
 import os
 import time
@@ -6,7 +6,22 @@ import time
 app = Flask(__name__)
 
 # ============================================================
-# ADDED: Database setup for storing emergency reports
+# ADDED: Secret key required for login sessions to work.
+# IMPORTANT: Change this to your own random string before
+# real use — anyone who knows this value could forge sessions.
+# ============================================================
+app.secret_key = os.environ.get('SECRET_KEY', 'change-this-to-a-random-string-oneearth-2026')
+
+# ============================================================
+# ADDED: Password for viewing /reports.
+# IMPORTANT: Change this to your own password. For real use,
+# set it as an environment variable in Render instead of
+# hardcoding it here (Render dashboard -> Environment).
+# ============================================================
+REPORTS_PASSWORD = os.environ.get('REPORTS_PASSWORD', 'oneearth2026')
+
+# ============================================================
+# Database setup for storing emergency reports
 # ============================================================
 DB_PATH = os.path.join(os.path.dirname(__file__), 'reports.db')
 
@@ -31,9 +46,7 @@ def init_db():
 init_db()
 
 # ============================================================
-# ADDED: Basic rate limiting (per IP) to reduce spam submissions
-# In-memory only — resets on app restart, which is fine for
-# basic abuse prevention without adding external dependencies.
+# Basic rate limiting (per IP) to reduce spam submissions
 # ============================================================
 last_submission_by_ip = {}
 MIN_SECONDS_BETWEEN_SUBMISSIONS = 20
@@ -45,14 +58,12 @@ def home():
 @app.route('/report', methods=['GET', 'POST'])
 def report_rescue():
     if request.method == 'POST':
-        # ADDED: Honeypot spam check — a hidden field real users never fill in.
-        # Bots that auto-fill every form field will trip this and get silently
-        # redirected without their fake report being saved.
+        # Honeypot spam check
         honeypot = request.form.get('website', '')
         if honeypot:
             return redirect(url_for('success'))
 
-        # ADDED: Simple per-IP rate limiting
+        # Per-IP rate limiting
         ip = request.remote_addr or 'unknown'
         now = time.time()
         last_time = last_submission_by_ip.get(ip, 0)
@@ -60,13 +71,21 @@ def report_rescue():
             return redirect(url_for('success'))
         last_submission_by_ip[ip] = now
 
-        # ADDED: Save the report to the database
-        species = request.form.get('species', '')
-        urgency = request.form.get('urgency', '')
-        reporter_name = request.form.get('reporter_name', '')
-        phone = request.form.get('phone', '')
-        location = request.form.get('location', '')
-        description = request.form.get('description', '')
+        species = request.form.get('species', '').strip()
+        urgency = request.form.get('urgency', '').strip()
+        reporter_name = request.form.get('reporter_name', '').strip()
+        phone = request.form.get('phone', '').strip()
+        location = request.form.get('location', '').strip()
+        description = request.form.get('description', '').strip()
+
+        # Server-side validation
+        required_fields = [species, urgency, reporter_name, phone, location, description]
+        if not all(required_fields):
+            return redirect(url_for('report_rescue'))
+
+        if len(phone) < 7 or len(description) < 5:
+            return redirect(url_for('report_rescue'))
+
         submitted_at = time.strftime('%Y-%m-%d %H:%M:%S')
 
         conn = sqlite3.connect(DB_PATH)
@@ -102,13 +121,30 @@ def track():
     return render_template('track.html')
 
 # ============================================================
-# ADDED: Simple admin view to see submitted reports
-# No authentication yet — fine for local testing, but before
-# using this in production you'd want to add a password check
-# so the public can't view everyone's report details.
+# ADDED: Password-protected reports view.
 # ============================================================
+@app.route('/reports-login', methods=['GET', 'POST'])
+def reports_login():
+    error = None
+    if request.method == 'POST':
+        entered_password = request.form.get('password', '')
+        if entered_password == REPORTS_PASSWORD:
+            session['reports_authenticated'] = True
+            return redirect(url_for('view_reports'))
+        else:
+            error = "Incorrect password. Please try again."
+    return render_template('reports_login.html', error=error)
+
+@app.route('/reports-logout')
+def reports_logout():
+    session.pop('reports_authenticated', None)
+    return redirect(url_for('reports_login'))
+
 @app.route('/reports')
 def view_reports():
+    if not session.get('reports_authenticated'):
+        return redirect(url_for('reports_login'))
+
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
