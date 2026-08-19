@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | OneEarth</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-dark: #1b5e20;
+            --danger-color: #d32f2f;
+            --border-color: #e0e0e0;
+            --radius-md: 8px;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f4f7f5 0%, #eef4f0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-box {
+            background: #fff;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 380px;
+        }
+        .login-box h1 {
+            font-size: 1.4rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.4rem;
+        }
+        .login-box p {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        input[type="password"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+        button {
+            width: 100%;
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 0.85rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        button:hover { background: var(--primary-dark); }
+        .error-msg {
+            color: var(--danger-color);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.2rem;
+            font-size: 0.85rem;
+            color: #666;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>🔒 Admin Access</h1>
+        <p>Enter the password to view submitted emergency reports.</p>
+        {% if error %}
+        <div class="error-msg">{{ error }}</div>
+        {% endif %}
+        <form method="POST">
+            <input type="password" name="password" placeholder="Password" required autofocus>
+            <button type="submit">Log In</button>
+        </form>
+        <a href="{{ url_for('home') }}" class="back-link">← Back to OneEarth</a>
+    </div>
+</body>
+</html>
