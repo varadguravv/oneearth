@@ -479,6 +479,92 @@
         <p>&copy; 2026 OneEarth Platform. Dedicated to Global Animal Safety, Welfare, and Ecological Conservation.</p>
         <p style="font-size: 0.85rem; margin-top: 0.50rem; color: #b0bec5; font-weight: 500; letter-spacing: 0.3px;">Approach by Varad Gurav</p>
     </footer>
+<div class="scroll-progress-bar" id="scrollProgressBar"></div>
+<button class="back-to-top-btn" id="backToTopBtn" aria-label="Back to top" title="Back to top">↑</button>
 
+<script>
+(function() {
+    const progressBar = document.getElementById('scrollProgressBar');
+    function updateProgressBar() {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        progressBar.style.width = progress + '%';
+    }
+
+    const backToTopBtn = document.getElementById('backToTopBtn');
+    function updateBackToTop() {
+        if (window.scrollY > 400) {
+            backToTopBtn.classList.add('is-visible');
+        } else {
+            backToTopBtn.classList.remove('is-visible');
+        }
+    }
+    backToTopBtn.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    window.addEventListener('scroll', function() {
+        updateProgressBar();
+        updateBackToTop();
+    });
+    updateProgressBar();
+    updateBackToTop();
+
+    const fadeTargets = document.querySelectorAll(
+        '.impact-counter-card, .homepage-card-styled, .trust-card'
+    );
+    fadeTargets.forEach(el => el.classList.add('fade-in-on-scroll'));
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+
+    fadeTargets.forEach(el => observer.observe(el));
+
+    function animateCounter(el, target, suffix, duration) {
+        let startTime = null;
+        function step(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const current = Math.floor(eased * target);
+            el.textContent = current.toLocaleString() + suffix;
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            } else {
+                el.textContent = target.toLocaleString() + suffix;
+            }
+        }
+        requestAnimationFrame(step);
+    }
+
+    const counterEls = document.querySelectorAll('.impact-counter-card h3');
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const el = entry.target;
+                const rawText = el.textContent.trim();
+                const match = rawText.match(/^([\d,]+)(.*)$/);
+                if (match) {
+                    const targetNum = parseInt(match[1].replace(/,/g, ''), 10);
+                    const suffix = match[2];
+                    if (!isNaN(targetNum)) {
+                        animateCounter(el, targetNum, suffix, 1500);
+                    }
+                }
+                counterObserver.unobserve(el);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    counterEls.forEach(el => counterObserver.observe(el));
+})();
+</script>
 </body>
 </html>
