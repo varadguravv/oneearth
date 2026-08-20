@@ -555,4 +555,142 @@ button:active,
     font-size: 0.8rem !important;
   }
 }
- 
+/* ==========================================================================
+   OneEarth — Homepage Polish Pack (ADDITIVE ONLY)
+   ========================================================================== */
+
+/* ---------- 1. Animated hero gradient ---------- */
+.homepage-hero-box {
+  background-size: 200% 200% !important;
+  animation: heroGradientShift 12s ease infinite;
+}
+
+@keyframes heroGradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ---------- 2. Scroll fade-in for cards & sections ---------- */
+.fade-in-on-scroll {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- 3. Better button/card hover states ---------- */
+.card-action-btn {
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.card-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.card-action-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.card-action-btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.5s ease;
+}
+
+.card-action-btn:hover::after {
+  left: 125%;
+}
+
+.homepage-card-styled {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.3s ease;
+}
+
+/* ---------- 4. Nav link underline animation ---------- */
+.nav-links a {
+  position: relative;
+}
+
+.nav-links a::before {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  width: 0%;
+  height: 2px;
+  background: currentColor;
+  transition: width 0.25s ease, left 0.25s ease;
+}
+
+.nav-links a:hover::before {
+  width: 70%;
+  left: 15%;
+}
+
+/* ---------- 5. Back-to-top button ---------- */
+.back-to-top-btn {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent-green, #2e7d32);
+  color: #fff;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+  z-index: 9999;
+}
+
+.back-to-top-btn.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top-btn:hover {
+  filter: brightness(1.1);
+}
+
+/* ---------- 6. Scroll progress bar ---------- */
+.scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: var(--accent-green, #2e7d32);
+  width: 0%;
+  z-index: 999999;
+  transition: width 0.1s ease-out;
+}
+
+/* ---------- 7. Respect reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .homepage-hero-box { animation: none !important; }
+  .fade-in-on-scroll {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+} 
