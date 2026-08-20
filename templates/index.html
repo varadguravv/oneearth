@@ -113,7 +113,11 @@
         }
 
         .homepage-hero-box {
-            background: linear-gradient(135deg, #12261c 0%, #1b3b2b 100%);
+            background:
+                linear-gradient(135deg, rgba(18,38,28,0.85) 0%, rgba(27,59,43,0.88) 100%),
+                url('https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=1200&auto=format&fit=crop&q=80');
+            background-size: 200% 200%, cover;
+            background-position: center, center 30%;
             border: 2px solid rgba(46, 125, 50, 0.4);
             border-radius: 16px;
             padding: 4rem 2rem;
@@ -337,6 +341,63 @@
             font-weight: 700;
             color: var(--primary-dark);
         }
+
+        .rescue-gallery-scroll {
+            display: flex;
+            gap: 1.2rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+            scroll-snap-type: x mandatory;
+        }
+
+        .rescue-gallery-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .rescue-gallery-scroll::-webkit-scrollbar-thumb {
+            background: rgba(46, 125, 50, 0.35);
+            border-radius: 10px;
+        }
+
+        .rescue-photo-card {
+            flex: 0 0 auto;
+            width: 220px;
+            scroll-snap-align: start;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            position: relative;
+            border: 2px solid rgba(46, 125, 50, 0.15);
+        }
+
+        .rescue-photo-card img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+
+        .rescue-photo-card:hover img {
+            transform: scale(1.06);
+        }
+
+        .rescue-photo-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(18,38,28,0.9), transparent);
+            color: #fff;
+            padding: 1.5rem 0.9rem 0.7rem 0.9rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .paw-accent::before {
+            content: "🐾";
+            margin-right: 0.4rem;
+        }
     </style>
 </head>
 <body>
@@ -389,7 +450,7 @@
         </div>
 
         <div class="section-heading-wrapper">
-            <h2>Trusted Across Communities</h2>
+            <h2 class="paw-accent">Trusted Across Communities</h2>
             <p>What rescuers, volunteers, and adopters say about working with OneEarth.</p>
         </div>
 
@@ -415,6 +476,38 @@
                 <span class="trust-badge">📍 Pan-India Coverage</span>
             </div>
         </section>
+
+        <div class="section-heading-wrapper">
+            <h2 class="paw-accent">Meet Our Recent Rescues</h2>
+            <p>Every animal has a story. Here are a few whose journeys started with a single report.</p>
+        </div>
+
+        <div class="rescue-gallery-scroll">
+            <div class="rescue-photo-card">
+                <img src="https://images.unsplash.com/photo-1543852786-1cf6624b9987?auto=format&fit=crop&w=400&q=80" alt="Luna, rescued kitten">
+                <div class="rescue-photo-caption">Luna — Rescued Kitten</div>
+            </div>
+            <div class="rescue-photo-card">
+                <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=400&auto=format&fit=crop&q=80" alt="Bruno, rescued dog">
+                <div class="rescue-photo-caption">Bruno — Highway Rescue</div>
+            </div>
+            <div class="rescue-photo-card">
+                <img src="https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=400&auto=format&fit=crop&q=80" alt="Ganga, rescued cow">
+                <div class="rescue-photo-caption">Ganga — Farm Sanctuary</div>
+            </div>
+            <div class="rescue-photo-card">
+                <img src="https://images.unsplash.com/photo-1444464666168-49d633b86797?w=400&auto=format&fit=crop&q=80" alt="Rescued raptor bird">
+                <div class="rescue-photo-caption">Kite — Avian Rehab</div>
+            </div>
+            <div class="rescue-photo-card">
+                <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=400&q=80" alt="Rescued sea turtle">
+                <div class="rescue-photo-caption">Sea Turtle — Conservation</div>
+            </div>
+            <div class="rescue-photo-card">
+                <img src="https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=400&q=80" alt="Storm, rescued horse">
+                <div class="rescue-photo-caption">Storm — Equine Care</div>
+            </div>
+        </div>
 
         <div class="section-heading-wrapper">
             <h2>Core Platform Services</h2>
@@ -479,92 +572,94 @@
         <p>&copy; 2026 OneEarth Platform. Dedicated to Global Animal Safety, Welfare, and Ecological Conservation.</p>
         <p style="font-size: 0.85rem; margin-top: 0.50rem; color: #b0bec5; font-weight: 500; letter-spacing: 0.3px;">Approach by Varad Gurav</p>
     </footer>
-<div class="scroll-progress-bar" id="scrollProgressBar"></div>
-<button class="back-to-top-btn" id="backToTopBtn" aria-label="Back to top" title="Back to top">↑</button>
 
-<script>
-(function() {
-    const progressBar = document.getElementById('scrollProgressBar');
-    function updateProgressBar() {
-        const scrollTop = window.scrollY;
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-        progressBar.style.width = progress + '%';
-    }
+    <div class="scroll-progress-bar" id="scrollProgressBar"></div>
+    <button class="back-to-top-btn" id="backToTopBtn" aria-label="Back to top" title="Back to top">↑</button>
 
-    const backToTopBtn = document.getElementById('backToTopBtn');
-    function updateBackToTop() {
-        if (window.scrollY > 400) {
-            backToTopBtn.classList.add('is-visible');
-        } else {
-            backToTopBtn.classList.remove('is-visible');
+    <script>
+    (function() {
+        const progressBar = document.getElementById('scrollProgressBar');
+        function updateProgressBar() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            progressBar.style.width = progress + '%';
         }
-    }
-    backToTopBtn.addEventListener('click', function() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
 
-    window.addEventListener('scroll', function() {
+        const backToTopBtn = document.getElementById('backToTopBtn');
+        function updateBackToTop() {
+            if (window.scrollY > 400) {
+                backToTopBtn.classList.add('is-visible');
+            } else {
+                backToTopBtn.classList.remove('is-visible');
+            }
+        }
+        backToTopBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        window.addEventListener('scroll', function() {
+            updateProgressBar();
+            updateBackToTop();
+        });
         updateProgressBar();
         updateBackToTop();
-    });
-    updateProgressBar();
-    updateBackToTop();
 
-    const fadeTargets = document.querySelectorAll(
-        '.impact-counter-card, .homepage-card-styled, .trust-card'
-    );
-    fadeTargets.forEach(el => el.classList.add('fade-in-on-scroll'));
+        const fadeTargets = document.querySelectorAll(
+            '.impact-counter-card, .homepage-card-styled, .trust-card, .rescue-photo-card'
+        );
+        fadeTargets.forEach(el => el.classList.add('fade-in-on-scroll'));
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('is-visible');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.15 });
-
-    fadeTargets.forEach(el => observer.observe(el));
-
-    function animateCounter(el, target, suffix, duration) {
-        let startTime = null;
-        function step(timestamp) {
-            if (!startTime) startTime = timestamp;
-            const progress = Math.min((timestamp - startTime) / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            const current = Math.floor(eased * target);
-            el.textContent = current.toLocaleString() + suffix;
-            if (progress < 1) {
-                requestAnimationFrame(step);
-            } else {
-                el.textContent = target.toLocaleString() + suffix;
-            }
-        }
-        requestAnimationFrame(step);
-    }
-
-    const counterEls = document.querySelectorAll('.impact-counter-card h3');
-    const counterObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const el = entry.target;
-                const rawText = el.textContent.trim();
-                const match = rawText.match(/^([\d,]+)(.*)$/);
-                if (match) {
-                    const targetNum = parseInt(match[1].replace(/,/g, ''), 10);
-                    const suffix = match[2];
-                    if (!isNaN(targetNum)) {
-                        animateCounter(el, targetNum, suffix, 1500);
-                    }
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
                 }
-                counterObserver.unobserve(el);
-            }
-        });
-    }, { threshold: 0.5 });
+            });
+        }, { threshold: 0.15 });
 
-    counterEls.forEach(el => counterObserver.observe(el));
-})();
-</script>
+        fadeTargets.forEach(el => observer.observe(el));
+
+        function animateCounter(el, target, suffix, duration) {
+            let startTime = null;
+            function step(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const progress = Math.min((timestamp - startTime) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(eased * target);
+                el.textContent = current.toLocaleString() + suffix;
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    el.textContent = target.toLocaleString() + suffix;
+                }
+            }
+            requestAnimationFrame(step);
+        }
+
+        const counterEls = document.querySelectorAll('.impact-counter-card h3');
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const rawText = el.textContent.trim();
+                    const match = rawText.match(/^([\d,]+)(.*)$/);
+                    if (match) {
+                        const targetNum = parseInt(match[1].replace(/,/g, ''), 10);
+                        const suffix = match[2];
+                        if (!isNaN(targetNum)) {
+                            animateCounter(el, targetNum, suffix, 1500);
+                        }
+                    }
+                    counterObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        counterEls.forEach(el => counterObserver.observe(el));
+    })();
+    </script>
+
 </body>
 </html>
