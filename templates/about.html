@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>About Us | OneEarth</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-dark: #1b5e20;
+            --accent-color: #fbc02d;
+            --accent-dark: #f57f17;
+            --dark-slate: #263238;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #e0e0e0;
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: var(--text-main);
+            background: linear-gradient(135deg, #f4f7f5 0%, #eef4f0 100%);
+            background-attachment: fixed;
+            line-height: 1.6;
+        }
+
+        .main-header {
+            background-color: var(--primary-dark);
+            color: #ffffff;
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 800; color: #ffffff; }
+
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; }
+        .nav-links a { color: rgba(255, 255, 255, 0.85); text-decoration: none; font-weight: 500; font-size: 0.95rem; padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); transition: 0.2s; }
+        .nav-links a:hover, .nav-links a.active { color: #ffffff; background-color: rgba(255, 255, 255, 0.15); }
+
+        .homepage-container { max-width: 1000px; margin: 2.5rem auto; padding: 0 1.5rem; }
+
+        .section-title-box {
+            background:
+                linear-gradient(rgba(26, 50, 40, 0.88), rgba(37, 71, 55, 0.92)),
+                url('https://images.unsplash.com/photo-1724408841651-ead9d9ee21d7?w=1200&auto=format&fit=crop&q=80');
+            background-size: cover;
+            background-position: center 30%;
+            color: white;
+            padding: 3.5rem 2rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 2.5rem;
+            text-align: center;
+            border-bottom: 5px solid var(--primary-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        .section-title-box h1 { font-size: 2.4rem; margin-bottom: 0.8rem; font-weight: 800; }
+        .section-title-box p { font-size: 1.05rem; max-width: 700px; margin: 0 auto; color: #eceff1; }
+
+        .story-block {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+        }
+
+        .story-block h2 {
+            color: var(--primary-dark);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 3px solid var(--accent-color);
+            display: inline-block;
+            padding-bottom: 0.3rem;
+        }
+
+        .story-block p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .value-card {
+            background: #ffffff;
+            border: 2px solid rgba(46, 125, 50, 0.2);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .value-card h3 {
+            color: var(--primary-dark);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .value-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .instant-sos-box { position: fixed; bottom: 20px; right: 20px; z-index: 999999; }
+        .sos-inner { background: var(--dark-slate); color: white; padding: 1rem; border-radius: var(--radius-lg); box-shadow: 0 10px 20px rgba(0,0,0,0.12); border: 2px solid var(--primary-color); width: 280px; display: flex; flex-direction: column; gap: 0.6rem; }
+
+        .main-footer { background-color: var(--dark-slate); color: #ffffff; text-align: center; padding: 2.5rem 2rem; margin-top: 4rem; border-top: 4px solid var(--primary-color); }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="nav-container">
+            <div class="logo">OneEarth 🌍</div>
+            <nav class="nav-links">
+                <a href="{{ url_for('home') }}">Home</a>
+                <a href="{{ url_for('report_rescue') }}">Report Emergency</a>
+                <a href="{{ url_for('directory') }}">Shelters & Resources</a>
+                <a href="{{ url_for('adoption') }}">Adoption & Fostering</a>
+                <a href="{{ url_for('track') }}">Live Tracker</a>
+                <a href="{{ url_for('awareness') }}">Conservation Awareness Data</a>
+                <a href="{{ url_for('about') }}" class="active">About Us</a>
+                <a href="{{ url_for('get_involved') }}">Get Involved</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="homepage-container">
+
+        <div class="section-title-box">
+            <h1>Our Story</h1>
+            <p>OneEarth exists because every animal — wild, stray, or farmed — deserves someone who shows up when things go wrong.</p>
+        </div>
+
+        <div class="story-block">
+            <h2>Why We Started</h2>
+            <p>OneEarth began as a simple idea: emergency help for animals in India is often scattered across dozens of disconnected phone numbers, NGOs, and forest department offices — and in a crisis, that fragmentation costs lives. We wanted a single place where anyone, anywhere, could report an animal in distress and be connected to the right kind of help fast.</p>
+            <p>What started as a coordination tool has grown into a platform covering emergency dispatch, shelter directories, adoption and fostering, live tracking, and conservation education — all built around one belief: no animal's story should end because nobody knew who to call.</p>
+        </div>
+
+        <div class="story-block">
+            <h2>What Drives Us</h2>
+            <p>India is home to roughly 75% of the world's wild tiger population and tens of thousands of wild elephants — alongside millions of stray dogs, cats, and cattle navigating cities and highways every day. Every one of these animals is affected by the same root pressures: shrinking habitat, human-wildlife conflict, and gaps in who's responsible for their care.</p>
+            <p>We built OneEarth to close some of those gaps — not to replace the incredible work of vets, forest departments, and grassroots rescuers, but to make it easier for people to find and reach them.</p>
+        </div>
+
+        <div class="values-grid">
+            <div class="value-card">
+                <h3>🐾 Every Species Matters</h3>
+                <p>From street dogs to tigers to farm cattle — no animal is "less urgent" than another.</p>
+            </div>
+            <div class="value-card">
+                <h3>🤝 Community First</h3>
+                <p>Real change happens through local volunteers, vets, and shelters — we're here to connect them.</p>
+            </div>
+            <div class="value-card">
+                <h3>🔎 Transparency</h3>
+                <p>We'd rather say "this data isn't verified yet" than pretend everything is finished.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="instant-sos-box">
+        <div class="sos-inner">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 0.8rem; font-weight: 700; color: #fbbf24; text-transform: uppercase;">Instant SOS</span>
+                <span style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%;"></span>
+            </div>
+            <a href="tel:1962" style="background-color: var(--primary-color); color: white; text-decoration: none; text-align: center; padding: 0.4rem; border-radius: 6px; font-weight: 700; font-size: 0.8rem; display: block;">📞 Call Helpline (1962)</a>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <p>&copy; 2026 OneEarth Platform. Dedicated to Global Animal Safety, Welfare, and Ecological Conservation.</p>
+        <p style="font-size: 0.85rem; margin-top: 0.4rem; color: #b0bec5;">Approach by Varad Gurav</p>
+    </footer>
+
+</body>
+</html>
