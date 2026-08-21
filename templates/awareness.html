@@ -97,7 +97,6 @@
             text-transform: uppercase;
         }
 
-        /* Real-Time Metrics Banner Tile Matrix */
         .metrics-banner {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -127,7 +126,6 @@
             color: var(--dark-slate);
         }
 
-        /* Interactive Hub Grid: Calculator + Guardian Pledge */
         .interactive-hub-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -191,7 +189,6 @@
             text-align: center;
         }
 
-        /* Full Width Interactive Map Section */
         .map-section-box {
             background: #ffffff;
             border: 2px solid rgba(46, 125, 50, 0.25);
@@ -209,7 +206,6 @@
             border: 1px solid #334155;
         }
 
-        /* Awareness Cards Grid */
         .awareness-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -296,7 +292,6 @@
 
         .main-footer { background-color: var(--dark-slate); color: #ffffff; text-align: center; padding: 2.5rem 2rem; margin-top: 4rem; border-top: 4px solid var(--primary-color); }
 
-        /* ADDED — Take Action section (styling only, reuses .awareness-card) */
         .action-section-heading {
             margin: 3rem 0 1.5rem 0;
         }
@@ -347,6 +342,8 @@
                 <a href="{{ url_for('adoption') }}">Adoption & Fostering</a>
                 <a href="{{ url_for('track') }}">Live Tracker</a>
                 <a href="{{ url_for('awareness') }}" class="active">Conservation Awareness Data</a>
+                <a href="{{ url_for('about') }}">About Us</a>
+                <a href="{{ url_for('get_involved') }}">Get Involved</a>
             </nav>
         </div>
     </header>
@@ -359,7 +356,6 @@
             <p>Empowering local communities and conservationists with actionable insights, anti-poaching telemetry metrics, and biodiversity restoration calculators.</p>
         </div>
 
-        <!-- Real-Time Metrics Banner Tile Matrix -->
         <div class="metrics-banner">
             <div class="metric-tile">
                 <h5>Protected Habitats</h5>
@@ -379,10 +375,8 @@
             </div>
         </div>
 
-        <!-- Interactive Hub: Calculator & Guardian Pledge -->
         <div class="interactive-hub-grid">
             
-            <!-- Calculator Card -->
             <div class="hub-card">
                 <h3>🌱 Community Biodiversity & Carbon Offset Calculator</h3>
                 <p>Estimate how your local community volunteering and stray animal welfare contributions scale into ecological recovery.</p>
@@ -403,7 +397,6 @@
                 </div>
             </div>
 
-            <!-- Pledge & Certification Card -->
             <div class="hub-card">
                 <h3>🛡️ OneEarth Local Guardian Pledge</h3>
                 <p>Take the digital oath to protect local flora and fauna, report poachers securely, and foster stray animal coexistence.</p>
@@ -423,17 +416,40 @@
 
         </div>
 
-        <!-- Interactive Global Conservation & Habitat Radar Map -->
         <div class="map-section-box">
             <h3 style="color: var(--primary-dark); font-size: 1.3rem; font-weight: 700; margin-bottom: 0.3rem;">Interactive Habitat & Wildlife Sanctuary Radar</h3>
             <p style="font-size: 0.9rem; color: var(--text-muted);">Inspect protected zones, reforestation nodes, and active ecological monitoring sectors.</p>
             <div id="conservationMap"></div>
         </div>
 
-        <!-- Conservation Data Cards Grid: Expanded with Illegal Business Info & Behavioral Safety Guidelines -->
+        <div class="map-section-box">
+            <h3 style="color: var(--primary-dark); font-size: 1.3rem; font-weight: 700; margin-bottom: 0.3rem;">📊 The Real Numbers Behind Why This Matters</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Current, sourced data on the species and habitats OneEarth is built to protect.</p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem;">
+
+                <div style="background: #fdf2f2; border-left: 4px solid var(--danger-color); padding: 1.2rem; border-radius: var(--radius-sm);">
+                    <h5 style="font-size: 0.85rem; color: var(--dark-slate); font-weight: 700; margin-bottom: 0.5rem;">🐅 Tiger Population Recovery</h5>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">India's wild tiger count rose from 1,411 in 2006 to roughly 3,682 in the 2022 census — now home to about 75% of the world's wild tigers. Despite this progress, 114 tigers were confirmed killed by poachers between 2018 and 2022 alone.</p>
+                </div>
+
+                <div style="background: #fdf2f2; border-left: 4px solid var(--accent-dark); padding: 1.2rem; border-radius: var(--radius-sm);">
+                    <h5 style="font-size: 0.85rem; color: var(--dark-slate); font-weight: 700; margin-bottom: 0.5rem;">🐘 Elephants Under Pressure</h5>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">India is home to an estimated 26,000+ wild elephants, but regional census data shows sharp declines in parts of Central India and the Eastern Ghats — some areas losing over 80% of their elephant population in recent years due to habitat loss and human-elephant conflict.</p>
+                </div>
+
+                <div style="background: #fdf2f2; border-left: 4px solid var(--primary-color); padding: 1.2rem; border-radius: var(--radius-sm);">
+                    <h5 style="font-size: 0.85rem; color: var(--dark-slate); font-weight: 700; margin-bottom: 0.5rem;">🌳 Forest Loss, Ongoing</h5>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">India lost around 18,200 hectares of primary forest in 2024 alone (Global Forest Watch). Since 2002, the country has lost roughly 348,000 hectares of humid primary forest — about 5.4% of what existed at the start of that period.</p>
+                </div>
+
+            </div>
+
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 1.2rem; font-style: italic;">Sources: National Tiger Conservation Authority (2022 census), Wildlife Institute of India elephant census data, Global Forest Watch (World Resources Institute). Figures reflect the most recent publicly available data as of 2025 and are updated periodically by these organizations.</p>
+        </div>
+
         <div class="awareness-grid">
             
-            <!-- Card 1: Illegal Wildlife Trade & Commercial Exploitation -->
             <div class="awareness-card">
                 <div>
                     <h4>
@@ -451,7 +467,6 @@
                 <a href="{{ url_for('report_rescue') }}" class="action-btn">Report Illegal Activity Securely</a>
             </div>
 
-            <!-- Card 2: Deforestation & Habitat Protection -->
             <div class="awareness-card">
                 <div>
                     <h4>
@@ -469,7 +484,6 @@
                 <a href="{{ url_for('directory') }}" class="action-btn">Explore Forest Sanctuaries</a>
             </div>
 
-            <!-- Card 3: Animal Behavior & Survival Safety Protocols -->
             <div class="awareness-card">
                 <div>
                     <h4>
@@ -489,7 +503,6 @@
 
         </div>
 
-        <!-- ADDED — Take Action: Protect Our Planet's Guardians -->
         <div class="action-section-heading">
             <h2>🌍 Take Action: Protect Our Planet's Guardians</h2>
             <p>Small, consistent steps — from planting a tree to joining a local group — add up to real ecological change.</p>
@@ -497,7 +510,6 @@
 
         <div class="awareness-grid">
 
-            <!-- Card A: Plant Trees & Stop Deforestation -->
             <div class="awareness-card">
                 <div>
                     <h4>🌳 Plant Trees, Stop Deforestation</h4>
@@ -512,7 +524,6 @@
                 <a href="{{ url_for('directory') }}" class="action-btn">Find Local Plantation Drives</a>
             </div>
 
-            <!-- Card B: Endangered Species -->
             <div class="awareness-card">
                 <div>
                     <h4>🐘 Why Rhinos, Elephants & Tigers Matter</h4>
@@ -532,7 +543,6 @@
                 <a href="{{ url_for('awareness') }}" class="action-btn">Join a Local Conservation Group</a>
             </div>
 
-            <!-- Card C: Beef Reduction & Injured Cattle -->
             <div class="awareness-card">
                 <div>
                     <h4>🐄 Reduce Beef Demand, Help Injured Cattle</h4>
@@ -547,7 +557,6 @@
                 <a href="{{ url_for('report_rescue') }}" class="action-btn">Report an Injured Cow</a>
             </div>
 
-            <!-- Card D: Low-Cost Stray Dog Rescue -->
             <div class="awareness-card">
                 <div>
                     <h4>🐕 Low-Cost Stray Dog Rescue Movement</h4>
@@ -584,7 +593,6 @@
     <!-- Leaflet JS for Interactive Habitat Map -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
-        // Initialize Conservation Map Hub
         let conMap = L.map('conservationMap').setView([18.5204, 73.8567], 11);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -592,7 +600,6 @@
             subdomains: 'abcd'
         }).addTo(conMap);
 
-        // Add Sample Protection Zones
         L.circle([18.5504, 73.8127], {
             color: '#2e7d32',
             fillColor: '#4caf50',
