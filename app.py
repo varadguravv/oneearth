@@ -120,6 +120,14 @@ def adoption():
 def track():
     return render_template('track.html')
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/get-involved')
+def get_involved():
+    return render_template('get_involved.html')
+
 # ============================================================
 # ADDED: Password-protected reports view.
 # ============================================================
@@ -155,10 +163,3 @@ def view_reports():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
-    @app.route('/about')
-def about():
-    return render_template('about.html')
-
-@app.route('/get-involved')
-def get_involved():
-    return render_template('get_involved.html')
