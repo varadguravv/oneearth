@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Case Status | OneEarth</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-dark: #1b5e20;
+            --danger-color: #d32f2f;
+            --dark-slate: #263238;
+            --text-muted: #666666;
+            --border-color: #e0e0e0;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f4f7f5 0%, #eef4f0 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+        .main-header {
+            background-color: var(--primary-dark);
+            color: #fff;
+            padding: 1rem 2rem;
+        }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 800; color: #fff; }
+        .nav-links { display: flex; gap: 1.2rem; flex-wrap: wrap; }
+        .nav-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+        .nav-links a:hover { color: #fff; }
+
+        .wrap { max-width: 700px; margin: 2.5rem auto; padding: 0 1.5rem; }
+
+        .lookup-box {
+            background: #fff;
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .lookup-box h1 {
+            color: var(--primary-dark);
+            font-size: 1.7rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .lookup-box p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .lookup-form {
+            display: flex;
+            gap: 0.8rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .lookup-form input {
+            flex: 1;
+            padding: 0.85rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+        }
+
+        .lookup-form button {
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 0.85rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .lookup-form button:hover { background: var(--primary-dark); }
+
+        .error-msg {
+            color: var(--danger-color);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .result-box {
+            background: #fff;
+            border: 2px solid rgba(46, 125, 50, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .result-box h2 {
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-track {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-stage {
+            flex: 1;
+            min-width: 100px;
+            text-align: center;
+            padding: 0.7rem 0.4rem;
+            border-radius: var(--radius-md);
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: #f1f1f1;
+            color: #999;
+        }
+
+        .status-stage.completed {
+            background: #e8f5e9;
+            color: var(--primary-dark);
+        }
+
+        .status-stage.current {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .case-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .case-detail-row:last-child { border-bottom: none; }
+        .case-detail-row span:first-child { color: var(--text-muted); }
+        .case-detail-row span:last-child { font-weight: 600; color: var(--dark-slate); }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="nav-container">
+            <div class="logo">OneEarth 🌍</div>
+            <nav class="nav-links">
+                <a href="{{ url_for('home') }}">Home</a>
+                <a href="{{ url_for('report_rescue') }}">Report Emergency</a>
+                <a href="{{ url_for('track') }}">Live Tracker</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="lookup-box">
+            <h1>🔍 Check Your Case Status</h1>
+            <p>Enter the case number you received after submitting your report.</p>
+            <form class="lookup-form" method="POST">
+                <input type="text" name="case_id" placeholder="e.g., 12" required autofocus>
+                <button type="submit">Check Status</button>
+            </form>
+            {% if error %}
+            <p class="error-msg">{{ error }}</p>
+            {% endif %}
+        </div>
+
+        {% if result %}
+        <div class="result-box">
+            <h2>Case #{{ result['id'] }}</h2>
+
+            <div class="status-track">
+                {% set current_index = stages.index(result['status']) if result['status'] in stages else 0 %}
+                {% for stage in stages %}
+                <div class="status-stage {% if loop.index0 < current_index %}completed{% elif loop.index0 == current_index %}current{% endif %}">
+                    {{ stage }}
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="case-detail-row">
+                <span>Species</span>
+                <span>{{ result['species'] }}</span>
+            </div>
+            <div class="case-detail-row">
+                <span>Urgency</span>
+                <span>{{ result['urgency'] }}</span>
+            </div>
+            <div class="case-detail-row">
+                <span>Location</span>
+                <span>{{ result['location'] }}</span>
+            </div>
+            <div class="case-detail-row">
+                <span>Submitted</span>
+                <span>{{ result['submitted_at'] }}</span>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
