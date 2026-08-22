@@ -26,9 +26,13 @@
             background-color: var(--primary-dark);
             color: #fff;
             padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .main-header a { color: #fff; text-decoration: none; font-weight: 700; }
-        .wrap { max-width: 1000px; margin: 2rem auto; padding: 0 1.5rem; }
+        .main-header .logout-link { font-weight: 500; font-size: 0.85rem; opacity: 0.85; }
+        .wrap { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
         h1 { color: var(--primary-dark); margin-bottom: 1.5rem; }
         table {
             width: 100%;
@@ -42,13 +46,13 @@
             padding: 0.75rem 1rem;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
         th {
             background: var(--primary-color);
             color: #fff;
             text-transform: uppercase;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
         }
         tr:last-child td { border-bottom: none; }
         .empty-state {
@@ -56,11 +60,32 @@
             padding: 3rem 1rem;
             color: var(--text-muted);
         }
+        .status-form select {
+            padding: 0.4rem 0.6rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            background: #fff;
+        }
+        .status-form button {
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 0.4rem 0.7rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-left: 0.3rem;
+        }
+        .status-form button:hover { background: var(--primary-dark); }
+        .status-form { display: flex; align-items: center; }
     </style>
 </head>
 <body>
     <header class="main-header">
         <a href="{{ url_for('home') }}">← Back to OneEarth</a>
+        <a href="{{ url_for('reports_logout') }}" class="logout-link">Log out</a>
     </header>
     <div class="wrap">
         <h1>Submitted Emergency Reports</h1>
@@ -75,6 +100,7 @@
                     <th>Phone</th>
                     <th>Location</th>
                     <th>Submitted</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -87,6 +113,16 @@
                     <td>{{ r['phone'] }}</td>
                     <td>{{ r['location'] }}</td>
                     <td>{{ r['submitted_at'] }}</td>
+                    <td>
+                        <form class="status-form" action="{{ url_for('update_status', report_id=r['id']) }}" method="POST">
+                            <select name="status">
+                                {% for stage in stages %}
+                                <option value="{{ stage }}" {% if r['status'] == stage %}selected{% endif %}>{{ stage }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit">Update</button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
