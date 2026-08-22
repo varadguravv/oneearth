@@ -4,7 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Report Success - OneEarth</title>
-    <link rel="stylesheet" href="{{ url_for('stat
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* ============================================================
+           ADDED — Case ID display box
+           ============================================================ */
+        .case-id-box {
+            background: #e8f5e9;
+            border: 2px solid #2e7d32;
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            display: inline-block;
+        }
+        .case-id-box p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #555;
+        }
+        .case-id-box .case-number {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #1b5e20;
+            margin: 0.3rem 0;
+        }
+        .status-check-btn {
+            display: inline-block;
+            background: #263238;
+            color: #fff;
+            text-decoration: none;
+            padding: 0.7rem 1.4rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .status-check-btn:hover { background: #37474f; }
+    </style>
 </head>
 <body>
     <header>
@@ -15,7 +51,18 @@
         <div class="card" style="text-align: center; padding: 30px;">
             <h2 style="color: #2e7d32;">✅ Rescue Alert Registered!</h2>
             <p>Our nearest volunteer network and ambulance team have been notified. Thank you for saving a life.</p>
+
+            <!-- ADDED: Real case ID from the database -->
+            {% if case_id %}
+            <div class="case-id-box">
+                <p>Your Case Number — save this to check status later</p>
+                <p class="case-number">#{{ case_id }}</p>
+            </div>
             <br>
+            <a href="{{ url_for('check_status') }}" class="status-check-btn">🔍 Check Case Status</a>
+            <br><br>
+            {% endif %}
+
             <a href="{{ url_for('home') }}" class="btn call-btn">Return to Home</a>
         </div>
     </main>
