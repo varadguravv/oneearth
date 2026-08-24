@@ -703,3 +703,56 @@ body {
     background-attachment: fixed !important;
     background-repeat: no-repeat !important;
 }
+.card-action-btn,
+.action-btn,
+.btn-adopt,
+.submit-btn,
+.gps-detect-btn,
+.elite-btn,
+.filter-btn,
+.cta-btn {
+    transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease !important;
+}
+ 
+.card-action-btn:hover,
+.action-btn:hover,
+.btn-adopt:hover,
+.submit-btn:hover,
+.gps-detect-btn:hover,
+.elite-btn:hover,
+.cta-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.18) !important;
+}
+ 
+.card-action-btn:active,
+.action-btn:active,
+.btn-adopt:active,
+.submit-btn:active,
+.cta-btn:active {
+    transform: translateY(0) scale(0.97) !important;
+}
+ 
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .card-action-btn,
+    .action-btn,
+    .btn-adopt,
+    .submit-btn,
+    .gps-detect-btn,
+    .elite-btn,
+    .filter-btn,
+    .cta-btn {
+        transition: none !important;
+    }
+    .card-action-btn:hover,
+    .action-btn:hover,
+    .btn-adopt:hover,
+    .submit-btn:hover,
+    .gps-detect-btn:hover,
+    .elite-btn:hover,
+    .cta-btn:hover {
+        transform: none !important;
+    }
+}
+ 
