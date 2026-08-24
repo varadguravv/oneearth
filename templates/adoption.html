@@ -10,6 +10,11 @@
     <title>Adoption & Fostering | OneEarth</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
+        /* ==========================================================================
+           Extended Professional Enterprise Styling & Layout Architecture
+           OneEarth Platform - Comprehensive Adoption & Fostering Module
+           ========================================================================== */
+
         :root {
             --primary-color: #2e7d32;
             --primary-dark: #1b5e20;
@@ -29,6 +34,7 @@
             --shadow-lg: 0 10px 20px rgba(0,0,0,0.12);
         }
 
+        /* Base resets and typography extensions */
         * {
             margin: 0;
             padding: 0;
@@ -46,6 +52,7 @@
             flex-direction: column;
         }
 
+        /* Professional Sticky Header Navigation */
         .main-header {
             background-color: var(--primary-dark);
             color: #ffffff;
@@ -97,6 +104,7 @@
             background-color: rgba(255, 255, 255, 0.15);
         }
 
+        /* Main Enterprise Layout Wrapper */
         .homepage-container {
             max-width: 1200px;
             margin: 2.5rem auto;
@@ -105,8 +113,13 @@
             width: 100%;
         }
 
+        /* Professional Header Banner Box */
         .section-title-box {
-            background: linear-gradient(rgba(26, 50, 40, 0.88), rgba(37, 71, 55, 0.92));
+            background:
+                linear-gradient(rgba(26, 50, 40, 0.88), rgba(37, 71, 55, 0.92)),
+                url('https://images.unsplash.com/photo-1717269025068-99b0e710d9a6?w=1200&auto=format&fit=crop&q=80');
+            background-size: cover;
+            background-position: center 30%;
             color: white;
             padding: 3.5rem 2rem;
             border-radius: var(--radius-lg);
@@ -117,10 +130,10 @@
         }
 
         .section-title-box h1 {
-            font-size: 2.8rem;
+            font-size: 2.9rem;
             margin-bottom: 1rem;
             color: #ffffff;
-            font-weight: 800;
+            font-weight: 900;
             letter-spacing: -0.5px;
         }
 
@@ -132,6 +145,7 @@
             line-height: 1.6;
         }
 
+        /* Presentation Badge */
         .presentation-badge {
             display: inline-block;
             background: linear-gradient(135deg, var(--accent-color), var(--accent-dark));
@@ -146,6 +160,9 @@
             box-shadow: var(--shadow-sm);
         }
 
+        /* ==========================================================================
+           NEW ELITE FEATURES: Next-Gen Innovation Panel
+           ========================================================================== */
         .elite-features-banner {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -204,6 +221,7 @@
             background: var(--primary-color);
         }
 
+        /* Modal Overlays for Elite Features */
         .elite-modal {
             display: none;
             position: fixed;
@@ -240,6 +258,7 @@
             cursor: pointer;
         }
 
+        /* Interactive Filter Categories Bar */
         .filter-bar {
             display: flex;
             justify-content: center;
@@ -281,6 +300,7 @@
             filter: brightness(0) invert(1);
         }
 
+        /* Adoption Profiles Grid System - Fully Centered Flex Architecture */
         .city-directory-grid {
             display: flex;
             flex-wrap: wrap;
@@ -291,6 +311,7 @@
             width: 100%;
         }
 
+        /* Enterprise Stylized Card Border */
         .adoption-card-styled-border {
             background: linear-gradient(135deg, #ffffff, #f4f7f5);
             border: 2px solid rgba(46, 125, 50, 0.25);
@@ -313,6 +334,7 @@
             border-color: var(--primary-color);
         }
 
+        /* Picture Container with Guaranteed Aspect Fill */
         .pet-image-container {
             width: 100%;
             height: 200px;
@@ -371,6 +393,7 @@
             line-height: 1.6;
         }
 
+        /* Interactive Buttons */
         .btn-adopt {
             display: block;
             width: 100%;
@@ -394,6 +417,7 @@
             transform: scale(0.98);
         }
 
+        /* Universal Instant SOS Widget */
         .instant-sos-box {
             position: fixed;
             bottom: 20px;
@@ -415,6 +439,7 @@
             width: 280px;
         }
 
+        /* Enterprise Footer Styling */
         .main-footer {
             background-color: var(--dark-slate);
             color: #ffffff;
@@ -429,6 +454,7 @@
             margin-bottom: 0.4rem;
         }
 
+        /* Responsive Breakpoints */
         @media (max-width: 768px) {
             .nav-container {
                 flex-direction: column;
@@ -450,6 +476,9 @@
             }
         }
 
+        /* ============================================================
+           ADDED — Inclusive statement banner
+           ============================================================ */
         .inclusive-banner {
             background: #f1f8e9;
             border: 1px solid #c8e6c9;
@@ -465,6 +494,9 @@
 </head>
 <body>
 
+    <!-- ==========================================
+         PROFESSIONAL ENTERPRISE NAVIGATION HEADER
+         ========================================== -->
     <header class="main-header">
         <div class="nav-container">
             <div class="logo">OneEarth 🌍</div>
@@ -476,24 +508,33 @@
                 <a href="{{ url_for('track') }}">Live Tracker</a>
                 <a href="{{ url_for('awareness') }}">Conservation Awareness Data</a>
                 <a href="{{ url_for('about') }}">About Us</a>
-<a href="{{ url_for('get_involved') }}">Get Involved</a>
+                <a href="{{ url_for('get_involved') }}">Get Involved</a>
             </nav>
         </div>
     </header>
 
+    <!-- ==========================================
+         MAIN CONTENT CONTAINER
+         ========================================== -->
     <main class="homepage-container">
         
+        <!-- Enterprise Header Banner Box -->
         <div class="section-title-box">
             <span class="presentation-badge">Rehabilitation & Fostering Center</span>
             <h1>Adoption & Fostering Portal</h1>
             <p>Give rescued strays, farm livestock, rehabilitated birds, and marine wildlife a second chance through verified adoption and long-term foster programs across India.</p>
         </div>
 
+        <!-- ADDED: Inclusive statement banner -->
         <div class="inclusive-banner">
             🐾 Every animal deserves a chance — from dogs and cats to farm animals, birds, horses, marine life, and small exotic pets. Browse by category below or reach out if you don't see what you're looking for.
         </div>
 
+        <!-- ==========================================================================
+           EXCLUSIVE NEXT-GEN INNOVATION SUITE (Icons replaced professionally)
+           ========================================================================== -->
         <div class="elite-features-banner">
+            <!-- Feature 1: AI Triage Vision -->
             <div class="elite-card">
                 <div>
                     <h4>
@@ -505,6 +546,7 @@
                 <button class="elite-btn" onclick="openModal('aiTriageModal')">Launch AI Scan</button>
             </div>
 
+            <!-- Feature 2: Proof-of-Rescue Ledger -->
             <div class="elite-card">
                 <div>
                     <h4>
@@ -516,6 +558,7 @@
                 <button class="elite-btn" onclick="openModal('ledgerModal')">View Ledger Timeline</button>
             </div>
 
+            <!-- Feature 3: AR Habitat Preview -->
             <div class="elite-card">
                 <div>
                     <h4>
@@ -527,6 +570,7 @@
                 <button class="elite-btn" onclick="openModal('arModal')">Simulate in AR</button>
             </div>
 
+            <!-- Feature 4: Hyper-Local SOS Radar -->
             <div class="elite-card">
                 <div>
                     <h4>
@@ -539,6 +583,7 @@
             </div>
         </div>
 
+        <!-- Interactive Species Filter Bar with Professional Icon Replacements -->
         <div class="filter-bar">
             <button class="filter-btn active" onclick="filterSpecies('all', this)">All Species</button>
             <button class="filter-btn" onclick="filterSpecies('urban', this)">
@@ -556,11 +601,13 @@
             <button class="filter-btn" onclick="filterSpecies('marine', this)">
                 <img src="{{ url_for('static', filename='icons/turtle.png') }}" alt="Turtle"> Marine & Wildlife
             </button>
+            <!-- ADDED: Exotic / Small Pets filter -->
             <button class="filter-btn" onclick="filterSpecies('exotic', this)">
                 <img src="{{ url_for('static', filename='icons/turtle.png') }}" alt="Exotic"> Exotic & Small Pets
             </button>
         </div>
 
+        <!-- Adoption Pet Cards Grid Structure (Preserves your Flask backend Jinja loop or static fallback cleanly) -->
         <div class="city-directory-grid" id="petGrid">
             
             {% if pets %}
@@ -582,6 +629,9 @@
                 </div>
                 {% endfor %}
             {% else %}
+                <!-- Default Enterprise Static Fallback Data Preserving Your Complete Setup -->
+                
+                <!-- Animal Card 1: Urban Stray Kitten -->
                 <div class="adoption-card-styled-border" data-category="urban">
                     <div>
                         <div class="pet-image-container">
@@ -598,6 +648,7 @@
                     </div>
                 </div>
 
+                <!-- Animal Card 2: Rescued Horse -->
                 <div class="adoption-card-styled-border" data-category="equine">
                     <div>
                         <div class="pet-image-container">
@@ -614,6 +665,7 @@
                     </div>
                 </div>
 
+                <!-- Animal Card 3: Marine Sea Turtle Pod -->
                 <div class="adoption-card-styled-border" data-category="marine">
                     <div>
                         <div class="pet-image-container">
@@ -630,6 +682,7 @@
                     </div>
                 </div>
 
+                <!-- Animal Card 4: Bruno Lab Mix -->
                 <div class="adoption-card-styled-border" data-category="urban">
                     <div>
                         <div class="pet-image-container">
@@ -646,6 +699,7 @@
                     </div>
                 </div>
 
+                <!-- Animal Card 5: Ganga Gau-Vansh -->
                 <div class="adoption-card-styled-border" data-category="farm">
                     <div>
                         <div class="pet-image-container">
@@ -662,6 +716,7 @@
                     </div>
                 </div>
 
+                <!-- Animal Card 6: Raptor Avian Unit -->
                 <div class="adoption-card-styled-border" data-category="avian">
                     <div>
                         <div class="pet-image-container">
@@ -678,6 +733,7 @@
                     </div>
                 </div>
 
+                <!-- ADDED: Animal Card 7 - Exotic / Small Pet -->
                 <div class="adoption-card-styled-border" data-category="exotic">
                     <div>
                         <div class="pet-image-container">
@@ -699,6 +755,10 @@
 
     </main>
 
+    <!-- ==========================================
+         ELITE INTERACTIVE FEATURE MODALS
+         ========================================== -->
+    <!-- AI Triage Modal -->
     <div class="elite-modal" id="aiTriageModal">
         <div class="elite-modal-content">
             <span class="close-modal" onclick="closeModal('aiTriageModal')">&times;</span>
@@ -712,6 +772,7 @@
         </div>
     </div>
 
+    <!-- Proof of Rescue Ledger Modal -->
     <div class="elite-modal" id="ledgerModal">
         <div class="elite-modal-content">
             <span class="close-modal" onclick="closeModal('ledgerModal')">&times;</span>
@@ -725,6 +786,7 @@
         </div>
     </div>
 
+    <!-- AR Habitat Preview Modal -->
     <div class="elite-modal" id="arModal">
         <div class="elite-modal-content">
             <span class="close-modal" onclick="closeModal('arModal')">&times;</span>
@@ -738,6 +800,9 @@
         </div>
     </div>
 
+    <!-- ==========================================
+         UNIVERSAL INSTANT SOS WIDGET
+         ========================================== -->
     <div class="instant-sos-box">
         <div class="sos-inner">
             <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -750,11 +815,17 @@
         </div>
     </div>
 
+    <!-- ==========================================
+         PROFESSIONAL ENTERPRISE FOOTER
+         ========================================== -->
     <footer class="main-footer">
         <p>&copy; 2026 OneEarth Platform. Dedicated to Global Animal Safety, Welfare, and Ecological Conservation.</p>
         <p style="font-size: 0.85rem; margin-top: 0.50rem; color: #b0bec5; font-weight: 500; letter-spacing: 0.3px;">Approach by Varad Gurav</p>
     </footer>
 
+    <!-- ==========================================
+         DYNAMIC CLIENT-SIDE SCRIPTS & INNOVATION CONTROLLERS
+         ========================================== -->
     <script>
         function filterSpecies(category, buttonElement) {
             const buttons = document.querySelectorAll('.filter-btn');
@@ -771,6 +842,7 @@
             });
         }
 
+        // Modal Controllers
         function openModal(modalId) {
             document.getElementById(modalId).style.display = 'flex';
         }
@@ -779,6 +851,7 @@
             document.getElementById(modalId).style.display = 'none';
         }
 
+        // AI Triage Simulation Handler
         function simulateAiScan(input) {
             if (input.files && input.files[0]) {
                 const resultBox = document.getElementById('aiResultBox');
@@ -788,6 +861,7 @@
             }
         }
 
+        // Geolocation Volunteer SOS Radar
         function triggerSosRadar() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
