@@ -72,7 +72,11 @@
         .homepage-container { max-width: 1200px; margin: 2.5rem auto; padding: 0 1.5rem; flex: 1; width: 100%; }
 
         .section-title-box {
-            background: linear-gradient(rgba(26, 50, 40, 0.88), rgba(37, 71, 55, 0.92));
+            background:
+                linear-gradient(rgba(26, 50, 40, 0.88), rgba(37, 71, 55, 0.92)),
+                url('https://images.unsplash.com/photo-1690338841545-af65597a3f0d?w=1200&auto=format&fit=crop&q=80');
+            background-size: cover;
+            background-position: center;
             color: white;
             padding: 3.5rem 2rem;
             border-radius: var(--radius-lg);
@@ -82,7 +86,7 @@
             box-shadow: var(--shadow-md);
         }
 
-        .section-title-box h1 { font-size: 2.8rem; margin-bottom: 1rem; font-weight: 800; }
+        .section-title-box h1 { font-size: 2.9rem; margin-bottom: 1rem; font-weight: 900; letter-spacing: -0.5px; }
         .section-title-box p { font-size: 1.15rem; max-width: 800px; margin: 0 auto; color: #eceff1; }
 
         .presentation-badge {
@@ -97,6 +101,7 @@
             text-transform: uppercase;
         }
 
+        /* Tracker Telemetry Matrix */
         .tracker-metrics {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -126,6 +131,7 @@
             color: var(--dark-slate);
         }
 
+        /* Main Live Map Section */
         .tracker-map-panel {
             background: #ffffff;
             border: 2px solid rgba(46, 125, 50, 0.25);
@@ -143,6 +149,7 @@
             border: 1px solid #cbd5e1;
         }
 
+        /* Active Units Grid */
         .units-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -224,6 +231,7 @@
 
         .unit-details-list li:last-child { margin-bottom: 0; }
 
+        /* Professional Live Telemetry Status Banner */
         .live-status-tracker-box {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -288,6 +296,7 @@
         .action-btn.secondary { background: #475569; }
         .action-btn.secondary:hover { background: #334155; }
 
+        /* Professional Secure Modal Dialog */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -377,7 +386,7 @@
                 <a href="{{ url_for('track') }}" class="active">Live Tracker</a>
                 <a href="{{ url_for('awareness') }}">Conservation Awareness Data</a>
                 <a href="{{ url_for('about') }}">About Us</a>
-<a href="{{ url_for('get_involved') }}">Get Involved</a>
+                <a href="{{ url_for('get_involved') }}">Get Involved</a>
             </nav>
         </div>
     </header>
@@ -390,6 +399,7 @@
             <p>Monitor real-time positions of active rescue ambulances, wildlife tracking collars, and emergency mobile veterinary units in the field.</p>
         </div>
 
+        <!-- Telemetry Matrix -->
         <div class="tracker-metrics">
             <div class="metric-tile">
                 <h5>Active Ambulances</h5>
@@ -405,14 +415,17 @@
             </div>
         </div>
 
+        <!-- Main Live Tracking Map Container -->
         <div class="tracker-map-panel">
             <h3 style="color: var(--primary-dark); font-size: 1.25rem; font-weight: 700; margin-bottom: 0.3rem;">📡 Real-Time Sector GPS Telemetry Radar</h3>
             <p style="font-size: 0.9rem; color: var(--text-muted);">Interactive live positioning of emergency response ambulances and wildlife corridors.</p>
             <div id="liveTrackerMap"></div>
         </div>
 
+        <!-- Active Units & Teams Grid with Precise Live Status & ETA Features -->
         <div class="units-grid">
             
+            <!-- Unit 1 -->
             <div class="unit-card">
                 <div>
                     <h4>Ambulance Unit #Alpha-1</h4>
@@ -441,6 +454,7 @@
                 </div>
             </div>
 
+            <!-- Unit 2 -->
             <div class="unit-card">
                 <div>
                     <h4>Wildlife Rescue Team #Beta</h4>
@@ -469,6 +483,7 @@
                 </div>
             </div>
 
+            <!-- Unit 3 -->
             <div class="unit-card">
                 <div>
                     <h4>Stray Care & Vaccination Van #3</h4>
@@ -497,6 +512,7 @@
                 </div>
             </div>
 
+            <!-- ADDED: Unit 4 - Livestock & Cattle Rescue Unit -->
             <div class="unit-card">
                 <div>
                     <h4>Livestock & Cattle Rescue Unit #Gamma</h4>
@@ -525,6 +541,7 @@
                 </div>
             </div>
 
+            <!-- ADDED: Unit 5 - Aquatic & Exotic Rescue Unit -->
             <div class="unit-card">
                 <div>
                     <h4>Aquatic & Exotic Rescue Unit #Delta</h4>
@@ -557,6 +574,7 @@
 
     </main>
 
+    <!-- Professional Secure Dispatch Modal Dialog -->
     <div id="dispatchModal" class="modal-overlay">
         <div class="modal-card">
             <div class="modal-header-box">
@@ -607,6 +625,7 @@
         let selectedUnitName = "";
         let selectedPhoneNumber = "";
 
+        // Initialize Live Tracker Map
         let trackerMap = L.map('liveTrackerMap').setView([18.5204, 73.8567], 12);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -614,10 +633,12 @@
             subdomains: 'abcd'
         }).addTo(trackerMap);
 
+        // Add Markers for Live Units with prominent status and ETA details
         L.marker([18.5304, 73.8467]).addTo(trackerMap).bindPopup("<b>Ambulance Unit #Alpha-1</b><br>Status: <span style='color:#b45309; font-weight:bold;'>On The Way</span><br><b>ETA: 5 Minutes</b>");
         L.marker([18.5604, 73.8127]).addTo(trackerMap).bindPopup("<b>Wildlife Rescue Team #Beta</b><br>Status: <span style='color:#0369a1; font-weight:bold;'>Dispatched</span><br><b>ETA: 12 Minutes</b>");
         L.marker([18.4904, 73.9027]).addTo(trackerMap).bindPopup("<b>Stray Care Van #3</b><br>Status: <span style='color:#15803d; font-weight:bold;'>Arrived On Site</span>");
 
+        // ADDED: Markers for new livestock and aquatic/exotic rescue units
         L.marker([18.4404, 73.8267]).addTo(trackerMap).bindPopup("<b>Livestock & Cattle Rescue Unit #Gamma</b><br>Status: <span style='color:#b45309; font-weight:bold;'>On The Way</span><br><b>ETA: 18 Minutes</b>");
         L.marker([18.5754, 73.8827]).addTo(trackerMap).bindPopup("<b>Aquatic & Exotic Rescue Unit #Delta</b><br>Status: <span style='color:#0369a1; font-weight:bold;'>Dispatched</span><br><b>ETA: 9 Minutes</b>");
 
