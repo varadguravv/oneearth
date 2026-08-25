@@ -317,7 +317,7 @@ button:active,
   }
 
   /* ---------- 2. Header & Navigation ---------- */
-  header, .navbar, nav, .nav-container {
+  header, .navbar, .nav-container {
     position: relative !important;
     top: auto !important;
     width: 100% !important;
@@ -333,6 +333,7 @@ button:active,
 
   .nav-links, .navbar-nav {
     display: flex !important;
+    flex-direction: row !important;
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
     gap: 8px !important;
