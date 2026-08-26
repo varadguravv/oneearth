@@ -32,7 +32,7 @@
         }
         .main-header a { color: #fff; text-decoration: none; font-weight: 700; }
         .main-header .logout-link { font-weight: 500; font-size: 0.85rem; opacity: 0.85; }
-        .wrap { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
+        .wrap { max-width: 1300px; margin: 2rem auto; padding: 0 1.5rem; overflow-x: auto; }
         h1 { color: var(--primary-dark); margin-bottom: 1.5rem; }
         table {
             width: 100%;
@@ -43,16 +43,17 @@
             box-shadow: var(--shadow-sm);
         }
         th, td {
-            padding: 0.75rem 1rem;
+            padding: 0.7rem 0.8rem;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
-            font-size: 0.85rem;
+            font-size: 0.82rem;
+            white-space: nowrap;
         }
         th {
             background: var(--primary-color);
             color: #fff;
             text-transform: uppercase;
-            font-size: 0.72rem;
+            font-size: 0.7rem;
         }
         tr:last-child td { border-bottom: none; }
         .empty-state {
@@ -80,6 +81,19 @@
         }
         .status-form button:hover { background: var(--primary-dark); }
         .status-form { display: flex; align-items: center; }
+
+        /* ADDED (Phase 1): risk assessment badge styling */
+        .risk-pill {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+        .risk-pill.severity-critical { background: #fde2e2; color: #b71c1c; }
+        .risk-pill.severity-high { background: #ffe9d6; color: #c25e00; }
+        .risk-pill.severity-moderate { background: #fff6d6; color: #a17d00; }
+        .risk-pill.severity-low { background: #e3f2e3; color: #1b5e20; }
     </style>
 </head>
 <body>
@@ -100,6 +114,10 @@
                     <th>Phone</th>
                     <th>Location</th>
                     <th>Submitted</th>
+                    <!-- ADDED (Phase 1) -->
+                    <th>Risk Score</th>
+                    <th>Severity</th>
+                    <th>Priority</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -113,6 +131,14 @@
                     <td>{{ r['phone'] }}</td>
                     <td>{{ r['location'] }}</td>
                     <td>{{ r['submitted_at'] }}</td>
+                    <!-- ADDED (Phase 1): risk assessment columns -->
+                    <td>{{ r['risk_score'] if r['risk_score'] is not none else '—' }}</td>
+                    <td>
+                        {% if r['severity'] %}
+                        <span class="risk-pill severity-{{ r['severity']|lower }}">{{ r['severity'] }}</span>
+                        {% else %}—{% endif %}
+                    </td>
+                    <td>{{ r['priority'] if r['priority'] else '—' }}</td>
                     <td>
                         <form class="status-form" action="{{ url_for('update_status', report_id=r['id']) }}" method="POST">
                             <select name="status">
