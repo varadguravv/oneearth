@@ -98,6 +98,7 @@
             border-radius: var(--radius-lg);
             padding: 2rem;
             box-shadow: var(--shadow-md);
+            margin-bottom: 1.5rem;
         }
 
         .result-box h2 {
@@ -146,6 +147,50 @@
         .case-detail-row:last-child { border-bottom: none; }
         .case-detail-row span:first-child { color: var(--text-muted); }
         .case-detail-row span:last-child { font-weight: 600; color: var(--dark-slate); }
+
+        /* ADDED (Phase 1): Risk assessment box */
+        .risk-box {
+            background: #fff;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.6rem;
+            box-shadow: var(--shadow-md);
+        }
+        .risk-box h3 {
+            font-size: 1rem;
+            color: var(--dark-slate);
+            margin-bottom: 1rem;
+        }
+        .risk-badge-row {
+            display: flex;
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .risk-badge {
+            padding: 0.4rem 0.9rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .risk-badge.severity-critical { background: #fde2e2; color: #b71c1c; }
+        .risk-badge.severity-high { background: #ffe9d6; color: #c25e00; }
+        .risk-badge.severity-moderate { background: #fff6d6; color: #a17d00; }
+        .risk-badge.severity-low { background: #e3f2e3; color: #1b5e20; }
+        .risk-score-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .risk-score-text strong { font-size: 1.1rem; color: var(--dark-slate); }
+        .risk-action-text {
+            font-size: 0.85rem;
+            color: #444;
+            line-height: 1.5;
+            background: #f8f9fa;
+            padding: 0.8rem;
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body>
@@ -203,6 +248,19 @@
                 <span>{{ result['submitted_at'] }}</span>
             </div>
         </div>
+
+        <!-- ADDED (Phase 1): Risk assessment for this case -->
+        {% if result['severity'] %}
+        <div class="risk-box">
+            <h3>📋 Automated Risk Assessment</h3>
+            <div class="risk-badge-row">
+                <span class="risk-badge severity-{{ result['severity']|lower }}">{{ result['severity'] }}</span>
+                <span class="risk-badge severity-{{ result['severity']|lower }}">{{ result['priority'] }}</span>
+            </div>
+            <p class="risk-score-text">Risk Score: <strong>{{ result['risk_score'] }}/100</strong></p>
+            <p class="risk-action-text">{{ result['recommended_action'] }}</p>
+        </div>
+        {% endif %}
         {% endif %}
     </div>
 </body>
