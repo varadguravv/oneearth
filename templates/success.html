@@ -6,9 +6,6 @@
     <title>Report Success - OneEarth</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        /* ============================================================
-           ADDED — Case ID display box
-           ============================================================ */
         .case-id-box {
             background: #e8f5e9;
             border: 2px solid #2e7d32;
@@ -40,6 +37,58 @@
             margin-top: 0.5rem;
         }
         .status-check-btn:hover { background: #37474f; }
+
+        /* ADDED (Phase 1): Risk assessment display */
+        .risk-assessment-box {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 1.4rem;
+            margin: 1.5rem auto;
+            max-width: 420px;
+            text-align: left;
+        }
+        .risk-assessment-box h3 {
+            font-size: 0.95rem;
+            color: #263238;
+            margin-bottom: 0.9rem;
+            text-align: center;
+        }
+        .risk-badge-row {
+            display: flex;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .risk-badge {
+            padding: 0.4rem 0.9rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .risk-badge.severity-critical { background: #fde2e2; color: #b71c1c; }
+        .risk-badge.severity-high { background: #ffe9d6; color: #c25e00; }
+        .risk-badge.severity-moderate { background: #fff6d6; color: #a17d00; }
+        .risk-badge.severity-low { background: #e3f2e3; color: #1b5e20; }
+        .risk-score-text {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        .risk-score-text strong {
+            font-size: 1.1rem;
+            color: #263238;
+        }
+        .risk-action-text {
+            font-size: 0.85rem;
+            color: #444;
+            line-height: 1.5;
+            background: #f8f9fa;
+            padding: 0.8rem;
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body>
@@ -52,12 +101,25 @@
             <h2 style="color: #2e7d32;">✅ Rescue Alert Registered!</h2>
             <p>Our nearest volunteer network and ambulance team have been notified. Thank you for saving a life.</p>
 
-            <!-- ADDED: Real case ID from the database -->
             {% if case_id %}
             <div class="case-id-box">
                 <p>Your Case Number — save this to check status later</p>
                 <p class="case-number">#{{ case_id }}</p>
             </div>
+
+            <!-- ADDED (Phase 1): Risk Assessment Summary -->
+            {% if report %}
+            <div class="risk-assessment-box">
+                <h3>📋 Automated Risk Assessment</h3>
+                <div class="risk-badge-row">
+                    <span class="risk-badge severity-{{ report['severity']|lower }}">{{ report['severity'] }}</span>
+                    <span class="risk-badge severity-{{ report['severity']|lower }}">{{ report['priority'] }}</span>
+                </div>
+                <p class="risk-score-text">Risk Score: <strong>{{ report['risk_score'] }}/100</strong></p>
+                <p class="risk-action-text">{{ report['recommended_action'] }}</p>
+            </div>
+            {% endif %}
+
             <br>
             <a href="{{ url_for('check_status') }}" class="status-check-btn">🔍 Check Case Status</a>
             <br><br>
