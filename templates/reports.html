@@ -32,8 +32,10 @@
         }
         .main-header a { color: #fff; text-decoration: none; font-weight: 700; }
         .main-header .logout-link { font-weight: 500; font-size: 0.85rem; opacity: 0.85; }
-        .wrap { max-width: 1300px; margin: 2rem auto; padding: 0 1.5rem; overflow-x: auto; }
-        h1 { color: var(--primary-dark); margin-bottom: 1.5rem; }
+        .wrap { max-width: 1400px; margin: 2rem auto; padding: 0 1.5rem; }
+        h1 { color: var(--primary-dark); margin-bottom: 0.5rem; }
+        .subtext { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
+        .table-scroll { overflow-x: auto; }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -41,19 +43,20 @@
             border-radius: var(--radius-md);
             overflow: hidden;
             box-shadow: var(--shadow-sm);
+            margin-bottom: 2.5rem;
         }
         th, td {
             padding: 0.7rem 0.8rem;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             white-space: nowrap;
         }
         th {
             background: var(--primary-color);
             color: #fff;
             text-transform: uppercase;
-            font-size: 0.7rem;
+            font-size: 0.68rem;
         }
         tr:last-child td { border-bottom: none; }
         .empty-state {
@@ -61,39 +64,111 @@
             padding: 3rem 1rem;
             color: var(--text-muted);
         }
-        .status-form select {
-            padding: 0.4rem 0.6rem;
+        .status-form, .responder-form, .confirm-form {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .status-form select, .responder-form select {
+            padding: 0.35rem 0.5rem;
             border: 1px solid var(--border-color);
             border-radius: 6px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             background: #fff;
         }
-        .status-form button {
+        .status-form button, .responder-form button, .confirm-form button {
             background: var(--primary-color);
             color: #fff;
             border: none;
-            padding: 0.4rem 0.7rem;
+            padding: 0.35rem 0.6rem;
             border-radius: 6px;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 700;
             cursor: pointer;
-            margin-left: 0.3rem;
         }
-        .status-form button:hover { background: var(--primary-dark); }
-        .status-form { display: flex; align-items: center; }
+        .status-form button:hover, .responder-form button:hover, .confirm-form button:hover {
+            background: var(--primary-dark);
+        }
+        .confirm-form button { background: #0369a1; }
+        .confirm-form button:hover { background: #075985; }
 
-        /* ADDED (Phase 1): risk assessment badge styling */
         .risk-pill {
             display: inline-block;
             padding: 0.25rem 0.6rem;
             border-radius: 50px;
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             font-weight: 700;
         }
         .risk-pill.severity-critical { background: #fde2e2; color: #b71c1c; }
         .risk-pill.severity-high { background: #ffe9d6; color: #c25e00; }
         .risk-pill.severity-moderate { background: #fff6d6; color: #a17d00; }
         .risk-pill.severity-low { background: #e3f2e3; color: #1b5e20; }
+
+        /* ADDED (Phase 2): response status + section header styles */
+        .response-status-tag {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .response-status-tag.pending { background: #fff6d6; color: #a17d00; }
+        .response-status-tag.responded { background: #e3f2e3; color: #1b5e20; }
+        .response-status-tag.escalated { background: #fde2e2; color: #b71c1c; }
+        .response-status-tag.unassigned { background: #eceff1; color: #546e7a; }
+        .response-status-tag.no-responder { background: #fde2e2; color: #b71c1c; }
+
+        .escalation-badge {
+            display: inline-block;
+            background: #fde2e2;
+            color: #b71c1c;
+            padding: 0.15rem 0.5rem;
+            border-radius: 50px;
+            font-size: 0.68rem;
+            font-weight: 700;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: baseline;
+            gap: 0.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .responder-list-box {
+            background: #fff;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .responder-list-box h2 {
+            font-size: 1rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.8rem;
+        }
+        .responder-chip-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 0.6rem;
+        }
+        .responder-chip {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem;
+            font-size: 0.78rem;
+        }
+        .responder-chip .r-name { font-weight: 700; color: var(--dark-slate); }
+        .responder-chip .r-meta { color: var(--text-muted); font-size: 0.72rem; margin-top: 0.2rem; }
+        .avail-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+        .avail-dot.yes { background: #2e7d32; }
+        .avail-dot.no { background: #d32f2f; }
     </style>
 </head>
 <body>
@@ -102,8 +177,28 @@
         <a href="{{ url_for('reports_logout') }}" class="logout-link">Log out</a>
     </header>
     <div class="wrap">
+
+        <!-- ADDED (Phase 2): responder roster overview -->
+        <div class="responder-list-box">
+            <h2>🚑 Responder Roster ({{ responders|length }} total)</h2>
+            <div class="responder-chip-grid">
+                {% for r in responders %}
+                <div class="responder-chip">
+                    <div class="r-name">
+                        <span class="avail-dot {% if r['available'] %}yes{% else %}no{% endif %}"></span>
+                        {{ r['name'] }}
+                    </div>
+                    <div class="r-meta">{{ r['responder_type'] }} · {{ r['location'] }} · {{ r['active_cases'] }} active case{{ 's' if r['active_cases'] != 1 else '' }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
         <h1>Submitted Emergency Reports</h1>
+        <p class="subtext">Includes automated risk assessment (Phase 1) and responder matching/escalation (Phase 2).</p>
+
         {% if reports %}
+        <div class="table-scroll">
         <table>
             <thead>
                 <tr>
@@ -114,11 +209,16 @@
                     <th>Phone</th>
                     <th>Location</th>
                     <th>Submitted</th>
-                    <!-- ADDED (Phase 1) -->
                     <th>Risk Score</th>
                     <th>Severity</th>
                     <th>Priority</th>
-                    <th>Status</th>
+                    <th>Case Status</th>
+                    <!-- ADDED (Phase 2) -->
+                    <th>Required Responder</th>
+                    <th>Assigned Responder</th>
+                    <th>Response Status</th>
+                    <th>Escalations</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -131,7 +231,6 @@
                     <td>{{ r['phone'] }}</td>
                     <td>{{ r['location'] }}</td>
                     <td>{{ r['submitted_at'] }}</td>
-                    <!-- ADDED (Phase 1): risk assessment columns -->
                     <td>{{ r['risk_score'] if r['risk_score'] is not none else '—' }}</td>
                     <td>
                         {% if r['severity'] %}
@@ -149,10 +248,47 @@
                             <button type="submit">Update</button>
                         </form>
                     </td>
+                    <!-- ADDED (Phase 2) columns -->
+                    <td>{{ r['required_responder_type'] if r['required_responder_type'] else '—' }}</td>
+                    <td>
+                        {% if r['assigned_responder'] %}
+                        {{ r['assigned_responder']['name'] }}<br>
+                        <span style="font-size:0.68rem;color:#888;">{{ r['assigned_responder']['responder_type'] }}</span>
+                        {% else %}
+                        <em style="color:#999;">None</em>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% set rs = r['response_status'] or 'Unassigned' %}
+                        <span class="response-status-tag
+                            {% if rs == 'Pending Response' %}pending
+                            {% elif rs == 'Responded' %}responded
+                            {% elif 'Escalated' in rs %}escalated
+                            {% elif rs == 'No Suitable Responder' %}no-responder
+                            {% else %}unassigned{% endif %}">{{ rs }}</span>
+                    </td>
+                    <td>
+                        {% if r['escalation_count'] and r['escalation_count'] > 0 %}
+                        <span class="escalation-badge">{{ r['escalation_count'] }}x</span>
+                        {% else %}—{% endif %}
+                    </td>
+                    <td>
+                        <div style="display:flex; flex-direction:column; gap:0.3rem;">
+                            <form class="responder-form" action="{{ url_for('reassign_responder', report_id=r['id']) }}" method="POST">
+                                <button type="submit" title="Re-run matching and reassign the best available responder">🔄 Reassign</button>
+                            </form>
+                            {% if r['response_status'] == 'Pending Response' %}
+                            <form class="confirm-form" action="{{ url_for('confirm_response', report_id=r['id']) }}" method="POST">
+                                <button type="submit">✓ Confirm Response</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        </div>
         {% else %}
         <div class="empty-state">No reports submitted yet.</div>
         {% endif %}
