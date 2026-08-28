@@ -148,13 +148,13 @@
         .case-detail-row span:first-child { color: var(--text-muted); }
         .case-detail-row span:last-child { font-weight: 600; color: var(--dark-slate); }
 
-        /* ADDED (Phase 1): Risk assessment box */
         .risk-box {
             background: #fff;
             border: 2px solid var(--border-color);
             border-radius: var(--radius-lg);
             padding: 1.6rem;
             box-shadow: var(--shadow-md);
+            margin-bottom: 1.5rem;
         }
         .risk-box h3 {
             font-size: 1rem;
@@ -191,6 +191,50 @@
             padding: 0.8rem;
             border-radius: 6px;
         }
+
+        /* ADDED (Phase 2): responder box */
+        .responder-box {
+            background: #fff;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.6rem;
+            box-shadow: var(--shadow-md);
+        }
+        .responder-box h3 {
+            font-size: 1rem;
+            color: var(--dark-slate);
+            margin-bottom: 1rem;
+        }
+        .responder-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            font-size: 0.88rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .responder-row:last-child { border-bottom: none; }
+        .responder-row span:first-child { color: var(--text-muted); }
+        .responder-row span:last-child { font-weight: 600; color: var(--dark-slate); }
+        .responder-type-tag {
+            display: inline-block;
+            background: #e8f5e9;
+            color: var(--primary-dark);
+            padding: 0.2rem 0.6rem;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+        .response-status-tag {
+            display: inline-block;
+            padding: 0.25rem 0.7rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .response-status-tag.pending { background: #fff6d6; color: #a17d00; }
+        .response-status-tag.responded { background: #e3f2e3; color: #1b5e20; }
+        .response-status-tag.escalated { background: #fde2e2; color: #b71c1c; }
+        .response-status-tag.unassigned { background: #eceff1; color: #546e7a; }
     </style>
 </head>
 <body>
@@ -249,7 +293,6 @@
             </div>
         </div>
 
-        <!-- ADDED (Phase 1): Risk assessment for this case -->
         {% if result['severity'] %}
         <div class="risk-box">
             <h3>📋 Automated Risk Assessment</h3>
@@ -261,6 +304,42 @@
             <p class="risk-action-text">{{ result['recommended_action'] }}</p>
         </div>
         {% endif %}
+
+        <!-- ADDED (Phase 2): responder assignment info -->
+        <div class="responder-box">
+            <h3>🚑 Response Details</h3>
+            <div class="responder-row">
+                <span>Response Status</span>
+                <span>
+                    {% set rs = result['response_status'] or 'Unassigned' %}
+                    <span class="response-status-tag
+                        {% if rs == 'Pending Response' %}pending
+                        {% elif rs == 'Responded' %}responded
+                        {% elif 'Escalated' in rs %}escalated
+                        {% else %}unassigned{% endif %}">{{ rs }}</span>
+                </span>
+            </div>
+            {% if assigned_responder %}
+            <div class="responder-row">
+                <span>Assigned To</span>
+                <span>{{ assigned_responder['name'] }}</span>
+            </div>
+            <div class="responder-row">
+                <span>Type</span>
+                <span><span class="responder-type-tag">{{ assigned_responder['responder_type'] }}</span></span>
+            </div>
+            <div class="responder-row">
+                <span>Contact</span>
+                <span>{{ assigned_responder['phone'] }}</span>
+            </div>
+            {% endif %}
+            {% if result['escalation_count'] and result['escalation_count'] > 0 %}
+            <div class="responder-row">
+                <span>Escalations</span>
+                <span>{{ result['escalation_count'] }}</span>
+            </div>
+            {% endif %}
+        </div>
         {% endif %}
     </div>
 </body>
