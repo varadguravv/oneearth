@@ -38,7 +38,6 @@
         }
         .status-check-btn:hover { background: #37474f; }
 
-        /* ADDED (Phase 1): Risk assessment display */
         .risk-assessment-box {
             background: #fff;
             border: 2px solid #e0e0e0;
@@ -89,6 +88,42 @@
             padding: 0.8rem;
             border-radius: 6px;
         }
+
+        /* ADDED (Phase 2): assigned responder box */
+        .responder-box {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 1.4rem;
+            margin: 1.5rem auto;
+            max-width: 420px;
+            text-align: left;
+        }
+        .responder-box h3 {
+            font-size: 0.95rem;
+            color: #263238;
+            margin-bottom: 0.9rem;
+            text-align: center;
+        }
+        .responder-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .responder-row:last-child { border-bottom: none; }
+        .responder-row span:first-child { color: #888; }
+        .responder-row span:last-child { font-weight: 600; color: #263238; }
+        .responder-type-tag {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #1b5e20;
+            padding: 0.2rem 0.6rem;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
@@ -107,7 +142,6 @@
                 <p class="case-number">#{{ case_id }}</p>
             </div>
 
-            <!-- ADDED (Phase 1): Risk Assessment Summary -->
             {% if report %}
             <div class="risk-assessment-box">
                 <h3>📋 Automated Risk Assessment</h3>
@@ -117,6 +151,36 @@
                 </div>
                 <p class="risk-score-text">Risk Score: <strong>{{ report['risk_score'] }}/100</strong></p>
                 <p class="risk-action-text">{{ report['recommended_action'] }}</p>
+            </div>
+            {% endif %}
+
+            <!-- ADDED (Phase 2): Assigned responder -->
+            {% if assigned_responder %}
+            <div class="responder-box">
+                <h3>🚑 Responder Assigned</h3>
+                <div class="responder-row">
+                    <span>Name</span>
+                    <span>{{ assigned_responder['name'] }}</span>
+                </div>
+                <div class="responder-row">
+                    <span>Type</span>
+                    <span><span class="responder-type-tag">{{ assigned_responder['responder_type'] }}</span></span>
+                </div>
+                <div class="responder-row">
+                    <span>Contact</span>
+                    <span>{{ assigned_responder['phone'] }}</span>
+                </div>
+                <div class="responder-row">
+                    <span>Based near</span>
+                    <span>{{ assigned_responder['location'] }}</span>
+                </div>
+            </div>
+            {% elif report and report['response_status'] == 'No Suitable Responder' %}
+            <div class="responder-box">
+                <h3>⚠️ No Responder Currently Available</h3>
+                <p style="font-size: 0.85rem; color: #666; text-align: center;">
+                    Your report has been logged. Please also call the national helpline (1962) directly for immediate assistance.
+                </p>
             </div>
             {% endif %}
 
