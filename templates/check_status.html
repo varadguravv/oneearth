@@ -25,11 +25,7 @@
             color: #333;
             line-height: 1.6;
         }
-        .main-header {
-            background-color: var(--primary-dark);
-            color: #fff;
-            padding: 1rem 2rem;
-        }
+        .main-header { background-color: var(--primary-dark); color: #fff; padding: 1rem 2rem; }
         .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 1.5rem; font-weight: 800; color: #fff; }
         .nav-links { display: flex; gap: 1.2rem; flex-wrap: wrap; }
@@ -46,51 +42,13 @@
             margin-bottom: 2rem;
             text-align: center;
         }
-
-        .lookup-box h1 {
-            color: var(--primary-dark);
-            font-size: 1.7rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .lookup-box p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .lookup-form {
-            display: flex;
-            gap: 0.8rem;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .lookup-form input {
-            flex: 1;
-            padding: 0.85rem 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            font-size: 1rem;
-        }
-
-        .lookup-form button {
-            background: var(--primary-color);
-            color: #fff;
-            border: none;
-            padding: 0.85rem 1.5rem;
-            border-radius: var(--radius-md);
-            font-weight: 700;
-            cursor: pointer;
-        }
-
+        .lookup-box h1 { color: var(--primary-dark); font-size: 1.7rem; margin-bottom: 0.5rem; }
+        .lookup-box p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+        .lookup-form { display: flex; gap: 0.8rem; max-width: 400px; margin: 0 auto; }
+        .lookup-form input { flex: 1; padding: 0.85rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 1rem; }
+        .lookup-form button { background: var(--primary-color); color: #fff; border: none; padding: 0.85rem 1.5rem; border-radius: var(--radius-md); font-weight: 700; cursor: pointer; }
         .lookup-form button:hover { background: var(--primary-dark); }
-
-        .error-msg {
-            color: var(--danger-color);
-            font-size: 0.9rem;
-            margin-top: 1rem;
-        }
+        .error-msg { color: var(--danger-color); font-size: 0.9rem; margin-top: 1rem; }
 
         .result-box {
             background: #fff;
@@ -100,55 +58,25 @@
             box-shadow: var(--shadow-md);
             margin-bottom: 1.5rem;
         }
+        .result-box h2 { color: var(--primary-dark); font-size: 1.3rem; margin-bottom: 0.5rem; }
 
-        .result-box h2 {
-            color: var(--primary-dark);
-            font-size: 1.3rem;
-            margin-bottom: 1.5rem;
-        }
+        /* ADDED (Phase 3): rescue stage + timer badges */
+        .top-badge-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.2rem; }
+        .badge { padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.78rem; font-weight: 700; }
+        .badge.stage { background: #e8eaf6; color: #283593; }
+        .badge.timer { background: #eceff1; color: #37474f; }
 
-        .status-track {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
+        .status-track { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .status-stage { flex: 1; min-width: 100px; text-align: center; padding: 0.7rem 0.4rem; border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 700; background: #f1f1f1; color: #999; }
+        .status-stage.completed { background: #e8f5e9; color: var(--primary-dark); }
+        .status-stage.current { background: var(--primary-color); color: #fff; }
 
-        .status-stage {
-            flex: 1;
-            min-width: 100px;
-            text-align: center;
-            padding: 0.7rem 0.4rem;
-            border-radius: var(--radius-md);
-            font-size: 0.75rem;
-            font-weight: 700;
-            background: #f1f1f1;
-            color: #999;
-        }
-
-        .status-stage.completed {
-            background: #e8f5e9;
-            color: var(--primary-dark);
-        }
-
-        .status-stage.current {
-            background: var(--primary-color);
-            color: #fff;
-        }
-
-        .case-detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.6rem 0;
-            border-bottom: 1px solid #eee;
-            font-size: 0.9rem;
-        }
-
+        .case-detail-row { display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid #eee; font-size: 0.9rem; }
         .case-detail-row:last-child { border-bottom: none; }
         .case-detail-row span:first-child { color: var(--text-muted); }
         .case-detail-row span:last-child { font-weight: 600; color: var(--dark-slate); }
 
-        .risk-box {
+        .risk-box, .responder-box, .timeline-box {
             background: #fff;
             border: 2px solid var(--border-color);
             border-radius: var(--radius-lg);
@@ -156,85 +84,28 @@
             box-shadow: var(--shadow-md);
             margin-bottom: 1.5rem;
         }
-        .risk-box h3 {
-            font-size: 1rem;
-            color: var(--dark-slate);
-            margin-bottom: 1rem;
-        }
-        .risk-badge-row {
-            display: flex;
-            gap: 0.6rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-        .risk-badge {
-            padding: 0.4rem 0.9rem;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 700;
-        }
+        .risk-box h3, .responder-box h3, .timeline-box h3 { font-size: 1rem; color: var(--dark-slate); margin-bottom: 1rem; }
+        .risk-badge-row { display: flex; gap: 0.6rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .risk-badge { padding: 0.4rem 0.9rem; border-radius: 50px; font-size: 0.8rem; font-weight: 700; }
         .risk-badge.severity-critical { background: #fde2e2; color: #b71c1c; }
         .risk-badge.severity-high { background: #ffe9d6; color: #c25e00; }
         .risk-badge.severity-moderate { background: #fff6d6; color: #a17d00; }
         .risk-badge.severity-low { background: #e3f2e3; color: #1b5e20; }
-        .risk-score-text {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
-        }
+        .risk-score-text { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; }
         .risk-score-text strong { font-size: 1.1rem; color: var(--dark-slate); }
-        .risk-action-text {
-            font-size: 0.85rem;
-            color: #444;
-            line-height: 1.5;
-            background: #f8f9fa;
-            padding: 0.8rem;
-            border-radius: 6px;
-        }
+        .risk-action-text { font-size: 0.85rem; color: #444; line-height: 1.5; background: #f8f9fa; padding: 0.8rem; border-radius: 6px; }
 
-        /* ADDED (Phase 2): responder box */
-        .responder-box {
-            background: #fff;
-            border: 2px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            padding: 1.6rem;
-            box-shadow: var(--shadow-md);
-        }
-        .responder-box h3 {
-            font-size: 1rem;
-            color: var(--dark-slate);
-            margin-bottom: 1rem;
-        }
-        .responder-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem 0;
-            font-size: 0.88rem;
-            border-bottom: 1px solid #f0f0f0;
-        }
+        .responder-row { display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 0.88rem; border-bottom: 1px solid #f0f0f0; }
         .responder-row:last-child { border-bottom: none; }
         .responder-row span:first-child { color: var(--text-muted); }
         .responder-row span:last-child { font-weight: 600; color: var(--dark-slate); }
-        .responder-type-tag {
-            display: inline-block;
-            background: #e8f5e9;
-            color: var(--primary-dark);
-            padding: 0.2rem 0.6rem;
-            border-radius: 50px;
-            font-size: 0.72rem;
-            font-weight: 700;
-        }
-        .response-status-tag {
-            display: inline-block;
-            padding: 0.25rem 0.7rem;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
-        .response-status-tag.pending { background: #fff6d6; color: #a17d00; }
-        .response-status-tag.responded { background: #e3f2e3; color: #1b5e20; }
-        .response-status-tag.escalated { background: #fde2e2; color: #b71c1c; }
-        .response-status-tag.unassigned { background: #eceff1; color: #546e7a; }
+        .responder-type-tag { display: inline-block; background: #e8f5e9; color: var(--primary-dark); padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.72rem; font-weight: 700; }
+
+        /* ADDED (Phase 3): timeline */
+        .timeline-item { border-left: 3px solid var(--primary-color); padding-left: 1rem; margin-bottom: 0.9rem; font-size: 0.85rem; }
+        .timeline-item .t-type { font-weight: 700; color: var(--dark-slate); }
+        .timeline-item .t-time { color: var(--text-muted); font-size: 0.72rem; margin-left: 0.5rem; }
+        .timeline-item .t-detail { color: var(--text-muted); font-size: 0.8rem; margin-top: 0.2rem; }
     </style>
 </head>
 <body>
@@ -257,14 +128,16 @@
                 <input type="text" name="case_id" placeholder="e.g., 12" required autofocus>
                 <button type="submit">Check Status</button>
             </form>
-            {% if error %}
-            <p class="error-msg">{{ error }}</p>
-            {% endif %}
+            {% if error %}<p class="error-msg">{{ error }}</p>{% endif %}
         </div>
 
         {% if result %}
         <div class="result-box">
             <h2>Case #{{ result['id'] }}</h2>
+            <div class="top-badge-row">
+                <span class="badge stage">{{ result['rescue_stage'] or 'Reported' }}</span>
+                <span class="badge timer">⏱ Active for {{ elapsed }}</span>
+            </div>
 
             <div class="status-track">
                 {% set current_index = stages.index(result['status']) if result['status'] in stages else 0 %}
@@ -275,22 +148,10 @@
                 {% endfor %}
             </div>
 
-            <div class="case-detail-row">
-                <span>Species</span>
-                <span>{{ result['species'] }}</span>
-            </div>
-            <div class="case-detail-row">
-                <span>Urgency</span>
-                <span>{{ result['urgency'] }}</span>
-            </div>
-            <div class="case-detail-row">
-                <span>Location</span>
-                <span>{{ result['location'] }}</span>
-            </div>
-            <div class="case-detail-row">
-                <span>Submitted</span>
-                <span>{{ result['submitted_at'] }}</span>
-            </div>
+            <div class="case-detail-row"><span>Species</span><span>{{ result['species'] }}</span></div>
+            <div class="case-detail-row"><span>Urgency</span><span>{{ result['urgency'] }}</span></div>
+            <div class="case-detail-row"><span>Location</span><span>{{ result['location'] }}</span></div>
+            <div class="case-detail-row"><span>Submitted</span><span>{{ result['submitted_at'] }}</span></div>
         </div>
 
         {% if result['severity'] %}
@@ -305,41 +166,31 @@
         </div>
         {% endif %}
 
-        <!-- ADDED (Phase 2): responder assignment info -->
+        {% if assigned_responder %}
         <div class="responder-box">
-            <h3>🚑 Response Details</h3>
-            <div class="responder-row">
-                <span>Response Status</span>
-                <span>
-                    {% set rs = result['response_status'] or 'Unassigned' %}
-                    <span class="response-status-tag
-                        {% if rs == 'Pending Response' %}pending
-                        {% elif rs == 'Responded' %}responded
-                        {% elif 'Escalated' in rs %}escalated
-                        {% else %}unassigned{% endif %}">{{ rs }}</span>
-                </span>
-            </div>
-            {% if assigned_responder %}
-            <div class="responder-row">
-                <span>Assigned To</span>
-                <span>{{ assigned_responder['name'] }}</span>
-            </div>
-            <div class="responder-row">
-                <span>Type</span>
-                <span><span class="responder-type-tag">{{ assigned_responder['responder_type'] }}</span></span>
-            </div>
-            <div class="responder-row">
-                <span>Contact</span>
-                <span>{{ assigned_responder['phone'] }}</span>
-            </div>
-            {% endif %}
+            <h3>🚑 Responder</h3>
+            <div class="responder-row"><span>Assigned To</span><span>{{ assigned_responder['name'] }}</span></div>
+            <div class="responder-row"><span>Type</span><span><span class="responder-type-tag">{{ assigned_responder['responder_type'] }}</span></span></div>
+            <div class="responder-row"><span>Contact</span><span>{{ assigned_responder['phone'] }}</span></div>
             {% if result['escalation_count'] and result['escalation_count'] > 0 %}
-            <div class="responder-row">
-                <span>Escalations</span>
-                <span>{{ result['escalation_count'] }}</span>
-            </div>
+            <div class="responder-row"><span>Escalations</span><span>{{ result['escalation_count'] }}</span></div>
             {% endif %}
         </div>
+        {% endif %}
+
+        <!-- ADDED (Phase 3): full timeline -->
+        {% if events %}
+        <div class="timeline-box">
+            <h3>📜 Case Timeline</h3>
+            {% for e in events %}
+            <div class="timeline-item">
+                <span class="t-type">{{ e['event_type'] }}</span>
+                <span class="t-time">{{ e['event_time'] }}</span>
+                {% if e['event_detail'] %}<div class="t-detail">{{ e['event_detail'] }}</div>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
         {% endif %}
     </div>
 </body>
