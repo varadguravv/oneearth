@@ -32,143 +32,136 @@
         }
         .main-header a { color: #fff; text-decoration: none; font-weight: 700; }
         .main-header .logout-link { font-weight: 500; font-size: 0.85rem; opacity: 0.85; }
-        .wrap { max-width: 1400px; margin: 2rem auto; padding: 0 1.5rem; }
+        .wrap { max-width: 1500px; margin: 2rem auto; padding: 0 1.5rem; }
         h1 { color: var(--primary-dark); margin-bottom: 0.5rem; }
         .subtext { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
-        .table-scroll { overflow-x: auto; }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #fff;
-            border-radius: var(--radius-md);
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 2.5rem;
-        }
-        th, td {
-            padding: 0.7rem 0.8rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.8rem;
-            white-space: nowrap;
-        }
-        th {
-            background: var(--primary-color);
-            color: #fff;
-            text-transform: uppercase;
-            font-size: 0.68rem;
-        }
-        tr:last-child td { border-bottom: none; }
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: var(--text-muted);
-        }
-        .status-form, .responder-form, .confirm-form {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-        .status-form select, .responder-form select {
-            padding: 0.35rem 0.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.75rem;
-            background: #fff;
-        }
-        .status-form button, .responder-form button, .confirm-form button {
-            background: var(--primary-color);
-            color: #fff;
-            border: none;
-            padding: 0.35rem 0.6rem;
-            border-radius: 6px;
-            font-size: 0.72rem;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .status-form button:hover, .responder-form button:hover, .confirm-form button:hover {
-            background: var(--primary-dark);
-        }
-        .confirm-form button { background: #0369a1; }
-        .confirm-form button:hover { background: #075985; }
-
-        .risk-pill {
-            display: inline-block;
-            padding: 0.25rem 0.6rem;
-            border-radius: 50px;
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
-        .risk-pill.severity-critical { background: #fde2e2; color: #b71c1c; }
-        .risk-pill.severity-high { background: #ffe9d6; color: #c25e00; }
-        .risk-pill.severity-moderate { background: #fff6d6; color: #a17d00; }
-        .risk-pill.severity-low { background: #e3f2e3; color: #1b5e20; }
-
-        /* ADDED (Phase 2): response status + section header styles */
-        .response-status-tag {
-            display: inline-block;
-            padding: 0.25rem 0.6rem;
-            border-radius: 50px;
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
-        .response-status-tag.pending { background: #fff6d6; color: #a17d00; }
-        .response-status-tag.responded { background: #e3f2e3; color: #1b5e20; }
-        .response-status-tag.escalated { background: #fde2e2; color: #b71c1c; }
-        .response-status-tag.unassigned { background: #eceff1; color: #546e7a; }
-        .response-status-tag.no-responder { background: #fde2e2; color: #b71c1c; }
-
-        .escalation-badge {
-            display: inline-block;
-            background: #fde2e2;
-            color: #b71c1c;
-            padding: 0.15rem 0.5rem;
-            border-radius: 50px;
-            font-size: 0.68rem;
-            font-weight: 700;
-        }
-
-        .section-heading {
-            display: flex;
-            align-items: baseline;
-            gap: 0.6rem;
-            margin-bottom: 0.5rem;
-        }
 
         .responder-list-box {
             background: #fff;
             border-radius: var(--radius-md);
             box-shadow: var(--shadow-sm);
             padding: 1.2rem 1.5rem;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
         }
-        .responder-list-box h2 {
-            font-size: 1rem;
-            color: var(--primary-dark);
-            margin-bottom: 0.8rem;
-        }
+        .responder-list-box h2 { font-size: 1rem; color: var(--primary-dark); margin-bottom: 0.8rem; }
         .responder-chip-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 0.6rem;
         }
-        .responder-chip {
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.6rem 0.8rem;
-            font-size: 0.78rem;
-        }
+        .responder-chip { border: 1px solid var(--border-color); border-radius: 8px; padding: 0.6rem 0.8rem; font-size: 0.78rem; }
         .responder-chip .r-name { font-weight: 700; color: var(--dark-slate); }
         .responder-chip .r-meta { color: var(--text-muted); font-size: 0.72rem; margin-top: 0.2rem; }
-        .avail-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 4px;
-        }
+        .avail-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
         .avail-dot.yes { background: #2e7d32; }
         .avail-dot.no { background: #d32f2f; }
+
+        /* ADDED (Phase 3): case card layout replaces the old flat table
+           so each case can show its own timeline + action buttons
+           without an unreadably wide table. */
+        .case-card {
+            background: #fff;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            padding: 1.3rem 1.5rem;
+            margin-bottom: 1.2rem;
+        }
+        .case-card-top {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 0.8rem;
+        }
+        .case-id-title { font-size: 1.05rem; font-weight: 800; color: var(--dark-slate); }
+        .case-meta-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 0.3rem; }
+
+        .pill { display: inline-block; padding: 0.25rem 0.65rem; border-radius: 50px; font-size: 0.72rem; font-weight: 700; }
+        .pill.severity-critical { background: #fde2e2; color: #b71c1c; }
+        .pill.severity-high { background: #ffe9d6; color: #c25e00; }
+        .pill.severity-moderate { background: #fff6d6; color: #a17d00; }
+        .pill.severity-low { background: #e3f2e3; color: #1b5e20; }
+        .pill.stage { background: #e8eaf6; color: #283593; }
+        .pill.timer { background: #eceff1; color: #37474f; }
+        .pill.response-pending { background: #fff6d6; color: #a17d00; }
+        .pill.response-responded { background: #e3f2e3; color: #1b5e20; }
+        .pill.response-escalated { background: #fde2e2; color: #b71c1c; }
+        .pill.response-unassigned { background: #eceff1; color: #546e7a; }
+        .pill.response-no-responder { background: #fde2e2; color: #b71c1c; }
+        .escalation-tag { background: #fde2e2; color: #b71c1c; font-size: 0.68rem; padding: 0.15rem 0.5rem; border-radius: 50px; font-weight: 700; }
+
+        .case-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 0.6rem;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        .case-details-grid strong { color: var(--dark-slate); display: block; font-size: 0.9rem; }
+
+        .action-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .action-btn {
+            border: none;
+            padding: 0.5rem 0.9rem;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            color: #fff;
+        }
+        .action-btn.accept { background: #2e7d32; }
+        .action-btn.decline { background: #d32f2f; }
+        .action-btn.enroute { background: #0369a1; }
+        .action-btn.arrived { background: #6a1b9a; }
+        .action-btn.complete { background: #00897b; }
+        .action-btn.close { background: #37474f; }
+        .action-btn.reassign { background: #757575; }
+        .action-btn:hover { opacity: 0.88; }
+        .status-form { display: flex; align-items: center; gap: 0.3rem; }
+        .status-form select {
+            padding: 0.4rem 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+
+        .timeline-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .timeline-toggle:hover { background: #f0f0f0; }
+        .timeline-list {
+            display: none;
+            margin-top: 0.8rem;
+            border-left: 3px solid var(--primary-color);
+            padding-left: 1rem;
+        }
+        .timeline-list.is-open { display: block; }
+        .timeline-item {
+            font-size: 0.8rem;
+            margin-bottom: 0.6rem;
+            position: relative;
+        }
+        .timeline-item .t-type { font-weight: 700; color: var(--dark-slate); }
+        .timeline-item .t-time { color: var(--text-muted); font-size: 0.72rem; margin-left: 0.5rem; }
+        .timeline-item .t-detail { color: var(--text-muted); font-size: 0.78rem; margin-top: 0.1rem; }
+
+        .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
     </style>
 </head>
 <body>
@@ -178,7 +171,6 @@
     </header>
     <div class="wrap">
 
-        <!-- ADDED (Phase 2): responder roster overview -->
         <div class="responder-list-box">
             <h2>🚑 Responder Roster ({{ responders|length }} total)</h2>
             <div class="responder-chip-grid">
@@ -194,101 +186,111 @@
             </div>
         </div>
 
-        <h1>Submitted Emergency Reports</h1>
-        <p class="subtext">Includes automated risk assessment (Phase 1) and responder matching/escalation (Phase 2).</p>
+        <h1>Emergency Cases</h1>
+        <p class="subtext">Risk assessment (Phase 1) · Responder matching & escalation (Phase 2) · Live rescue lifecycle (Phase 3)</p>
 
         {% if reports %}
-        <div class="table-scroll">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Species</th>
-                    <th>Urgency</th>
-                    <th>Reporter</th>
-                    <th>Phone</th>
-                    <th>Location</th>
-                    <th>Submitted</th>
-                    <th>Risk Score</th>
-                    <th>Severity</th>
-                    <th>Priority</th>
-                    <th>Case Status</th>
-                    <!-- ADDED (Phase 2) -->
-                    <th>Required Responder</th>
-                    <th>Assigned Responder</th>
-                    <th>Response Status</th>
-                    <th>Escalations</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for r in reports %}
-                <tr>
-                    <td>{{ r['id'] }}</td>
-                    <td>{{ r['species'] }}</td>
-                    <td>{{ r['urgency'] }}</td>
-                    <td>{{ r['reporter_name'] }}</td>
-                    <td>{{ r['phone'] }}</td>
-                    <td>{{ r['location'] }}</td>
-                    <td>{{ r['submitted_at'] }}</td>
-                    <td>{{ r['risk_score'] if r['risk_score'] is not none else '—' }}</td>
-                    <td>
-                        {% if r['severity'] %}
-                        <span class="risk-pill severity-{{ r['severity']|lower }}">{{ r['severity'] }}</span>
-                        {% else %}—{% endif %}
-                    </td>
-                    <td>{{ r['priority'] if r['priority'] else '—' }}</td>
-                    <td>
-                        <form class="status-form" action="{{ url_for('update_status', report_id=r['id']) }}" method="POST">
-                            <select name="status">
-                                {% for stage in stages %}
-                                <option value="{{ stage }}" {% if r['status'] == stage %}selected{% endif %}>{{ stage }}</option>
-                                {% endfor %}
-                            </select>
-                            <button type="submit">Update</button>
-                        </form>
-                    </td>
-                    <!-- ADDED (Phase 2) columns -->
-                    <td>{{ r['required_responder_type'] if r['required_responder_type'] else '—' }}</td>
-                    <td>
-                        {% if r['assigned_responder'] %}
-                        {{ r['assigned_responder']['name'] }}<br>
-                        <span style="font-size:0.68rem;color:#888;">{{ r['assigned_responder']['responder_type'] }}</span>
-                        {% else %}
-                        <em style="color:#999;">None</em>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% set rs = r['response_status'] or 'Unassigned' %}
-                        <span class="response-status-tag
-                            {% if rs == 'Pending Response' %}pending
-                            {% elif rs == 'Responded' %}responded
-                            {% elif 'Escalated' in rs %}escalated
-                            {% elif rs == 'No Suitable Responder' %}no-responder
-                            {% else %}unassigned{% endif %}">{{ rs }}</span>
-                    </td>
-                    <td>
-                        {% if r['escalation_count'] and r['escalation_count'] > 0 %}
-                        <span class="escalation-badge">{{ r['escalation_count'] }}x</span>
-                        {% else %}—{% endif %}
-                    </td>
-                    <td>
-                        <div style="display:flex; flex-direction:column; gap:0.3rem;">
-                            <form class="responder-form" action="{{ url_for('reassign_responder', report_id=r['id']) }}" method="POST">
-                                <button type="submit" title="Re-run matching and reassign the best available responder">🔄 Reassign</button>
-                            </form>
-                            {% if r['response_status'] == 'Pending Response' %}
-                            <form class="confirm-form" action="{{ url_for('confirm_response', report_id=r['id']) }}" method="POST">
-                                <button type="submit">✓ Confirm Response</button>
-                            </form>
+            {% for r in reports %}
+            <div class="case-card">
+                <div class="case-card-top">
+                    <div>
+                        <div class="case-id-title">Case #{{ r['id'] }} — {{ r['species'] }}</div>
+                        <div class="case-meta-row">
+                            {% if r['severity'] %}
+                            <span class="pill severity-{{ r['severity']|lower }}">{{ r['severity'] }} · {{ r['priority'] }}</span>
+                            {% endif %}
+                            <span class="pill stage">{{ r['rescue_stage'] or 'Reported' }}</span>
+                            <span class="pill timer">⏱ {{ r['elapsed'] }}</span>
+                            {% set rs = r['response_status'] or 'Unassigned' %}
+                            <span class="pill
+                                {% if rs == 'Pending Response' %}response-pending
+                                {% elif rs == 'Responded' %}response-responded
+                                {% elif 'Escalated' in rs %}response-escalated
+                                {% elif rs == 'No Suitable Responder' %}response-no-responder
+                                {% else %}response-unassigned{% endif %}">{{ rs }}</span>
+                            {% if r['escalation_count'] and r['escalation_count'] > 0 %}
+                            <span class="escalation-tag">{{ r['escalation_count'] }}x escalated</span>
                             {% endif %}
                         </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        </div>
+                    </div>
+                </div>
+
+                <div class="case-details-grid">
+                    <div><strong>{{ r['reporter_name'] }}</strong>Reporter · {{ r['phone'] }}</div>
+                    <div><strong>{{ r['location'] }}</strong>Location</div>
+                    <div><strong>{{ r['risk_score'] if r['risk_score'] is not none else '—' }}/100</strong>Risk Score</div>
+                    <div><strong>{{ r['required_responder_type'] if r['required_responder_type'] else '—' }}</strong>Required Type</div>
+                    <div>
+                        <strong>{% if r['assigned_responder'] %}{{ r['assigned_responder']['name'] }}{% else %}None{% endif %}</strong>
+                        Assigned Responder
+                    </div>
+                    <div><strong>{{ r['submitted_at'] }}</strong>Submitted</div>
+                </div>
+
+                <!-- ADDED (Phase 3): stage-appropriate action buttons -->
+                <div class="action-row">
+                    {% set stage = r['rescue_stage'] or 'Reported' %}
+
+                    {% if stage == 'Assigned' and r['response_status'] == 'Pending Response' %}
+                        <form action="{{ url_for('accept_case', report_id=r['id']) }}" method="POST">
+                            <button type="submit" class="action-btn accept">✓ Accept</button>
+                        </form>
+                        <form action="{{ url_for('decline_case', report_id=r['id']) }}" method="POST">
+                            <button type="submit" class="action-btn decline">✗ Decline</button>
+                        </form>
+                    {% elif stage == 'Accepted' %}
+                        <form action="{{ url_for('en_route_case', report_id=r['id']) }}" method="POST">
+                            <button type="submit" class="action-btn enroute">🚗 Mark En Route</button>
+                        </form>
+                    {% elif stage == 'En Route' %}
+                        <form action="{{ url_for('arrived_case', report_id=r['id']) }}" method="POST">
+                            <button type="submit" class="action-btn arrived">📍 Mark Arrived</button>
+                        </form>
+                    {% elif stage == 'Arrived' %}
+                        <form action="{{ url_for('complete_case', report_id=r['id']) }}" method="POST">
+                            <button type="submit" class="action-btn complete">✅ Mark Rescue Completed</button>
+                        </form>
+                    {% elif stage == 'Rescue Completed' %}
+                        <form action="{{ url_for('close_case', report_id=r['id']) }}" method="POST">
+                            <button type="submit" class="action-btn close">🔒 Close Case</button>
+                        </form>
+                    {% elif stage == 'Case Closed' %}
+                        <span style="color:#999; font-size:0.82rem; align-self:center;">Case closed — history preserved below.</span>
+                    {% endif %}
+
+                    {% if stage != 'Case Closed' %}
+                    <form action="{{ url_for('reassign_responder', report_id=r['id']) }}" method="POST">
+                        <button type="submit" class="action-btn reassign">🔄 Reassign</button>
+                    </form>
+                    {% endif %}
+
+                    <form class="status-form" action="{{ url_for('update_status', report_id=r['id']) }}" method="POST">
+                        <select name="status">
+                            {% for s in stages %}
+                            <option value="{{ s }}" {% if r['status'] == s %}selected{% endif %}>{{ s }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="action-btn reassign">Update Status</button>
+                    </form>
+                </div>
+
+                <!-- ADDED (Phase 3): expandable timeline -->
+                <button type="button" class="timeline-toggle" onclick="var t=document.getElementById('timeline-{{ r['id'] }}'); t.classList.toggle('is-open');">
+                    📜 View Timeline ({{ r['events']|length }} events)
+                </button>
+                <div class="timeline-list" id="timeline-{{ r['id'] }}">
+                    {% for e in r['events'] %}
+                    <div class="timeline-item">
+                        <span class="t-type">{{ e['event_type'] }}</span>
+                        <span class="t-time">{{ e['event_time'] }}</span>
+                        {% if e['event_detail'] %}
+                        <div class="t-detail">{{ e['event_detail'] }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
         {% else %}
         <div class="empty-state">No reports submitted yet.</div>
         {% endif %}
