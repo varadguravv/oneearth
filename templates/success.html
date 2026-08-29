@@ -14,17 +14,8 @@
             margin: 1.5rem 0;
             display: inline-block;
         }
-        .case-id-box p {
-            margin: 0;
-            font-size: 0.85rem;
-            color: #555;
-        }
-        .case-id-box .case-number {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: #1b5e20;
-            margin: 0.3rem 0;
-        }
+        .case-id-box p { margin: 0; font-size: 0.85rem; color: #555; }
+        .case-id-box .case-number { font-size: 1.6rem; font-weight: 800; color: #1b5e20; margin: 0.3rem 0; }
         .status-check-btn {
             display: inline-block;
             background: #263238;
@@ -47,49 +38,17 @@
             max-width: 420px;
             text-align: left;
         }
-        .risk-assessment-box h3 {
-            font-size: 0.95rem;
-            color: #263238;
-            margin-bottom: 0.9rem;
-            text-align: center;
-        }
-        .risk-badge-row {
-            display: flex;
-            justify-content: center;
-            gap: 0.6rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-        .risk-badge {
-            padding: 0.4rem 0.9rem;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 700;
-        }
+        .risk-assessment-box h3 { font-size: 0.95rem; color: #263238; margin-bottom: 0.9rem; text-align: center; }
+        .risk-badge-row { display: flex; justify-content: center; gap: 0.6rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .risk-badge { padding: 0.4rem 0.9rem; border-radius: 50px; font-size: 0.8rem; font-weight: 700; }
         .risk-badge.severity-critical { background: #fde2e2; color: #b71c1c; }
         .risk-badge.severity-high { background: #ffe9d6; color: #c25e00; }
         .risk-badge.severity-moderate { background: #fff6d6; color: #a17d00; }
         .risk-badge.severity-low { background: #e3f2e3; color: #1b5e20; }
-        .risk-score-text {
-            text-align: center;
-            font-size: 0.85rem;
-            color: #666;
-            margin-bottom: 1rem;
-        }
-        .risk-score-text strong {
-            font-size: 1.1rem;
-            color: #263238;
-        }
-        .risk-action-text {
-            font-size: 0.85rem;
-            color: #444;
-            line-height: 1.5;
-            background: #f8f9fa;
-            padding: 0.8rem;
-            border-radius: 6px;
-        }
+        .risk-score-text { text-align: center; font-size: 0.85rem; color: #666; margin-bottom: 1rem; }
+        .risk-score-text strong { font-size: 1.1rem; color: #263238; }
+        .risk-action-text { font-size: 0.85rem; color: #444; line-height: 1.5; background: #f8f9fa; padding: 0.8rem; border-radius: 6px; }
 
-        /* ADDED (Phase 2): assigned responder box */
         .responder-box {
             background: #fff;
             border: 2px solid #e0e0e0;
@@ -99,30 +58,28 @@
             max-width: 420px;
             text-align: left;
         }
-        .responder-box h3 {
-            font-size: 0.95rem;
-            color: #263238;
-            margin-bottom: 0.9rem;
-            text-align: center;
-        }
-        .responder-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.4rem 0;
-            font-size: 0.85rem;
-            border-bottom: 1px solid #f0f0f0;
-        }
+        .responder-box h3 { font-size: 0.95rem; color: #263238; margin-bottom: 0.9rem; text-align: center; }
+        .responder-row { display: flex; justify-content: space-between; padding: 0.4rem 0; font-size: 0.85rem; border-bottom: 1px solid #f0f0f0; }
         .responder-row:last-child { border-bottom: none; }
         .responder-row span:first-child { color: #888; }
         .responder-row span:last-child { font-weight: 600; color: #263238; }
-        .responder-type-tag {
+        .responder-type-tag { display: inline-block; background: #e8f5e9; color: #1b5e20; padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.72rem; font-weight: 700; }
+
+        /* ADDED (Phase 3): rescue stage + timer line */
+        .stage-line {
+            text-align: center;
+            font-size: 0.82rem;
+            color: #666;
+            margin-top: 0.6rem;
+        }
+        .stage-badge {
             display: inline-block;
-            background: #e8f5e9;
-            color: #1b5e20;
-            padding: 0.2rem 0.6rem;
+            background: #e8eaf6;
+            color: #283593;
+            padding: 0.25rem 0.7rem;
             border-radius: 50px;
-            font-size: 0.72rem;
             font-weight: 700;
+            font-size: 0.75rem;
         }
     </style>
 </head>
@@ -152,28 +109,20 @@
                 <p class="risk-score-text">Risk Score: <strong>{{ report['risk_score'] }}/100</strong></p>
                 <p class="risk-action-text">{{ report['recommended_action'] }}</p>
             </div>
+            <!-- ADDED (Phase 3) -->
+            <p class="stage-line">
+                Current stage: <span class="stage-badge">{{ report['rescue_stage'] or 'Reported' }}</span>
+                &nbsp;·&nbsp; Active for {{ elapsed }}
+            </p>
             {% endif %}
 
-            <!-- ADDED (Phase 2): Assigned responder -->
             {% if assigned_responder %}
             <div class="responder-box">
                 <h3>🚑 Responder Assigned</h3>
-                <div class="responder-row">
-                    <span>Name</span>
-                    <span>{{ assigned_responder['name'] }}</span>
-                </div>
-                <div class="responder-row">
-                    <span>Type</span>
-                    <span><span class="responder-type-tag">{{ assigned_responder['responder_type'] }}</span></span>
-                </div>
-                <div class="responder-row">
-                    <span>Contact</span>
-                    <span>{{ assigned_responder['phone'] }}</span>
-                </div>
-                <div class="responder-row">
-                    <span>Based near</span>
-                    <span>{{ assigned_responder['location'] }}</span>
-                </div>
+                <div class="responder-row"><span>Name</span><span>{{ assigned_responder['name'] }}</span></div>
+                <div class="responder-row"><span>Type</span><span><span class="responder-type-tag">{{ assigned_responder['responder_type'] }}</span></span></div>
+                <div class="responder-row"><span>Contact</span><span>{{ assigned_responder['phone'] }}</span></div>
+                <div class="responder-row"><span>Based near</span><span>{{ assigned_responder['location'] }}</span></div>
             </div>
             {% elif report and report['response_status'] == 'No Suitable Responder' %}
             <div class="responder-box">
