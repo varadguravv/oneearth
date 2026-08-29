@@ -4,11 +4,11 @@ import os
 import time
 from datetime import datetime
 
-# Phase 1 — unchanged, still the only place risk is actually scored
+# Phase 1 — unchanged
 from risk_assessment import calculate_risk_assessment
 
-# Phase 2 — new, separate modules for responder matching + escalation
-from responder_matching import recommend_responders, DEFAULT_INCIDENT_LAT, DEFAULT_INCIDENT_LON
+# Phase 2 — unchanged
+from responder_matching import recommend_responders
 from escalation import needs_escalation
 
 app = Flask(__name__)
@@ -28,12 +28,23 @@ STATUS_STAGES = [
 ]
 
 # ============================================================
-# ADDED (Phase 2): demo responder seed data.
-# Realistic sample data only — no real people. Coordinates are
-# spread around the same Pune-area coordinates already used
-# throughout the site's demo maps, so distance scoring has
-# something meaningful to differentiate on.
+# ADDED (Phase 3): the full rescue lifecycle, in order. This is
+# the master reference list for what stage a case is in — the
+# actual chronological record lives in the new case_events table,
+# since real cases may branch (e.g. Declined -> reassigned ->
+# Assigned again), which a fixed list alone can't represent.
 # ============================================================
+RESCUE_LIFECYCLE = [
+    'Reported',
+    'Assessed',
+    'Assigned',
+    'Accepted',
+    'En Route',
+    'Arrived',
+    'Rescue Completed',
+    'Case Closed',
+]
+
 DEMO_RESPONDERS = [
     ('Priya Sharma', 'Volunteer', '+91 98765 11111', 'Kothrud, Pune', 18.5074, 73.8077, 1, 1, 'urban,cattle'),
     ('Dr. Ananya Rao', 'Veterinarian', '+91 98765 22222', 'Baner, Pune', 18.5642, 73.7769, 1, 0, 'urban,cattle,avian'),
@@ -66,46 +77,28 @@ def init_db():
     ''')
     conn.commit()
 
-    c.execute("PRAGMA table_info(reports)")
-    columns = [row[1] for row in c.fetchall()]
-
-    if 'status' not in columns:
-        c.execute("ALTER TABLE reports ADD COLUMN status TEXT DEFAULT 'Report Received'")
-        conn.commit()
-
-    # Phase 1 columns (unchanged from before)
-    for col, coltype in [
-        ('risk_score', 'INTEGER'),
-        ('severity', 'TEXT'),
-        ('priority', 'TEXT'),
-        ('recommended_action', 'TEXT'),
-    ]:
-        if col not in columns:
-            c.execute(f"ALTER TABLE reports ADD COLUMN {col} {coltype}")
-            conn.commit()
-
-    # ============================================================
-    # ADDED (Phase 2): responder-assignment columns on the existing
-    # reports table, using the exact same safe migration pattern
-    # already used for every prior column. Existing rows are
-    # untouched; new columns default to NULL/'Unassigned'.
-    # ============================================================
-    for col, coltype in [
-        ('required_responder_type', 'TEXT'),
-        ('assigned_responder_id', 'INTEGER'),
-        ('assignment_time', 'TEXT'),
-        ('response_status', "TEXT DEFAULT 'Unassigned'"),
-        ('escalation_count', 'INTEGER DEFAULT 0'),
-    ]:
+    def ensure_column(col, coltype):
         c.execute("PRAGMA table_info(reports)")
-        current_cols = [row[1] for row in c.fetchall()]
-        if col not in current_cols:
+        existing = [row[1] for row in c.fetchall()]
+        if col not in existing:
             c.execute(f"ALTER TABLE reports ADD COLUMN {col} {coltype}")
             conn.commit()
 
-    # ============================================================
-    # ADDED (Phase 2): new, separate responders table.
-    # ============================================================
+    ensure_column('status', "TEXT DEFAULT 'Report Received'")
+    # Phase 1
+    ensure_column('risk_score', 'INTEGER')
+    ensure_column('severity', 'TEXT')
+    ensure_column('priority', 'TEXT')
+    ensure_column('recommended_action', 'TEXT')
+    # Phase 2
+    ensure_column('required_responder_type', 'TEXT')
+    ensure_column('assigned_responder_id', 'INTEGER')
+    ensure_column('assignment_time', 'TEXT')
+    ensure_column('response_status', "TEXT DEFAULT 'Unassigned'")
+    ensure_column('escalation_count', 'INTEGER DEFAULT 0')
+    # ADDED (Phase 3)
+    ensure_column('rescue_stage', "TEXT DEFAULT 'Reported'")
+
     c.execute('''
         CREATE TABLE IF NOT EXISTS responders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -122,17 +115,30 @@ def init_db():
     ''')
     conn.commit()
 
-    # Seed demo responders only if the table is empty, so re-running
-    # the app never duplicates or resets responder data.
     c.execute("SELECT COUNT(*) FROM responders")
-    count = c.fetchone()[0]
-    if count == 0:
+    if c.fetchone()[0] == 0:
         c.executemany('''
             INSERT INTO responders
             (name, responder_type, phone, location, latitude, longitude, available, active_cases, capabilities)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', DEMO_RESPONDERS)
         conn.commit()
+
+    # ============================================================
+    # ADDED (Phase 3): new table for the chronological case timeline.
+    # Each row is one timestamped event — this is the real audit
+    # trail, since the lifecycle can branch (declines, escalations).
+    # ============================================================
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS case_events (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            report_id INTEGER,
+            event_type TEXT,
+            event_detail TEXT,
+            event_time TEXT
+        )
+    ''')
+    conn.commit()
 
     conn.close()
 
@@ -141,6 +147,48 @@ init_db()
 
 last_submission_by_ip = {}
 MIN_SECONDS_BETWEEN_SUBMISSIONS = 20
+
+
+# ============================================================
+# ADDED (Phase 3): shared helpers
+# ============================================================
+def log_event(conn, report_id, event_type, event_detail=''):
+    c = conn.cursor()
+    now_str = time.strftime('%Y-%m-%d %H:%M:%S')
+    c.execute('''
+        INSERT INTO case_events (report_id, event_type, event_detail, event_time)
+        VALUES (?, ?, ?, ?)
+    ''', (report_id, event_type, event_detail, now_str))
+    conn.commit()
+
+
+def get_case_events(conn, report_id):
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute('SELECT * FROM case_events WHERE report_id = ? ORDER BY id ASC', (report_id,))
+    return c.fetchall()
+
+
+def human_elapsed(timestamp_str):
+    """Renders a timestamp as a short 'time elapsed since' string, e.g.
+    '42s', '5m', '2h 10m'. Used for the response timer."""
+    if not timestamp_str:
+        return '—'
+    try:
+        dt = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
+    except (TypeError, ValueError):
+        return '—'
+    seconds = int((datetime.now() - dt).total_seconds())
+    if seconds < 0:
+        seconds = 0
+    if seconds < 60:
+        return f"{seconds}s"
+    minutes = seconds // 60
+    if minutes < 60:
+        return f"{minutes}m"
+    hours = minutes // 60
+    remaining_minutes = minutes % 60
+    return f"{hours}h {remaining_minutes}m"
 
 
 def get_all_responders(conn):
@@ -159,13 +207,12 @@ def get_responder_by_id(conn, responder_id):
     return c.fetchone()
 
 
-def assign_best_responder(conn, report_id, species, severity, priority, description):
+def assign_best_responder(conn, report_id, species, severity, priority, description, is_reassignment=False):
     """
-    ADDED (Phase 2): runs the full recommend -> assign pipeline for a
-    single report. Used both at submission time and during manual
-    reassignment/escalation, so the logic only lives in one place.
-    Updates the report row AND the responders' active_cases counts.
-    Returns the assigned responder row, or None if nobody was suitable.
+    Runs the recommend -> assign pipeline for one report. Used at
+    submission time, on manual reassignment, on decline, and on
+    escalation, so the logic only lives in one place. Logs a
+    Phase 3 timeline event for whichever outcome occurs.
     """
     c = conn.cursor()
     all_responders = get_all_responders(conn)
@@ -182,6 +229,7 @@ def assign_best_responder(conn, report_id, species, severity, priority, descript
             WHERE id = ?
         ''', (required_type_str, report_id))
         conn.commit()
+        log_event(conn, report_id, 'No Suitable Responder Found', f'Required: {required_type_str}')
         return None
 
     best_responder, score, distance_km = ranked[0]
@@ -190,25 +238,24 @@ def assign_best_responder(conn, report_id, species, severity, priority, descript
     c.execute('''
         UPDATE reports
         SET required_responder_type = ?, assigned_responder_id = ?,
-            assignment_time = ?, response_status = 'Pending Response'
+            assignment_time = ?, response_status = 'Pending Response',
+            rescue_stage = 'Assigned'
         WHERE id = ?
     ''', (required_type_str, best_responder['id'], now_str, report_id))
 
-    c.execute('''
-        UPDATE responders SET active_cases = active_cases + 1 WHERE id = ?
-    ''', (best_responder['id'],))
+    c.execute('UPDATE responders SET active_cases = active_cases + 1 WHERE id = ?', (best_responder['id'],))
     conn.commit()
+
+    detail = f"{best_responder['name']} ({best_responder['responder_type']}), {distance_km} km away"
+    if is_reassignment:
+        detail += ' — reassigned'
+    log_event(conn, report_id, 'Responder Assigned', detail)
 
     return best_responder
 
 
 def run_escalation_check(conn):
-    """
-    ADDED (Phase 2): on-demand escalation sweep, called each time the
-    admin reports dashboard loads. No background scheduler needed for
-    this phase — checking on page load is sufficient to demonstrate
-    the full escalation flow locally.
-    """
+    """Phase 2 logic, unchanged, now also logging Phase 3 timeline events."""
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     c.execute("SELECT * FROM reports WHERE response_status = 'Pending Response'")
@@ -217,40 +264,72 @@ def run_escalation_check(conn):
     for report in pending:
         if needs_escalation(report):
             old_responder_id = report['assigned_responder_id']
+            old_responder = get_responder_by_id(conn, old_responder_id)
 
-            # Free up the old responder's slot before searching again,
-            # and exclude them from re-selection this round.
+            log_event(conn, report['id'], 'Escalated',
+                      f"No response from {old_responder['name'] if old_responder else 'assigned responder'} in time")
+
             all_responders = [r for r in get_all_responders(conn) if r['id'] != old_responder_id]
-
-            required_types, ranked = recommend_responders(
-                all_responders, report['species'], report['severity'],
-                report['priority'], report['description']
-            )
 
             if old_responder_id:
                 c.execute('UPDATE responders SET active_cases = MAX(active_cases - 1, 0) WHERE id = ?',
                           (old_responder_id,))
+                conn.commit()
 
-            if ranked:
-                new_responder, score, distance_km = ranked[0]
-                now_str = time.strftime('%Y-%m-%d %H:%M:%S')
-                c.execute('''
-                    UPDATE reports
-                    SET assigned_responder_id = ?, assignment_time = ?,
-                        response_status = 'Pending Response',
-                        escalation_count = escalation_count + 1
-                    WHERE id = ?
-                ''', (new_responder['id'], now_str, report['id']))
-                c.execute('UPDATE responders SET active_cases = active_cases + 1 WHERE id = ?',
-                          (new_responder['id'],))
-            else:
-                c.execute('''
-                    UPDATE reports
-                    SET response_status = 'Escalated - No Responder Available',
-                        escalation_count = escalation_count + 1
-                    WHERE id = ?
-                ''', (report['id'],))
+            c.execute('UPDATE reports SET escalation_count = escalation_count + 1 WHERE id = ?', (report['id'],))
             conn.commit()
+
+            assign_best_responder(
+                conn, report['id'], report['species'], report['severity'],
+                report['priority'], report['description'], is_reassignment=True
+            )
+
+
+def handle_decline(conn, report_id):
+    """
+    ADDED (Phase 3): a responder declining is handled immediately
+    (not on a timeout, unlike escalation) — find the next best
+    available responder right away and reassign.
+    """
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute('SELECT * FROM reports WHERE id = ?', (report_id,))
+    report = c.fetchone()
+    if not report:
+        return
+
+    old_responder_id = report['assigned_responder_id']
+    old_responder = get_responder_by_id(conn, old_responder_id)
+    log_event(conn, report_id, 'Declined',
+              f"Declined by {old_responder['name'] if old_responder else 'responder'}")
+
+    if old_responder_id:
+        c.execute('UPDATE responders SET active_cases = MAX(active_cases - 1, 0) WHERE id = ?',
+                  (old_responder_id,))
+        conn.commit()
+
+    all_responders = [r for r in get_all_responders(conn) if r['id'] != old_responder_id]
+    required_types, ranked = recommend_responders(
+        all_responders, report['species'], report['severity'], report['priority'], report['description']
+    )
+
+    if ranked:
+        new_responder, score, distance_km = ranked[0]
+        now_str = time.strftime('%Y-%m-%d %H:%M:%S')
+        c.execute('''
+            UPDATE reports
+            SET assigned_responder_id = ?, assignment_time = ?,
+                response_status = 'Pending Response', rescue_stage = 'Assigned'
+            WHERE id = ?
+        ''', (new_responder['id'], now_str, report_id))
+        c.execute('UPDATE responders SET active_cases = active_cases + 1 WHERE id = ?', (new_responder['id'],))
+        conn.commit()
+        log_event(conn, report_id, 'Responder Assigned',
+                  f"{new_responder['name']} ({new_responder['responder_type']}) after decline")
+    else:
+        c.execute("UPDATE reports SET response_status = 'No Suitable Responder' WHERE id = ?", (report_id,))
+        conn.commit()
+        log_event(conn, report_id, 'No Suitable Responder Found', 'after decline')
 
 
 @app.route('/')
@@ -296,20 +375,26 @@ def report_rescue():
         c.execute('''
             INSERT INTO reports (
                 species, urgency, reporter_name, phone, location, description,
-                submitted_at, status, risk_score, severity, priority, recommended_action
+                submitted_at, status, risk_score, severity, priority, recommended_action,
+                rescue_stage
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             species, urgency, reporter_name, phone, location, description,
             submitted_at, 'Report Received',
             assessment['risk_score'], assessment['severity'],
-            assessment['priority'], assessment['recommended_action']
+            assessment['priority'], assessment['recommended_action'],
+            'Assessed'
         ))
         conn.commit()
         case_id = c.lastrowid
 
-        # ADDED (Phase 2): automatically determine + assign the best
-        # available responder right after the report is created.
+        # ADDED (Phase 3): timeline events for the two steps that just happened
+        log_event(conn, case_id, 'Report Received', f'Reported by {reporter_name}')
+        log_event(conn, case_id, 'Risk Assessed',
+                  f"{assessment['severity']} severity, risk score {assessment['risk_score']}/100")
+
+        # Phase 2 — unchanged, now also logs a 'Responder Assigned' timeline event
         assign_best_responder(
             conn, case_id, species, assessment['severity'],
             assessment['priority'], description
@@ -330,17 +415,20 @@ def success():
     case_id = request.args.get('case_id')
     report = None
     assigned_responder = None
+    elapsed = None
     if case_id and case_id.isdigit():
         conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
         c.execute('SELECT * FROM reports WHERE id = ?', (case_id,))
         report = c.fetchone()
-        if report and report['assigned_responder_id']:
-            assigned_responder = get_responder_by_id(conn, report['assigned_responder_id'])
+        if report:
+            if report['assigned_responder_id']:
+                assigned_responder = get_responder_by_id(conn, report['assigned_responder_id'])
+            elapsed = human_elapsed(report['submitted_at'])
         conn.close()
     return render_template('success.html', case_id=case_id, report=report,
-                            assigned_responder=assigned_responder)
+                            assigned_responder=assigned_responder, elapsed=elapsed)
 
 
 @app.route('/awareness')
@@ -373,6 +461,8 @@ def check_status():
     result = None
     error = None
     assigned_responder = None
+    elapsed = None
+    events = []
     if request.method == 'POST':
         case_id = request.form.get('case_id', '').strip()
         if case_id.isdigit():
@@ -381,15 +471,19 @@ def check_status():
             c = conn.cursor()
             c.execute('SELECT * FROM reports WHERE id = ?', (case_id,))
             result = c.fetchone()
-            if result and result['assigned_responder_id']:
-                assigned_responder = get_responder_by_id(conn, result['assigned_responder_id'])
+            if result:
+                if result['assigned_responder_id']:
+                    assigned_responder = get_responder_by_id(conn, result['assigned_responder_id'])
+                elapsed = human_elapsed(result['submitted_at'])
+                events = get_case_events(conn, result['id'])
             conn.close()
             if not result:
                 error = "No case found with that number. Please check and try again."
         else:
             error = "Please enter a valid case number (numbers only)."
     return render_template('check_status.html', result=result, error=error,
-                            stages=STATUS_STAGES, assigned_responder=assigned_responder)
+                            stages=STATUS_STAGES, assigned_responder=assigned_responder,
+                            elapsed=elapsed, events=events)
 
 
 @app.route('/reports-login', methods=['GET', 'POST'])
@@ -417,10 +511,6 @@ def view_reports():
         return redirect(url_for('reports_login'))
 
     conn = sqlite3.connect(DB_PATH)
-
-    # ADDED (Phase 2): run the on-demand escalation sweep before
-    # displaying the dashboard, so any newly-overdue P1/P2 cases get
-    # reassigned before the admin even looks at them.
     run_escalation_check(conn)
 
     conn.row_factory = sqlite3.Row
@@ -430,19 +520,20 @@ def view_reports():
 
     responders = get_all_responders(conn)
     responders_by_id = {r['id']: r for r in responders}
-    conn.close()
 
-    # Enrich each report with its assigned responder's details for
-    # easy display in the template (sqlite3.Row is read-only, so we
-    # build plain dicts here rather than mutating the rows).
     enriched_reports = []
     for r in reports:
         d = dict(r)
         d['assigned_responder'] = responders_by_id.get(r['assigned_responder_id'])
+        # ADDED (Phase 3): elapsed timer + timeline per case
+        d['elapsed'] = human_elapsed(r['submitted_at'])
+        d['events'] = get_case_events(conn, r['id'])
         enriched_reports.append(d)
 
+    conn.close()
+
     return render_template('reports.html', reports=enriched_reports, stages=STATUS_STAGES,
-                            responders=responders)
+                            responders=responders, lifecycle=RESCUE_LIFECYCLE)
 
 
 @app.route('/update-status/<int:report_id>', methods=['POST'])
@@ -461,11 +552,6 @@ def update_status(report_id):
     return redirect(url_for('view_reports'))
 
 
-# ============================================================
-# ADDED (Phase 2): manual admin actions — reassign a case to a
-# different responder, or confirm that the assigned responder
-# has responded. Both require the existing admin login.
-# ============================================================
 @app.route('/reassign-responder/<int:report_id>', methods=['POST'])
 def reassign_responder(report_id):
     if not session.get('reports_authenticated'):
@@ -474,7 +560,6 @@ def reassign_responder(report_id):
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
-
     c.execute('SELECT * FROM reports WHERE id = ?', (report_id,))
     report = c.fetchone()
 
@@ -487,11 +572,8 @@ def reassign_responder(report_id):
 
         assign_best_responder(
             conn, report_id, report['species'], report['severity'],
-            report['priority'], report['description']
+            report['priority'], report['description'], is_reassignment=True
         )
-        # Manual reassignment doesn't count as an automatic escalation,
-        # but we still want it clearly separate from the original
-        # assignment — no escalation_count change here.
 
     conn.close()
     return redirect(url_for('view_reports'))
@@ -499,13 +581,106 @@ def reassign_responder(report_id):
 
 @app.route('/confirm-response/<int:report_id>', methods=['POST'])
 def confirm_response(report_id):
+    """Kept from Phase 2 for backward compatibility — now equivalent to Accept."""
     if not session.get('reports_authenticated'):
         return redirect(url_for('reports_login'))
 
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
-    c.execute("UPDATE reports SET response_status = 'Responded' WHERE id = ?", (report_id,))
+    c.execute("UPDATE reports SET response_status = 'Responded', rescue_stage = 'Accepted' WHERE id = ?",
+              (report_id,))
     conn.commit()
+    log_event(conn, report_id, 'Accepted', 'Confirmed via admin dashboard')
+    conn.close()
+    return redirect(url_for('view_reports'))
+
+
+# ============================================================
+# ADDED (Phase 3): rescue lifecycle action routes.
+# All admin-gated for now (no separate responder login exists yet —
+# this matches "smallest safe changes", not introducing new auth).
+# ============================================================
+@app.route('/case/<int:report_id>/accept', methods=['POST'])
+def accept_case(report_id):
+    if not session.get('reports_authenticated'):
+        return redirect(url_for('reports_login'))
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("UPDATE reports SET response_status = 'Responded', rescue_stage = 'Accepted' WHERE id = ?",
+              (report_id,))
+    conn.commit()
+    log_event(conn, report_id, 'Accepted', '')
+    conn.close()
+    return redirect(url_for('view_reports'))
+
+
+@app.route('/case/<int:report_id>/decline', methods=['POST'])
+def decline_case(report_id):
+    if not session.get('reports_authenticated'):
+        return redirect(url_for('reports_login'))
+    conn = sqlite3.connect(DB_PATH)
+    handle_decline(conn, report_id)
+    conn.close()
+    return redirect(url_for('view_reports'))
+
+
+@app.route('/case/<int:report_id>/en-route', methods=['POST'])
+def en_route_case(report_id):
+    if not session.get('reports_authenticated'):
+        return redirect(url_for('reports_login'))
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("UPDATE reports SET rescue_stage = 'En Route' WHERE id = ?", (report_id,))
+    conn.commit()
+    log_event(conn, report_id, 'En Route', '')
+    conn.close()
+    return redirect(url_for('view_reports'))
+
+
+@app.route('/case/<int:report_id>/arrived', methods=['POST'])
+def arrived_case(report_id):
+    if not session.get('reports_authenticated'):
+        return redirect(url_for('reports_login'))
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("UPDATE reports SET rescue_stage = 'Arrived' WHERE id = ?", (report_id,))
+    conn.commit()
+    log_event(conn, report_id, 'Arrived', '')
+    conn.close()
+    return redirect(url_for('view_reports'))
+
+
+@app.route('/case/<int:report_id>/complete', methods=['POST'])
+def complete_case(report_id):
+    if not session.get('reports_authenticated'):
+        return redirect(url_for('reports_login'))
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute('SELECT assigned_responder_id FROM reports WHERE id = ?', (report_id,))
+    row = c.fetchone()
+    c.execute("UPDATE reports SET rescue_stage = 'Rescue Completed', status = 'Animal Rescued' WHERE id = ?",
+              (report_id,))
+    conn.commit()
+    if row and row['assigned_responder_id']:
+        c.execute('UPDATE responders SET active_cases = MAX(active_cases - 1, 0) WHERE id = ?',
+                  (row['assigned_responder_id'],))
+        conn.commit()
+    log_event(conn, report_id, 'Rescue Completed', '')
+    conn.close()
+    return redirect(url_for('view_reports'))
+
+
+@app.route('/case/<int:report_id>/close', methods=['POST'])
+def close_case(report_id):
+    if not session.get('reports_authenticated'):
+        return redirect(url_for('reports_login'))
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("UPDATE reports SET rescue_stage = 'Case Closed', status = 'Recovering' WHERE id = ?",
+              (report_id,))
+    conn.commit()
+    log_event(conn, report_id, 'Case Closed', 'Full history preserved in reports table')
     conn.close()
     return redirect(url_for('view_reports'))
 
