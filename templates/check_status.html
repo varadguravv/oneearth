@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Check Case Status | OneEarth</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         :root {
@@ -32,7 +33,7 @@
         .nav-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
         .nav-links a:hover { color: #fff; }
 
-        .wrap { max-width: 700px; margin: 2.5rem auto; padding: 0 1.5rem; }
+        .wrap { max-width: 750px; margin: 2.5rem auto; padding: 0 1.5rem; }
 
         .lookup-box {
             background: #fff;
@@ -60,11 +61,13 @@
         }
         .result-box h2 { color: var(--primary-dark); font-size: 1.3rem; margin-bottom: 0.5rem; }
 
-        /* ADDED (Phase 3): rescue stage + timer badges */
         .top-badge-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.2rem; }
         .badge { padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.78rem; font-weight: 700; }
         .badge.stage { background: #e8eaf6; color: #283593; }
         .badge.timer { background: #eceff1; color: #37474f; }
+        .badge.distance { background: #e0f2f1; color: #00695c; }
+        .badge.eta { background: #fff3e0; color: #e65100; }
+        .badge.approx { background: #fdf6e3; color: #a17d00; }
 
         .status-track { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
         .status-stage { flex: 1; min-width: 100px; text-align: center; padding: 0.7rem 0.4rem; border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 700; background: #f1f1f1; color: #999; }
@@ -76,7 +79,7 @@
         .case-detail-row span:first-child { color: var(--text-muted); }
         .case-detail-row span:last-child { font-weight: 600; color: var(--dark-slate); }
 
-        .risk-box, .responder-box, .timeline-box {
+        .risk-box, .responder-box, .timeline-box, .map-box {
             background: #fff;
             border: 2px solid var(--border-color);
             border-radius: var(--radius-lg);
@@ -84,7 +87,7 @@
             box-shadow: var(--shadow-md);
             margin-bottom: 1.5rem;
         }
-        .risk-box h3, .responder-box h3, .timeline-box h3 { font-size: 1rem; color: var(--dark-slate); margin-bottom: 1rem; }
+        .risk-box h3, .responder-box h3, .timeline-box h3, .map-box h3 { font-size: 1rem; color: var(--dark-slate); margin-bottom: 1rem; }
         .risk-badge-row { display: flex; gap: 0.6rem; margin-bottom: 1rem; flex-wrap: wrap; }
         .risk-badge { padding: 0.4rem 0.9rem; border-radius: 50px; font-size: 0.8rem; font-weight: 700; }
         .risk-badge.severity-critical { background: #fde2e2; color: #b71c1c; }
@@ -101,11 +104,37 @@
         .responder-row span:last-child { font-weight: 600; color: var(--dark-slate); }
         .responder-type-tag { display: inline-block; background: #e8f5e9; color: var(--primary-dark); padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.72rem; font-weight: 700; }
 
-        /* ADDED (Phase 3): timeline */
         .timeline-item { border-left: 3px solid var(--primary-color); padding-left: 1rem; margin-bottom: 0.9rem; font-size: 0.85rem; }
         .timeline-item .t-type { font-weight: 700; color: var(--dark-slate); }
         .timeline-item .t-time { color: var(--text-muted); font-size: 0.72rem; margin-left: 0.5rem; }
         .timeline-item .t-detail { color: var(--text-muted); font-size: 0.8rem; margin-top: 0.2rem; }
+
+        /* ADDED (Phase 4): map + approximate-location note */
+        #trackingMap {
+            width: 100%;
+            height: 320px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+        .approx-note {
+            font-size: 0.78rem;
+            color: #a17d00;
+            background: #fdf6e3;
+            border: 1px solid rgba(251, 192, 45, 0.5);
+            padding: 0.6rem 0.9rem;
+            border-radius: 6px;
+            margin-top: 0.8rem;
+        }
+        .no-map-note {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 1rem;
+        }
+
+        @media (max-width: 480px) {
+            #trackingMap { height: 240px; }
+        }
     </style>
 </head>
 <body>
@@ -137,6 +166,13 @@
             <div class="top-badge-row">
                 <span class="badge stage">{{ result['rescue_stage'] or 'Reported' }}</span>
                 <span class="badge timer">⏱ Active for {{ elapsed }}</span>
+                {% if result['distance_km'] is not none %}
+                <span class="badge distance">📏 {{ result['distance_km'] }} km away</span>
+                <span class="badge eta">🕐 ~{{ result['eta_minutes'] }} min ETA</span>
+                {% endif %}
+                {% if not result['location_precise'] %}
+                <span class="badge approx">⚠️ Approximate location</span>
+                {% endif %}
             </div>
 
             <div class="status-track">
@@ -166,19 +202,32 @@
         </div>
         {% endif %}
 
+        <!-- ADDED (Phase 4): interactive tracking map -->
+        <div class="map-box">
+            <h3>🗺️ Live Rescue Tracking</h3>
+            {% if assigned_responder and result['incident_lat'] is not none %}
+            <div id="trackingMap"></div>
+            {% if not result['location_precise'] %}
+            <p class="approx-note">⚠️ This report didn't include precise GPS coordinates, so the incident marker shown is an approximate city-center location, not the exact spot reported.</p>
+            {% endif %}
+            {% else %}
+            <p class="no-map-note">Map will appear once a responder has been assigned to this case.</p>
+            {% endif %}
+        </div>
+
         {% if assigned_responder %}
         <div class="responder-box">
             <h3>🚑 Responder</h3>
             <div class="responder-row"><span>Assigned To</span><span>{{ assigned_responder['name'] }}</span></div>
             <div class="responder-row"><span>Type</span><span><span class="responder-type-tag">{{ assigned_responder['responder_type'] }}</span></span></div>
             <div class="responder-row"><span>Contact</span><span>{{ assigned_responder['phone'] }}</span></div>
+            <div class="responder-row"><span>Based near</span><span>{{ assigned_responder['location'] }}</span></div>
             {% if result['escalation_count'] and result['escalation_count'] > 0 %}
             <div class="responder-row"><span>Escalations</span><span>{{ result['escalation_count'] }}</span></div>
             {% endif %}
         </div>
         {% endif %}
 
-        <!-- ADDED (Phase 3): full timeline -->
         {% if events %}
         <div class="timeline-box">
             <h3>📜 Case Timeline</h3>
@@ -193,5 +242,58 @@
         {% endif %}
         {% endif %}
     </div>
+
+    <!-- ADDED (Phase 4): map initialization -->
+    {% if result and assigned_responder and result['incident_lat'] is not none %}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        const incidentLat = {{ result['incident_lat'] }};
+        const incidentLon = {{ result['incident_lon'] }};
+        const responderLat = {{ assigned_responder['latitude'] }};
+        const responderLon = {{ assigned_responder['longitude'] }};
+        const rescueStage = "{{ result['rescue_stage'] or 'Reported' }}";
+
+        const midLat = (incidentLat + responderLat) / 2;
+        const midLon = (incidentLon + responderLon) / 2;
+
+        const trackingMap = L.map('trackingMap').setView([midLat, midLon], 11);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            maxZoom: 19,
+            subdomains: 'abcd'
+        }).addTo(trackingMap);
+
+        const incidentIcon = L.divIcon({
+            html: '🚨',
+            className: 'emoji-marker',
+            iconSize: [30, 30]
+        });
+        const responderIcon = L.divIcon({
+            html: '{{ "🚑" if assigned_responder["responder_type"] == "Veterinarian" else ("🌿" if assigned_responder["responder_type"] == "Wildlife Specialist" else "🚗") }}',
+            className: 'emoji-marker',
+            iconSize: [30, 30]
+        });
+
+        L.marker([incidentLat, incidentLon], {icon: incidentIcon}).addTo(trackingMap)
+            .bindPopup('<b>Incident Location</b><br>{{ result["location"]|e }}');
+
+        L.marker([responderLat, responderLon], {icon: responderIcon}).addTo(trackingMap)
+            .bindPopup('<b>{{ assigned_responder["name"]|e }}</b><br>{{ assigned_responder["responder_type"] }}<br>Status: ' + rescueStage);
+
+        // Simple straight-line connector — not a real route, just a
+        // visual link between the two points shown on the map.
+        L.polyline([[incidentLat, incidentLon], [responderLat, responderLon]], {
+            color: '#2e7d32',
+            weight: 2,
+            dashArray: '6, 8'
+        }).addTo(trackingMap);
+
+        const bounds = L.latLngBounds([[incidentLat, incidentLon], [responderLat, responderLon]]);
+        trackingMap.fitBounds(bounds, {padding: [40, 40]});
+    </script>
+    <style>
+        .emoji-marker { font-size: 24px; text-align: center; line-height: 30px; }
+    </style>
+    {% endif %}
 </body>
 </html>
