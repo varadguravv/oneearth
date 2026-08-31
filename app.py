@@ -9,7 +9,12 @@ from risk_assessment import calculate_risk_assessment
 
 # Phase 2 — unchanged
 from responder_matching import recommend_responders
+
+# Phase 3 — unchanged
 from escalation import needs_escalation
+
+# Phase 4 — new, separate module
+from location_utils import parse_incident_coordinates, estimate_eta_minutes
 
 app = Flask(__name__)
 
@@ -27,22 +32,9 @@ STATUS_STAGES = [
     'Recovering'
 ]
 
-# ============================================================
-# ADDED (Phase 3): the full rescue lifecycle, in order. This is
-# the master reference list for what stage a case is in — the
-# actual chronological record lives in the new case_events table,
-# since real cases may branch (e.g. Declined -> reassigned ->
-# Assigned again), which a fixed list alone can't represent.
-# ============================================================
 RESCUE_LIFECYCLE = [
-    'Reported',
-    'Assessed',
-    'Assigned',
-    'Accepted',
-    'En Route',
-    'Arrived',
-    'Rescue Completed',
-    'Case Closed',
+    'Reported', 'Assessed', 'Assigned', 'Accepted',
+    'En Route', 'Arrived', 'Rescue Completed', 'Case Closed',
 ]
 
 DEMO_RESPONDERS = [
@@ -96,8 +88,14 @@ def init_db():
     ensure_column('assignment_time', 'TEXT')
     ensure_column('response_status', "TEXT DEFAULT 'Unassigned'")
     ensure_column('escalation_count', 'INTEGER DEFAULT 0')
-    # ADDED (Phase 3)
+    # Phase 3
     ensure_column('rescue_stage', "TEXT DEFAULT 'Reported'")
+    # ADDED (Phase 4): incident location + distance/ETA columns
+    ensure_column('incident_lat', 'REAL')
+    ensure_column('incident_lon', 'REAL')
+    ensure_column('location_precise', 'INTEGER DEFAULT 0')
+    ensure_column('distance_km', 'REAL')
+    ensure_column('eta_minutes', 'INTEGER')
 
     c.execute('''
         CREATE TABLE IF NOT EXISTS responders (
@@ -124,11 +122,6 @@ def init_db():
         ''', DEMO_RESPONDERS)
         conn.commit()
 
-    # ============================================================
-    # ADDED (Phase 3): new table for the chronological case timeline.
-    # Each row is one timestamped event — this is the real audit
-    # trail, since the lifecycle can branch (declines, escalations).
-    # ============================================================
     c.execute('''
         CREATE TABLE IF NOT EXISTS case_events (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -149,9 +142,6 @@ last_submission_by_ip = {}
 MIN_SECONDS_BETWEEN_SUBMISSIONS = 20
 
 
-# ============================================================
-# ADDED (Phase 3): shared helpers
-# ============================================================
 def log_event(conn, report_id, event_type, event_detail=''):
     c = conn.cursor()
     now_str = time.strftime('%Y-%m-%d %H:%M:%S')
@@ -170,8 +160,6 @@ def get_case_events(conn, report_id):
 
 
 def human_elapsed(timestamp_str):
-    """Renders a timestamp as a short 'time elapsed since' string, e.g.
-    '42s', '5m', '2h 10m'. Used for the response timer."""
     if not timestamp_str:
         return '—'
     try:
@@ -207,18 +195,20 @@ def get_responder_by_id(conn, responder_id):
     return c.fetchone()
 
 
-def assign_best_responder(conn, report_id, species, severity, priority, description, is_reassignment=False):
+def assign_best_responder(conn, report_id, species, severity, priority, description,
+                           incident_lat=None, incident_lon=None, is_reassignment=False):
     """
-    Runs the recommend -> assign pipeline for one report. Used at
-    submission time, on manual reassignment, on decline, and on
-    escalation, so the logic only lives in one place. Logs a
-    Phase 3 timeline event for whichever outcome occurs.
+    Unchanged Phase 2/3 pipeline, now also accepts the incident's real
+    coordinates (Phase 4) so distance/ETA are computed against the
+    actual reported location instead of always falling back to the
+    default city-center point.
     """
     c = conn.cursor()
     all_responders = get_all_responders(conn)
 
     required_types, ranked = recommend_responders(
-        all_responders, species, severity, priority, description
+        all_responders, species, severity, priority, description,
+        incident_lat=incident_lat, incident_lon=incident_lon
     )
     required_type_str = ', '.join(required_types)
 
@@ -235,18 +225,21 @@ def assign_best_responder(conn, report_id, species, severity, priority, descript
     best_responder, score, distance_km = ranked[0]
     now_str = time.strftime('%Y-%m-%d %H:%M:%S')
 
+    # ADDED (Phase 4): store distance + estimated ETA alongside the assignment
+    eta_minutes = estimate_eta_minutes(distance_km)
+
     c.execute('''
         UPDATE reports
         SET required_responder_type = ?, assigned_responder_id = ?,
             assignment_time = ?, response_status = 'Pending Response',
-            rescue_stage = 'Assigned'
+            rescue_stage = 'Assigned', distance_km = ?, eta_minutes = ?
         WHERE id = ?
-    ''', (required_type_str, best_responder['id'], now_str, report_id))
+    ''', (required_type_str, best_responder['id'], now_str, distance_km, eta_minutes, report_id))
 
     c.execute('UPDATE responders SET active_cases = active_cases + 1 WHERE id = ?', (best_responder['id'],))
     conn.commit()
 
-    detail = f"{best_responder['name']} ({best_responder['responder_type']}), {distance_km} km away"
+    detail = f"{best_responder['name']} ({best_responder['responder_type']}), {distance_km} km away, ~{eta_minutes} min ETA"
     if is_reassignment:
         detail += ' — reassigned'
     log_event(conn, report_id, 'Responder Assigned', detail)
@@ -255,7 +248,6 @@ def assign_best_responder(conn, report_id, species, severity, priority, descript
 
 
 def run_escalation_check(conn):
-    """Phase 2 logic, unchanged, now also logging Phase 3 timeline events."""
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     c.execute("SELECT * FROM reports WHERE response_status = 'Pending Response'")
@@ -281,16 +273,13 @@ def run_escalation_check(conn):
 
             assign_best_responder(
                 conn, report['id'], report['species'], report['severity'],
-                report['priority'], report['description'], is_reassignment=True
+                report['priority'], report['description'],
+                incident_lat=report['incident_lat'], incident_lon=report['incident_lon'],
+                is_reassignment=True
             )
 
 
 def handle_decline(conn, report_id):
-    """
-    ADDED (Phase 3): a responder declining is handled immediately
-    (not on a timeout, unlike escalation) — find the next best
-    available responder right away and reassign.
-    """
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     c.execute('SELECT * FROM reports WHERE id = ?', (report_id,))
@@ -308,28 +297,10 @@ def handle_decline(conn, report_id):
                   (old_responder_id,))
         conn.commit()
 
-    all_responders = [r for r in get_all_responders(conn) if r['id'] != old_responder_id]
-    required_types, ranked = recommend_responders(
-        all_responders, report['species'], report['severity'], report['priority'], report['description']
+    assign_best_responder(
+        conn, report_id, report['species'], report['severity'], report['priority'], report['description'],
+        incident_lat=report['incident_lat'], incident_lon=report['incident_lon']
     )
-
-    if ranked:
-        new_responder, score, distance_km = ranked[0]
-        now_str = time.strftime('%Y-%m-%d %H:%M:%S')
-        c.execute('''
-            UPDATE reports
-            SET assigned_responder_id = ?, assignment_time = ?,
-                response_status = 'Pending Response', rescue_stage = 'Assigned'
-            WHERE id = ?
-        ''', (new_responder['id'], now_str, report_id))
-        c.execute('UPDATE responders SET active_cases = active_cases + 1 WHERE id = ?', (new_responder['id'],))
-        conn.commit()
-        log_event(conn, report_id, 'Responder Assigned',
-                  f"{new_responder['name']} ({new_responder['responder_type']}) after decline")
-    else:
-        c.execute("UPDATE reports SET response_status = 'No Suitable Responder' WHERE id = ?", (report_id,))
-        conn.commit()
-        log_event(conn, report_id, 'No Suitable Responder Found', 'after decline')
 
 
 @app.route('/')
@@ -370,34 +341,38 @@ def report_rescue():
         # Phase 1 — unchanged
         assessment = calculate_risk_assessment(species, urgency, description, location)
 
+        # ADDED (Phase 4): extract real coordinates from the location
+        # text if the reporter used the existing map picker. Falls
+        # back gracefully to an approximate point otherwise.
+        incident_lat, incident_lon, location_precise = parse_incident_coordinates(location)
+
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute('''
             INSERT INTO reports (
                 species, urgency, reporter_name, phone, location, description,
                 submitted_at, status, risk_score, severity, priority, recommended_action,
-                rescue_stage
+                rescue_stage, incident_lat, incident_lon, location_precise
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             species, urgency, reporter_name, phone, location, description,
             submitted_at, 'Report Received',
             assessment['risk_score'], assessment['severity'],
             assessment['priority'], assessment['recommended_action'],
-            'Assessed'
+            'Assessed', incident_lat, incident_lon, int(location_precise)
         ))
         conn.commit()
         case_id = c.lastrowid
 
-        # ADDED (Phase 3): timeline events for the two steps that just happened
         log_event(conn, case_id, 'Report Received', f'Reported by {reporter_name}')
         log_event(conn, case_id, 'Risk Assessed',
                   f"{assessment['severity']} severity, risk score {assessment['risk_score']}/100")
 
-        # Phase 2 — unchanged, now also logs a 'Responder Assigned' timeline event
         assign_best_responder(
             conn, case_id, species, assessment['severity'],
-            assessment['priority'], description
+            assessment['priority'], description,
+            incident_lat=incident_lat, incident_lon=incident_lon
         )
         conn.close()
 
@@ -525,7 +500,6 @@ def view_reports():
     for r in reports:
         d = dict(r)
         d['assigned_responder'] = responders_by_id.get(r['assigned_responder_id'])
-        # ADDED (Phase 3): elapsed timer + timeline per case
         d['elapsed'] = human_elapsed(r['submitted_at'])
         d['events'] = get_case_events(conn, r['id'])
         enriched_reports.append(d)
@@ -572,7 +546,9 @@ def reassign_responder(report_id):
 
         assign_best_responder(
             conn, report_id, report['species'], report['severity'],
-            report['priority'], report['description'], is_reassignment=True
+            report['priority'], report['description'],
+            incident_lat=report['incident_lat'], incident_lon=report['incident_lon'],
+            is_reassignment=True
         )
 
     conn.close()
@@ -581,7 +557,6 @@ def reassign_responder(report_id):
 
 @app.route('/confirm-response/<int:report_id>', methods=['POST'])
 def confirm_response(report_id):
-    """Kept from Phase 2 for backward compatibility — now equivalent to Accept."""
     if not session.get('reports_authenticated'):
         return redirect(url_for('reports_login'))
 
@@ -595,11 +570,6 @@ def confirm_response(report_id):
     return redirect(url_for('view_reports'))
 
 
-# ============================================================
-# ADDED (Phase 3): rescue lifecycle action routes.
-# All admin-gated for now (no separate responder login exists yet —
-# this matches "smallest safe changes", not introducing new auth).
-# ============================================================
 @app.route('/case/<int:report_id>/accept', methods=['POST'])
 def accept_case(report_id):
     if not session.get('reports_authenticated'):
