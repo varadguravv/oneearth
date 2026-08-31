@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submitted Reports | OneEarth</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         :root {
@@ -16,39 +17,17 @@
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: #f4f7f5;
-            color: #333;
-            line-height: 1.6;
-        }
-        .main-header {
-            background-color: var(--primary-dark);
-            color: #fff;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        body { font-family: system-ui, -apple-system, sans-serif; background: #f4f7f5; color: #333; line-height: 1.6; }
+        .main-header { background-color: var(--primary-dark); color: #fff; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
         .main-header a { color: #fff; text-decoration: none; font-weight: 700; }
         .main-header .logout-link { font-weight: 500; font-size: 0.85rem; opacity: 0.85; }
         .wrap { max-width: 1500px; margin: 2rem auto; padding: 0 1.5rem; }
         h1 { color: var(--primary-dark); margin-bottom: 0.5rem; }
         .subtext { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
 
-        .responder-list-box {
-            background: #fff;
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
-            padding: 1.2rem 1.5rem;
-            margin-bottom: 2rem;
-        }
+        .responder-list-box { background: #fff; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); padding: 1.2rem 1.5rem; margin-bottom: 2rem; }
         .responder-list-box h2 { font-size: 1rem; color: var(--primary-dark); margin-bottom: 0.8rem; }
-        .responder-chip-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 0.6rem;
-        }
+        .responder-chip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.6rem; }
         .responder-chip { border: 1px solid var(--border-color); border-radius: 8px; padding: 0.6rem 0.8rem; font-size: 0.78rem; }
         .responder-chip .r-name { font-weight: 700; color: var(--dark-slate); }
         .responder-chip .r-meta { color: var(--text-muted); font-size: 0.72rem; margin-top: 0.2rem; }
@@ -56,24 +35,8 @@
         .avail-dot.yes { background: #2e7d32; }
         .avail-dot.no { background: #d32f2f; }
 
-        /* ADDED (Phase 3): case card layout replaces the old flat table
-           so each case can show its own timeline + action buttons
-           without an unreadably wide table. */
-        .case-card {
-            background: #fff;
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
-            padding: 1.3rem 1.5rem;
-            margin-bottom: 1.2rem;
-        }
-        .case-card-top {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 1rem;
-            margin-bottom: 0.8rem;
-        }
+        .case-card { background: #fff; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); padding: 1.3rem 1.5rem; margin-bottom: 1.2rem; }
+        .case-card-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.8rem; }
         .case-id-title { font-size: 1.05rem; font-weight: 800; color: var(--dark-slate); }
         .case-meta-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 0.3rem; }
 
@@ -84,6 +47,9 @@
         .pill.severity-low { background: #e3f2e3; color: #1b5e20; }
         .pill.stage { background: #e8eaf6; color: #283593; }
         .pill.timer { background: #eceff1; color: #37474f; }
+        .pill.distance { background: #e0f2f1; color: #00695c; }
+        .pill.eta { background: #fff3e0; color: #e65100; }
+        .pill.approx { background: #fdf6e3; color: #a17d00; }
         .pill.response-pending { background: #fff6d6; color: #a17d00; }
         .pill.response-responded { background: #e3f2e3; color: #1b5e20; }
         .pill.response-escalated { background: #fde2e2; color: #b71c1c; }
@@ -91,34 +57,11 @@
         .pill.response-no-responder { background: #fde2e2; color: #b71c1c; }
         .escalation-tag { background: #fde2e2; color: #b71c1c; font-size: 0.68rem; padding: 0.15rem 0.5rem; border-radius: 50px; font-weight: 700; }
 
-        .case-details-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 0.6rem;
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
-            padding: 0.8rem;
-            background: #f8f9fa;
-            border-radius: 6px;
-        }
+        .case-details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.6rem; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem; padding: 0.8rem; background: #f8f9fa; border-radius: 6px; }
         .case-details-grid strong { color: var(--dark-slate); display: block; font-size: 0.9rem; }
 
-        .action-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        .action-btn {
-            border: none;
-            padding: 0.5rem 0.9rem;
-            border-radius: 6px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            cursor: pointer;
-            color: #fff;
-        }
+        .action-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+        .action-btn { border: none; padding: 0.5rem 0.9rem; border-radius: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer; color: #fff; }
         .action-btn.accept { background: #2e7d32; }
         .action-btn.decline { background: #d32f2f; }
         .action-btn.enroute { background: #0369a1; }
@@ -128,14 +71,10 @@
         .action-btn.reassign { background: #757575; }
         .action-btn:hover { opacity: 0.88; }
         .status-form { display: flex; align-items: center; gap: 0.3rem; }
-        .status-form select {
-            padding: 0.4rem 0.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.75rem;
-        }
+        .status-form select { padding: 0.4rem 0.5rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.75rem; }
 
-        .timeline-toggle {
+        .toggle-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+        .timeline-toggle, .map-toggle {
             background: none;
             border: 1px solid var(--border-color);
             color: var(--text-muted);
@@ -144,22 +83,25 @@
             font-size: 0.75rem;
             cursor: pointer;
         }
-        .timeline-toggle:hover { background: #f0f0f0; }
-        .timeline-list {
-            display: none;
-            margin-top: 0.8rem;
-            border-left: 3px solid var(--primary-color);
-            padding-left: 1rem;
-        }
+        .timeline-toggle:hover, .map-toggle:hover { background: #f0f0f0; }
+        .timeline-list { display: none; margin-top: 0.8rem; border-left: 3px solid var(--primary-color); padding-left: 1rem; }
         .timeline-list.is-open { display: block; }
-        .timeline-item {
-            font-size: 0.8rem;
-            margin-bottom: 0.6rem;
-            position: relative;
-        }
+        .timeline-item { font-size: 0.8rem; margin-bottom: 0.6rem; position: relative; }
         .timeline-item .t-type { font-weight: 700; color: var(--dark-slate); }
         .timeline-item .t-time { color: var(--text-muted); font-size: 0.72rem; margin-left: 0.5rem; }
         .timeline-item .t-detail { color: var(--text-muted); font-size: 0.78rem; margin-top: 0.1rem; }
+
+        /* ADDED (Phase 4): lazy map container */
+        .case-map-container { display: none; margin-top: 0.8rem; }
+        .case-map-container.is-open { display: block; }
+        .case-map {
+            width: 100%;
+            height: 260px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        .approx-note-inline { font-size: 0.72rem; color: #a17d00; margin-top: 0.4rem; }
+        .emoji-marker { font-size: 22px; text-align: center; line-height: 28px; }
 
         .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
     </style>
@@ -187,7 +129,7 @@
         </div>
 
         <h1>Emergency Cases</h1>
-        <p class="subtext">Risk assessment (Phase 1) · Responder matching & escalation (Phase 2) · Live rescue lifecycle (Phase 3)</p>
+        <p class="subtext">Risk assessment (Phase 1) · Responder matching & escalation (Phase 2) · Rescue lifecycle (Phase 3) · Location & tracking (Phase 4)</p>
 
         {% if reports %}
             {% for r in reports %}
@@ -201,6 +143,13 @@
                             {% endif %}
                             <span class="pill stage">{{ r['rescue_stage'] or 'Reported' }}</span>
                             <span class="pill timer">⏱ {{ r['elapsed'] }}</span>
+                            {% if r['distance_km'] is not none %}
+                            <span class="pill distance">📏 {{ r['distance_km'] }} km</span>
+                            <span class="pill eta">🕐 ~{{ r['eta_minutes'] }} min</span>
+                            {% endif %}
+                            {% if r['incident_lat'] is not none and not r['location_precise'] %}
+                            <span class="pill approx">⚠️ Approx. location</span>
+                            {% endif %}
                             {% set rs = r['response_status'] or 'Unassigned' %}
                             <span class="pill
                                 {% if rs == 'Pending Response' %}response-pending
@@ -227,10 +176,8 @@
                     <div><strong>{{ r['submitted_at'] }}</strong>Submitted</div>
                 </div>
 
-                <!-- ADDED (Phase 3): stage-appropriate action buttons -->
                 <div class="action-row">
                     {% set stage = r['rescue_stage'] or 'Reported' %}
-
                     {% if stage == 'Assigned' and r['response_status'] == 'Pending Response' %}
                         <form action="{{ url_for('accept_case', report_id=r['id']) }}" method="POST">
                             <button type="submit" class="action-btn accept">✓ Accept</button>
@@ -274,26 +221,84 @@
                     </form>
                 </div>
 
-                <!-- ADDED (Phase 3): expandable timeline -->
-                <button type="button" class="timeline-toggle" onclick="var t=document.getElementById('timeline-{{ r['id'] }}'); t.classList.toggle('is-open');">
-                    📜 View Timeline ({{ r['events']|length }} events)
-                </button>
+                <div class="toggle-row">
+                    <button type="button" class="timeline-toggle" onclick="var t=document.getElementById('timeline-{{ r['id'] }}'); t.classList.toggle('is-open');">
+                        📜 Timeline ({{ r['events']|length }})
+                    </button>
+                    {% if r['assigned_responder'] and r['incident_lat'] is not none %}
+                    <button type="button" class="map-toggle" onclick="toggleCaseMap({{ r['id'] }}, {{ r['incident_lat'] }}, {{ r['incident_lon'] }}, {{ r['assigned_responder']['latitude'] }}, {{ r['assigned_responder']['longitude'] }}, '{{ r['assigned_responder']['name']|e }}', '{{ r['location']|e }}')">
+                        🗺️ View Map
+                    </button>
+                    {% endif %}
+                </div>
+
                 <div class="timeline-list" id="timeline-{{ r['id'] }}">
                     {% for e in r['events'] %}
                     <div class="timeline-item">
                         <span class="t-type">{{ e['event_type'] }}</span>
                         <span class="t-time">{{ e['event_time'] }}</span>
-                        {% if e['event_detail'] %}
-                        <div class="t-detail">{{ e['event_detail'] }}</div>
-                        {% endif %}
+                        {% if e['event_detail'] %}<div class="t-detail">{{ e['event_detail'] }}</div>{% endif %}
                     </div>
                     {% endfor %}
                 </div>
+
+                <!-- ADDED (Phase 4): lazy-loaded map container per case -->
+                {% if r['assigned_responder'] and r['incident_lat'] is not none %}
+                <div class="case-map-container" id="map-container-{{ r['id'] }}">
+                    <div class="case-map" id="case-map-{{ r['id'] }}"></div>
+                    {% if not r['location_precise'] %}
+                    <p class="approx-note-inline">⚠️ Approximate incident location (no precise GPS captured).</p>
+                    {% endif %}
+                </div>
+                {% endif %}
             </div>
             {% endfor %}
         {% else %}
         <div class="empty-state">No reports submitted yet.</div>
         {% endif %}
     </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        // ADDED (Phase 4): lazy per-case map initialization. Each map
+        // is only created the first time its "View Map" button is
+        // clicked, keyed by case ID, so dozens of cases on one page
+        // don't all initialize Leaflet maps at once.
+        const initializedMaps = {};
+
+        function toggleCaseMap(caseId, incidentLat, incidentLon, responderLat, responderLon, responderName, locationLabel) {
+            const container = document.getElementById('map-container-' + caseId);
+            container.classList.toggle('is-open');
+
+            if (container.classList.contains('is-open') && !initializedMaps[caseId]) {
+                const midLat = (incidentLat + responderLat) / 2;
+                const midLon = (incidentLon + responderLon) / 2;
+
+                const map = L.map('case-map-' + caseId).setView([midLat, midLon], 11);
+
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                    maxZoom: 19,
+                    subdomains: 'abcd'
+                }).addTo(map);
+
+                L.marker([incidentLat, incidentLon]).addTo(map).bindPopup('Incident: ' + locationLabel);
+                L.marker([responderLat, responderLon]).addTo(map).bindPopup(responderName);
+
+                L.polyline([[incidentLat, incidentLon], [responderLat, responderLon]], {
+                    color: '#2e7d32', weight: 2, dashArray: '6, 8'
+                }).addTo(map);
+
+                map.fitBounds(L.latLngBounds([[incidentLat, incidentLon], [responderLat, responderLon]]), {padding: [30, 30]});
+
+                initializedMaps[caseId] = map;
+            } else if (initializedMaps[caseId]) {
+                // Leaflet needs a size recalculation if it was
+                // initialized while hidden (display:none at init time
+                // isn't the case here since we init only when opened,
+                // but this keeps things robust if toggled repeatedly).
+                setTimeout(() => initializedMaps[caseId].invalidateSize(), 50);
+            }
+        }
+    </script>
 </body>
 </html>
