@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Report Success - OneEarth</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         .case-id-box {
@@ -29,16 +30,16 @@
         }
         .status-check-btn:hover { background: #37474f; }
 
-        .risk-assessment-box {
+        .risk-assessment-box, .responder-box, .map-box {
             background: #fff;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             padding: 1.4rem;
             margin: 1.5rem auto;
-            max-width: 420px;
+            max-width: 460px;
             text-align: left;
         }
-        .risk-assessment-box h3 { font-size: 0.95rem; color: #263238; margin-bottom: 0.9rem; text-align: center; }
+        .risk-assessment-box h3, .responder-box h3, .map-box h3 { font-size: 0.95rem; color: #263238; margin-bottom: 0.9rem; text-align: center; }
         .risk-badge-row { display: flex; justify-content: center; gap: 0.6rem; margin-bottom: 1rem; flex-wrap: wrap; }
         .risk-badge { padding: 0.4rem 0.9rem; border-radius: 50px; font-size: 0.8rem; font-weight: 700; }
         .risk-badge.severity-critical { background: #fde2e2; color: #b71c1c; }
@@ -49,38 +50,22 @@
         .risk-score-text strong { font-size: 1.1rem; color: #263238; }
         .risk-action-text { font-size: 0.85rem; color: #444; line-height: 1.5; background: #f8f9fa; padding: 0.8rem; border-radius: 6px; }
 
-        .responder-box {
-            background: #fff;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 1.4rem;
-            margin: 1.5rem auto;
-            max-width: 420px;
-            text-align: left;
-        }
-        .responder-box h3 { font-size: 0.95rem; color: #263238; margin-bottom: 0.9rem; text-align: center; }
         .responder-row { display: flex; justify-content: space-between; padding: 0.4rem 0; font-size: 0.85rem; border-bottom: 1px solid #f0f0f0; }
         .responder-row:last-child { border-bottom: none; }
         .responder-row span:first-child { color: #888; }
         .responder-row span:last-child { font-weight: 600; color: #263238; }
         .responder-type-tag { display: inline-block; background: #e8f5e9; color: #1b5e20; padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.72rem; font-weight: 700; }
 
-        /* ADDED (Phase 3): rescue stage + timer line */
-        .stage-line {
-            text-align: center;
-            font-size: 0.82rem;
-            color: #666;
-            margin-top: 0.6rem;
-        }
-        .stage-badge {
-            display: inline-block;
-            background: #e8eaf6;
-            color: #283593;
-            padding: 0.25rem 0.7rem;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 0.75rem;
-        }
+        .stage-line { text-align: center; font-size: 0.82rem; color: #666; margin-top: 0.6rem; }
+        .stage-badge { display: inline-block; background: #e8eaf6; color: #283593; padding: 0.25rem 0.7rem; border-radius: 50px; font-weight: 700; font-size: 0.75rem; }
+
+        /* ADDED (Phase 4) */
+        #successMap { width: 100%; height: 220px; border-radius: 8px; border: 1px solid #e0e0e0; }
+        .dist-eta-row { display: flex; justify-content: center; gap: 0.6rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .dist-eta-badge { padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.75rem; font-weight: 700; }
+        .dist-eta-badge.distance { background: #e0f2f1; color: #00695c; }
+        .dist-eta-badge.eta { background: #fff3e0; color: #e65100; }
+        .approx-note-small { font-size: 0.72rem; color: #a17d00; text-align: center; margin-top: 0.6rem; }
     </style>
 </head>
 <body>
@@ -109,7 +94,6 @@
                 <p class="risk-score-text">Risk Score: <strong>{{ report['risk_score'] }}/100</strong></p>
                 <p class="risk-action-text">{{ report['recommended_action'] }}</p>
             </div>
-            <!-- ADDED (Phase 3) -->
             <p class="stage-line">
                 Current stage: <span class="stage-badge">{{ report['rescue_stage'] or 'Reported' }}</span>
                 &nbsp;·&nbsp; Active for {{ elapsed }}
@@ -124,6 +108,23 @@
                 <div class="responder-row"><span>Contact</span><span>{{ assigned_responder['phone'] }}</span></div>
                 <div class="responder-row"><span>Based near</span><span>{{ assigned_responder['location'] }}</span></div>
             </div>
+
+            <!-- ADDED (Phase 4): map + distance/ETA -->
+            {% if report and report['incident_lat'] is not none %}
+            <div class="map-box">
+                <h3>🗺️ Rescue Tracking</h3>
+                <div class="dist-eta-row">
+                    {% if report['distance_km'] is not none %}
+                    <span class="dist-eta-badge distance">📏 {{ report['distance_km'] }} km away</span>
+                    <span class="dist-eta-badge eta">🕐 ~{{ report['eta_minutes'] }} min ETA</span>
+                    {% endif %}
+                </div>
+                <div id="successMap"></div>
+                {% if not report['location_precise'] %}
+                <p class="approx-note-small">⚠️ Approximate location shown — precise GPS wasn't captured for this report.</p>
+                {% endif %}
+            </div>
+            {% endif %}
             {% elif report and report['response_status'] == 'No Suitable Responder' %}
             <div class="responder-box">
                 <h3>⚠️ No Responder Currently Available</h3>
@@ -141,5 +142,34 @@
             <a href="{{ url_for('home') }}" class="btn call-btn">Return to Home</a>
         </div>
     </main>
+
+    {% if report and assigned_responder and report['incident_lat'] is not none %}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        const incidentLat = {{ report['incident_lat'] }};
+        const incidentLon = {{ report['incident_lon'] }};
+        const responderLat = {{ assigned_responder['latitude'] }};
+        const responderLon = {{ assigned_responder['longitude'] }};
+
+        const midLat = (incidentLat + responderLat) / 2;
+        const midLon = (incidentLon + responderLon) / 2;
+
+        const successMap = L.map('successMap').setView([midLat, midLon], 11);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            maxZoom: 19,
+            subdomains: 'abcd'
+        }).addTo(successMap);
+
+        L.marker([incidentLat, incidentLon]).addTo(successMap).bindPopup('Incident Location');
+        L.marker([responderLat, responderLon]).addTo(successMap).bindPopup('{{ assigned_responder["name"]|e }}');
+
+        L.polyline([[incidentLat, incidentLon], [responderLat, responderLon]], {
+            color: '#2e7d32', weight: 2, dashArray: '6, 8'
+        }).addTo(successMap);
+
+        successMap.fitBounds(L.latLngBounds([[incidentLat, incidentLon], [responderLat, responderLon]]), {padding: [30, 30]});
+    </script>
+    {% endif %}
 </body>
 </html>
