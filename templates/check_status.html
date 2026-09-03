@@ -8,41 +8,21 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         :root {
-            --primary-color: #2e7d32;
-            --primary-dark: #1b5e20;
-            --danger-color: #d32f2f;
-            --dark-slate: #263238;
-            --text-muted: #666666;
-            --border-color: #e0e0e0;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+            --primary-color: #2e7d32; --primary-dark: #1b5e20; --danger-color: #d32f2f;
+            --dark-slate: #263238; --text-muted: #666666; --border-color: #e0e0e0;
+            --radius-md: 8px; --radius-lg: 12px;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05); --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #f4f7f5 0%, #eef4f0 100%);
-            color: #333;
-            line-height: 1.6;
-        }
+        body { font-family: system-ui, -apple-system, sans-serif; background: linear-gradient(135deg, #f4f7f5 0%, #eef4f0 100%); color: #333; line-height: 1.6; }
         .main-header { background-color: var(--primary-dark); color: #fff; padding: 1rem 2rem; }
         .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 1.5rem; font-weight: 800; color: #fff; }
         .nav-links { display: flex; gap: 1.2rem; flex-wrap: wrap; }
         .nav-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
         .nav-links a:hover { color: #fff; }
-
         .wrap { max-width: 750px; margin: 2.5rem auto; padding: 0 1.5rem; }
-
-        .lookup-box {
-            background: #fff;
-            border-radius: var(--radius-lg);
-            padding: 2.5rem;
-            box-shadow: var(--shadow-md);
-            margin-bottom: 2rem;
-            text-align: center;
-        }
+        .lookup-box { background: #fff; border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-md); margin-bottom: 2rem; text-align: center; }
         .lookup-box h1 { color: var(--primary-dark); font-size: 1.7rem; margin-bottom: 0.5rem; }
         .lookup-box p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
         .lookup-form { display: flex; gap: 0.8rem; max-width: 400px; margin: 0 auto; }
@@ -50,24 +30,19 @@
         .lookup-form button { background: var(--primary-color); color: #fff; border: none; padding: 0.85rem 1.5rem; border-radius: var(--radius-md); font-weight: 700; cursor: pointer; }
         .lookup-form button:hover { background: var(--primary-dark); }
         .error-msg { color: var(--danger-color); font-size: 0.9rem; margin-top: 1rem; }
-
-        .result-box {
-            background: #fff;
-            border: 2px solid rgba(46, 125, 50, 0.2);
-            border-radius: var(--radius-lg);
-            padding: 2rem;
-            box-shadow: var(--shadow-md);
-            margin-bottom: 1.5rem;
-        }
+        .result-box { background: #fff; border: 2px solid rgba(46, 125, 50, 0.2); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-md); margin-bottom: 1.5rem; }
         .result-box h2 { color: var(--primary-dark); font-size: 1.3rem; margin-bottom: 0.5rem; }
 
         .top-badge-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.2rem; }
         .badge { padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.78rem; font-weight: 700; }
         .badge.stage { background: #e8eaf6; color: #283593; }
+        .badge.simple { background: var(--primary-color); color: #fff; }
         .badge.timer { background: #eceff1; color: #37474f; }
         .badge.distance { background: #e0f2f1; color: #00695c; }
         .badge.eta { background: #fff3e0; color: #e65100; }
         .badge.approx { background: #fdf6e3; color: #a17d00; }
+        .badge.live { background: #e8f5e9; color: #1b5e20; }
+        .badge.simulated { background: #eceff1; color: #607d8b; }
 
         .status-track { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
         .status-stage { flex: 1; min-width: 100px; text-align: center; padding: 0.7rem 0.4rem; border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 700; background: #f1f1f1; color: #999; }
@@ -79,14 +54,7 @@
         .case-detail-row span:first-child { color: var(--text-muted); }
         .case-detail-row span:last-child { font-weight: 600; color: var(--dark-slate); }
 
-        .risk-box, .responder-box, .timeline-box, .map-box {
-            background: #fff;
-            border: 2px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            padding: 1.6rem;
-            box-shadow: var(--shadow-md);
-            margin-bottom: 1.5rem;
-        }
+        .risk-box, .responder-box, .timeline-box, .map-box { background: #fff; border: 2px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.6rem; box-shadow: var(--shadow-md); margin-bottom: 1.5rem; }
         .risk-box h3, .responder-box h3, .timeline-box h3, .map-box h3 { font-size: 1rem; color: var(--dark-slate); margin-bottom: 1rem; }
         .risk-badge-row { display: flex; gap: 0.6rem; margin-bottom: 1rem; flex-wrap: wrap; }
         .risk-badge { padding: 0.4rem 0.9rem; border-radius: 50px; font-size: 0.8rem; font-weight: 700; }
@@ -109,32 +77,13 @@
         .timeline-item .t-time { color: var(--text-muted); font-size: 0.72rem; margin-left: 0.5rem; }
         .timeline-item .t-detail { color: var(--text-muted); font-size: 0.8rem; margin-top: 0.2rem; }
 
-        /* ADDED (Phase 4): map + approximate-location note */
-        #trackingMap {
-            width: 100%;
-            height: 320px;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-color);
-        }
-        .approx-note {
-            font-size: 0.78rem;
-            color: #a17d00;
-            background: #fdf6e3;
-            border: 1px solid rgba(251, 192, 45, 0.5);
-            padding: 0.6rem 0.9rem;
-            border-radius: 6px;
-            margin-top: 0.8rem;
-        }
-        .no-map-note {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            text-align: center;
-            padding: 1rem;
-        }
+        #trackingMap { width: 100%; height: 320px; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
+        .approx-note { font-size: 0.78rem; color: #a17d00; background: #fdf6e3; border: 1px solid rgba(251, 192, 45, 0.5); padding: 0.6rem 0.9rem; border-radius: 6px; margin-top: 0.8rem; }
+        .no-map-note { font-size: 0.85rem; color: var(--text-muted); text-align: center; padding: 1rem; }
+        .emoji-marker { font-size: 24px; text-align: center; line-height: 30px; }
+        .live-refresh-note { font-size: 0.72rem; color: var(--text-muted); text-align: center; margin-top: 0.6rem; }
 
-        @media (max-width: 480px) {
-            #trackingMap { height: 240px; }
-        }
+        @media (max-width: 480px) { #trackingMap { height: 240px; } }
     </style>
 </head>
 <body>
@@ -164,11 +113,17 @@
         <div class="result-box">
             <h2>Case #{{ result['id'] }}</h2>
             <div class="top-badge-row">
+                <span class="badge simple" id="simpleStatusBadge">{{ live.simple_status if live else 'Assigned' }}</span>
                 <span class="badge stage">{{ result['rescue_stage'] or 'Reported' }}</span>
                 <span class="badge timer">⏱ Active for {{ elapsed }}</span>
-                {% if result['distance_km'] is not none %}
-                <span class="badge distance">📏 {{ result['distance_km'] }} km away</span>
-                <span class="badge eta">🕐 ~{{ result['eta_minutes'] }} min ETA</span>
+                {% if live and live.live_distance_km is not none %}
+                <span class="badge distance" id="distanceBadge">📏 {{ live.live_distance_km }} km away</span>
+                <span class="badge eta" id="etaBadge">🕐 ~{{ live.live_eta_minutes }} min ETA</span>
+                {% endif %}
+                {% if live %}
+                <span class="badge {{ 'live' if live.is_live else 'simulated' }}" id="liveTag">
+                    {{ '🟢 Live position' if live.is_live else '🔵 Estimated position' }}
+                </span>
                 {% endif %}
                 {% if not result['location_precise'] %}
                 <span class="badge approx">⚠️ Approximate location</span>
@@ -178,9 +133,7 @@
             <div class="status-track">
                 {% set current_index = stages.index(result['status']) if result['status'] in stages else 0 %}
                 {% for stage in stages %}
-                <div class="status-stage {% if loop.index0 < current_index %}completed{% elif loop.index0 == current_index %}current{% endif %}">
-                    {{ stage }}
-                </div>
+                <div class="status-stage {% if loop.index0 < current_index %}completed{% elif loop.index0 == current_index %}current{% endif %}">{{ stage }}</div>
                 {% endfor %}
             </div>
 
@@ -202,26 +155,25 @@
         </div>
         {% endif %}
 
-        <!-- ADDED (Phase 4): interactive tracking map -->
         <div class="map-box">
             <h3>🗺️ Live Rescue Tracking</h3>
-            {% if assigned_responder and result['incident_lat'] is not none %}
+            {% if live and live.responder and result['incident_lat'] is not none %}
             <div id="trackingMap"></div>
             {% if not result['location_precise'] %}
-            <p class="approx-note">⚠️ This report didn't include precise GPS coordinates, so the incident marker shown is an approximate city-center location, not the exact spot reported.</p>
+            <p class="approx-note">⚠️ This report didn't include precise GPS coordinates, so the incident marker shown is approximate.</p>
             {% endif %}
+            <p class="live-refresh-note" id="refreshNote"></p>
             {% else %}
             <p class="no-map-note">Map will appear once a responder has been assigned to this case.</p>
             {% endif %}
         </div>
 
-        {% if assigned_responder %}
+        {% if live and live.responder %}
         <div class="responder-box">
             <h3>🚑 Responder</h3>
-            <div class="responder-row"><span>Assigned To</span><span>{{ assigned_responder['name'] }}</span></div>
-            <div class="responder-row"><span>Type</span><span><span class="responder-type-tag">{{ assigned_responder['responder_type'] }}</span></span></div>
-            <div class="responder-row"><span>Contact</span><span>{{ assigned_responder['phone'] }}</span></div>
-            <div class="responder-row"><span>Based near</span><span>{{ assigned_responder['location'] }}</span></div>
+            <div class="responder-row"><span>Assigned To</span><span>{{ live.responder['name'] }}</span></div>
+            <div class="responder-row"><span>Type</span><span><span class="responder-type-tag">{{ live.responder['responder_type'] }}</span></span></div>
+            <div class="responder-row"><span>Contact</span><span>{{ live.responder['phone'] }}</span></div>
             {% if result['escalation_count'] and result['escalation_count'] > 0 %}
             <div class="responder-row"><span>Escalations</span><span>{{ result['escalation_count'] }}</span></div>
             {% endif %}
@@ -243,57 +195,99 @@
         {% endif %}
     </div>
 
-    <!-- ADDED (Phase 4): map initialization -->
-    {% if result and assigned_responder and result['incident_lat'] is not none %}
+    {% if result and live and live.responder and result['incident_lat'] is not none %}
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
+        const caseId = {{ result['id'] }};
         const incidentLat = {{ result['incident_lat'] }};
         const incidentLon = {{ result['incident_lon'] }};
-        const responderLat = {{ assigned_responder['latitude'] }};
-        const responderLon = {{ assigned_responder['longitude'] }};
-        const rescueStage = "{{ result['rescue_stage'] or 'Reported' }}";
+        let responderLat = {{ live.live_lat }};
+        let responderLon = {{ live.live_lon }};
+        const responderType = "{{ live.responder['responder_type'] }}";
+        const responderName = "{{ live.responder['name']|e }}";
+        let currentStage = "{{ result['rescue_stage'] or 'Reported' }}";
+
+        const incidentIcon = L.divIcon({ html: '🚨', className: 'emoji-marker', iconSize: [30, 30] });
+        const responderIcon = L.divIcon({
+            html: responderType === 'Veterinarian' ? '🚑' : (responderType === 'Wildlife Specialist' ? '🌿' : '🚗'),
+            className: 'emoji-marker', iconSize: [30, 30]
+        });
 
         const midLat = (incidentLat + responderLat) / 2;
         const midLon = (incidentLon + responderLon) / 2;
-
         const trackingMap = L.map('trackingMap').setView([midLat, midLon], 11);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            maxZoom: 19,
-            subdomains: 'abcd'
+            maxZoom: 19, subdomains: 'abcd'
         }).addTo(trackingMap);
 
-        const incidentIcon = L.divIcon({
-            html: '🚨',
-            className: 'emoji-marker',
-            iconSize: [30, 30]
-        });
-        const responderIcon = L.divIcon({
-            html: '{{ "🚑" if assigned_responder["responder_type"] == "Veterinarian" else ("🌿" if assigned_responder["responder_type"] == "Wildlife Specialist" else "🚗") }}',
-            className: 'emoji-marker',
-            iconSize: [30, 30]
-        });
-
-        L.marker([incidentLat, incidentLon], {icon: incidentIcon}).addTo(trackingMap)
+        const incidentMarker = L.marker([incidentLat, incidentLon], {icon: incidentIcon}).addTo(trackingMap)
             .bindPopup('<b>Incident Location</b><br>{{ result["location"]|e }}');
 
-        L.marker([responderLat, responderLon], {icon: responderIcon}).addTo(trackingMap)
-            .bindPopup('<b>{{ assigned_responder["name"]|e }}</b><br>{{ assigned_responder["responder_type"] }}<br>Status: ' + rescueStage);
+        const responderMarker = L.marker([responderLat, responderLon], {icon: responderIcon}).addTo(trackingMap)
+            .bindPopup('<b>' + responderName + '</b><br>' + responderType + '<br>Status: ' + currentStage);
 
-        // Simple straight-line connector — not a real route, just a
-        // visual link between the two points shown on the map.
-        L.polyline([[incidentLat, incidentLon], [responderLat, responderLon]], {
-            color: '#2e7d32',
-            weight: 2,
-            dashArray: '6, 8'
+        let connector = L.polyline([[incidentLat, incidentLon], [responderLat, responderLon]], {
+            color: '#2e7d32', weight: 2, dashArray: '6, 8'
         }).addTo(trackingMap);
 
-        const bounds = L.latLngBounds([[incidentLat, incidentLon], [responderLat, responderLon]]);
-        trackingMap.fitBounds(bounds, {padding: [40, 40]});
+        trackingMap.fitBounds(L.latLngBounds([[incidentLat, incidentLon], [responderLat, responderLon]]), {padding: [40, 40]});
+
+        // ADDED (Phase 5): live polling — free client-side technique,
+        // no websockets/paid services. Only polls while movement is
+        // actually possible (En Route / Rescue In Progress); stops once
+        // resolved so it doesn't poll forever on a finished case.
+        const activeStages = ['En Route', 'Rescue In Progress'];
+        let pollCount = 0;
+        const refreshNote = document.getElementById('refreshNote');
+
+        function pollLiveStatus() {
+            if (!activeStages.includes(currentStage)) {
+                if (refreshNote) refreshNote.textContent = 'Tracking updates paused — case is not currently en route.';
+                return;
+            }
+            fetch('/api/case/' + caseId + '/live')
+                .then(r => r.json())
+                .then(data => {
+                    pollCount++;
+                    if (refreshNote) refreshNote.textContent = 'Live-updated ' + pollCount + ' time(s) — refreshes every 15s while en route.';
+
+                    currentStage = data.rescue_stage;
+                    if (data.responder_lat && data.responder_lon) {
+                        responderLat = data.responder_lat;
+                        responderLon = data.responder_lon;
+                        responderMarker.setLatLng([responderLat, responderLon]);
+                        connector.setLatLngs([[incidentLat, incidentLon], [responderLat, responderLon]]);
+                    }
+
+                    const distBadge = document.getElementById('distanceBadge');
+                    const etaBadge = document.getElementById('etaBadge');
+                    const simpleBadge = document.getElementById('simpleStatusBadge');
+                    const liveTag = document.getElementById('liveTag');
+                    if (distBadge && data.distance_km !== null) distBadge.textContent = '📏 ' + data.distance_km + ' km away';
+                    if (etaBadge && data.eta_minutes !== null) etaBadge.textContent = '🕐 ~' + data.eta_minutes + ' min ETA';
+                    if (simpleBadge) simpleBadge.textContent = data.simple_status;
+                    if (liveTag) liveTag.textContent = data.is_live ? '🟢 Live position' : '🔵 Estimated position';
+
+                    if (activeStages.includes(currentStage)) {
+                        setTimeout(pollLiveStatus, 15000);
+                    } else if (refreshNote) {
+                        refreshNote.textContent = 'Tracking complete — responder has reached this stage: ' + currentStage;
+                    }
+                })
+                .catch(() => {
+                    if (refreshNote) refreshNote.textContent = 'Could not refresh live position — will retry shortly.';
+                    setTimeout(pollLiveStatus, 15000);
+                });
+        }
+
+        if (activeStages.includes(currentStage)) {
+            setTimeout(pollLiveStatus, 15000);
+            if (refreshNote) refreshNote.textContent = 'Live tracking active — next update in 15s.';
+        } else if (refreshNote) {
+            refreshNote.textContent = 'Live position updates apply once the responder is en route.';
+        }
     </script>
-    <style>
-        .emoji-marker { font-size: 24px; text-align: center; line-height: 30px; }
-    </style>
     {% endif %}
 </body>
 </html>
