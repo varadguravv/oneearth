@@ -8,12 +8,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         :root {
-            --primary-color: #2e7d32;
-            --primary-dark: #1b5e20;
-            --dark-slate: #263238;
-            --text-muted: #666666;
-            --border-color: #e0e0e0;
-            --radius-md: 8px;
+            --primary-color: #2e7d32; --primary-dark: #1b5e20; --dark-slate: #263238;
+            --text-muted: #666666; --border-color: #e0e0e0; --radius-md: 8px;
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -46,10 +42,13 @@
         .pill.severity-moderate { background: #fff6d6; color: #a17d00; }
         .pill.severity-low { background: #e3f2e3; color: #1b5e20; }
         .pill.stage { background: #e8eaf6; color: #283593; }
+        .pill.simple { background: var(--primary-color); color: #fff; }
         .pill.timer { background: #eceff1; color: #37474f; }
         .pill.distance { background: #e0f2f1; color: #00695c; }
         .pill.eta { background: #fff3e0; color: #e65100; }
         .pill.approx { background: #fdf6e3; color: #a17d00; }
+        .pill.live { background: #e8f5e9; color: #1b5e20; }
+        .pill.simulated { background: #eceff1; color: #607d8b; }
         .pill.response-pending { background: #fff6d6; color: #a17d00; }
         .pill.response-responded { background: #e3f2e3; color: #1b5e20; }
         .pill.response-escalated { background: #fde2e2; color: #b71c1c; }
@@ -66,23 +65,17 @@
         .action-btn.decline { background: #d32f2f; }
         .action-btn.enroute { background: #0369a1; }
         .action-btn.arrived { background: #6a1b9a; }
-        .action-btn.complete { background: #00897b; }
+        .action-btn.progress { background: #00897b; }
+        .action-btn.complete { background: #2e7d32; }
         .action-btn.close { background: #37474f; }
         .action-btn.reassign { background: #757575; }
+        .action-btn.responder-link { background: #ef6c00; text-decoration: none; display: inline-block; }
         .action-btn:hover { opacity: 0.88; }
         .status-form { display: flex; align-items: center; gap: 0.3rem; }
         .status-form select { padding: 0.4rem 0.5rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.75rem; }
 
         .toggle-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
-        .timeline-toggle, .map-toggle {
-            background: none;
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            cursor: pointer;
-        }
+        .timeline-toggle, .map-toggle { background: none; border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.75rem; cursor: pointer; }
         .timeline-toggle:hover, .map-toggle:hover { background: #f0f0f0; }
         .timeline-list { display: none; margin-top: 0.8rem; border-left: 3px solid var(--primary-color); padding-left: 1rem; }
         .timeline-list.is-open { display: block; }
@@ -91,15 +84,9 @@
         .timeline-item .t-time { color: var(--text-muted); font-size: 0.72rem; margin-left: 0.5rem; }
         .timeline-item .t-detail { color: var(--text-muted); font-size: 0.78rem; margin-top: 0.1rem; }
 
-        /* ADDED (Phase 4): lazy map container */
         .case-map-container { display: none; margin-top: 0.8rem; }
         .case-map-container.is-open { display: block; }
-        .case-map {
-            width: 100%;
-            height: 260px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
+        .case-map { width: 100%; height: 260px; border-radius: 8px; border: 1px solid var(--border-color); }
         .approx-note-inline { font-size: 0.72rem; color: #a17d00; margin-top: 0.4rem; }
         .emoji-marker { font-size: 22px; text-align: center; line-height: 28px; }
 
@@ -118,10 +105,7 @@
             <div class="responder-chip-grid">
                 {% for r in responders %}
                 <div class="responder-chip">
-                    <div class="r-name">
-                        <span class="avail-dot {% if r['available'] %}yes{% else %}no{% endif %}"></span>
-                        {{ r['name'] }}
-                    </div>
+                    <div class="r-name"><span class="avail-dot {% if r['available'] %}yes{% else %}no{% endif %}"></span>{{ r['name'] }}</div>
                     <div class="r-meta">{{ r['responder_type'] }} · {{ r['location'] }} · {{ r['active_cases'] }} active case{{ 's' if r['active_cases'] != 1 else '' }}</div>
                 </div>
                 {% endfor %}
@@ -129,7 +113,7 @@
         </div>
 
         <h1>Emergency Cases</h1>
-        <p class="subtext">Risk assessment (Phase 1) · Responder matching & escalation (Phase 2) · Rescue lifecycle (Phase 3) · Location & tracking (Phase 4)</p>
+        <p class="subtext">Risk assessment (Phase 1) · Responder matching & escalation (Phase 2) · Rescue lifecycle (Phase 3) · Location tracking (Phase 4) · Real-time tracking (Phase 5)</p>
 
         {% if reports %}
             {% for r in reports %}
@@ -138,18 +122,16 @@
                     <div>
                         <div class="case-id-title">Case #{{ r['id'] }} — {{ r['species'] }}</div>
                         <div class="case-meta-row">
-                            {% if r['severity'] %}
-                            <span class="pill severity-{{ r['severity']|lower }}">{{ r['severity'] }} · {{ r['priority'] }}</span>
-                            {% endif %}
+                            <span class="pill simple">{{ r['simple_status'] }}</span>
+                            {% if r['severity'] %}<span class="pill severity-{{ r['severity']|lower }}">{{ r['severity'] }} · {{ r['priority'] }}</span>{% endif %}
                             <span class="pill stage">{{ r['rescue_stage'] or 'Reported' }}</span>
                             <span class="pill timer">⏱ {{ r['elapsed'] }}</span>
-                            {% if r['distance_km'] is not none %}
-                            <span class="pill distance">📏 {{ r['distance_km'] }} km</span>
-                            <span class="pill eta">🕐 ~{{ r['eta_minutes'] }} min</span>
+                            {% if r['live_distance_km'] is not none %}
+                            <span class="pill distance">📏 {{ r['live_distance_km'] }} km</span>
+                            <span class="pill eta">🕐 ~{{ r['live_eta_minutes'] }} min</span>
+                            <span class="pill {{ 'live' if r['is_live'] else 'simulated' }}">{{ '🟢 Live' if r['is_live'] else '🔵 Estimated' }}</span>
                             {% endif %}
-                            {% if r['incident_lat'] is not none and not r['location_precise'] %}
-                            <span class="pill approx">⚠️ Approx. location</span>
-                            {% endif %}
+                            {% if r['incident_lat'] is not none and not r['location_precise'] %}<span class="pill approx">⚠️ Approx. location</span>{% endif %}
                             {% set rs = r['response_status'] or 'Unassigned' %}
                             <span class="pill
                                 {% if rs == 'Pending Response' %}response-pending
@@ -157,9 +139,7 @@
                                 {% elif 'Escalated' in rs %}response-escalated
                                 {% elif rs == 'No Suitable Responder' %}response-no-responder
                                 {% else %}response-unassigned{% endif %}">{{ rs }}</span>
-                            {% if r['escalation_count'] and r['escalation_count'] > 0 %}
-                            <span class="escalation-tag">{{ r['escalation_count'] }}x escalated</span>
-                            {% endif %}
+                            {% if r['escalation_count'] and r['escalation_count'] > 0 %}<span class="escalation-tag">{{ r['escalation_count'] }}x escalated</span>{% endif %}
                         </div>
                     </div>
                 </div>
@@ -169,53 +149,39 @@
                     <div><strong>{{ r['location'] }}</strong>Location</div>
                     <div><strong>{{ r['risk_score'] if r['risk_score'] is not none else '—' }}/100</strong>Risk Score</div>
                     <div><strong>{{ r['required_responder_type'] if r['required_responder_type'] else '—' }}</strong>Required Type</div>
-                    <div>
-                        <strong>{% if r['assigned_responder'] %}{{ r['assigned_responder']['name'] }}{% else %}None{% endif %}</strong>
-                        Assigned Responder
-                    </div>
+                    <div><strong>{% if r['assigned_responder'] %}{{ r['assigned_responder']['name'] }}{% else %}None{% endif %}</strong>Assigned Responder</div>
                     <div><strong>{{ r['submitted_at'] }}</strong>Submitted</div>
                 </div>
 
                 <div class="action-row">
                     {% set stage = r['rescue_stage'] or 'Reported' %}
                     {% if stage == 'Assigned' and r['response_status'] == 'Pending Response' %}
-                        <form action="{{ url_for('accept_case', report_id=r['id']) }}" method="POST">
-                            <button type="submit" class="action-btn accept">✓ Accept</button>
-                        </form>
-                        <form action="{{ url_for('decline_case', report_id=r['id']) }}" method="POST">
-                            <button type="submit" class="action-btn decline">✗ Decline</button>
-                        </form>
+                        <form action="{{ url_for('accept_case', report_id=r['id']) }}" method="POST"><button type="submit" class="action-btn accept">✓ Accept</button></form>
+                        <form action="{{ url_for('decline_case', report_id=r['id']) }}" method="POST"><button type="submit" class="action-btn decline">✗ Decline</button></form>
                     {% elif stage == 'Accepted' %}
-                        <form action="{{ url_for('en_route_case', report_id=r['id']) }}" method="POST">
-                            <button type="submit" class="action-btn enroute">🚗 Mark En Route</button>
-                        </form>
+                        <form action="{{ url_for('en_route_case', report_id=r['id']) }}" method="POST"><button type="submit" class="action-btn enroute">🚗 Mark En Route</button></form>
                     {% elif stage == 'En Route' %}
-                        <form action="{{ url_for('arrived_case', report_id=r['id']) }}" method="POST">
-                            <button type="submit" class="action-btn arrived">📍 Mark Arrived</button>
-                        </form>
+                        <form action="{{ url_for('arrived_case', report_id=r['id']) }}" method="POST"><button type="submit" class="action-btn arrived">📍 Mark Arrived</button></form>
                     {% elif stage == 'Arrived' %}
-                        <form action="{{ url_for('complete_case', report_id=r['id']) }}" method="POST">
-                            <button type="submit" class="action-btn complete">✅ Mark Rescue Completed</button>
-                        </form>
+                        <form action="{{ url_for('start_rescue_case', report_id=r['id']) }}" method="POST"><button type="submit" class="action-btn progress">🩹 Start Rescue</button></form>
+                    {% elif stage == 'Rescue In Progress' %}
+                        <form action="{{ url_for('complete_case', report_id=r['id']) }}" method="POST"><button type="submit" class="action-btn complete">✅ Mark Rescue Completed</button></form>
                     {% elif stage == 'Rescue Completed' %}
-                        <form action="{{ url_for('close_case', report_id=r['id']) }}" method="POST">
-                            <button type="submit" class="action-btn close">🔒 Close Case</button>
-                        </form>
+                        <form action="{{ url_for('close_case', report_id=r['id']) }}" method="POST"><button type="submit" class="action-btn close">🔒 Mark Resolved</button></form>
                     {% elif stage == 'Case Closed' %}
-                        <span style="color:#999; font-size:0.82rem; align-self:center;">Case closed — history preserved below.</span>
+                        <span style="color:#999; font-size:0.82rem; align-self:center;">Resolved — history preserved below.</span>
                     {% endif %}
 
                     {% if stage != 'Case Closed' %}
-                    <form action="{{ url_for('reassign_responder', report_id=r['id']) }}" method="POST">
-                        <button type="submit" class="action-btn reassign">🔄 Reassign</button>
-                    </form>
+                    <form action="{{ url_for('reassign_responder', report_id=r['id']) }}" method="POST"><button type="submit" class="action-btn reassign">🔄 Reassign</button></form>
+                    {% if r['assigned_responder'] %}
+                    <a href="{{ url_for('responder_location_page', report_id=r['id']) }}" class="action-btn responder-link" target="_blank">📍 Responder Interface</a>
+                    {% endif %}
                     {% endif %}
 
                     <form class="status-form" action="{{ url_for('update_status', report_id=r['id']) }}" method="POST">
                         <select name="status">
-                            {% for s in stages %}
-                            <option value="{{ s }}" {% if r['status'] == s %}selected{% endif %}>{{ s }}</option>
-                            {% endfor %}
+                            {% for s in stages %}<option value="{{ s }}" {% if r['status'] == s %}selected{% endif %}>{{ s }}</option>{% endfor %}
                         </select>
                         <button type="submit" class="action-btn reassign">Update Status</button>
                     </form>
@@ -226,8 +192,8 @@
                         📜 Timeline ({{ r['events']|length }})
                     </button>
                     {% if r['assigned_responder'] and r['incident_lat'] is not none %}
-                    <button type="button" class="map-toggle" onclick="toggleCaseMap({{ r['id'] }}, {{ r['incident_lat'] }}, {{ r['incident_lon'] }}, {{ r['assigned_responder']['latitude'] }}, {{ r['assigned_responder']['longitude'] }}, '{{ r['assigned_responder']['name']|e }}', '{{ r['location']|e }}')">
-                        🗺️ View Map
+                    <button type="button" class="map-toggle" onclick="toggleCaseMap({{ r['id'] }}, {{ r['incident_lat'] }}, {{ r['incident_lon'] }}, {{ r['live_lat'] }}, {{ r['live_lon'] }}, '{{ r['assigned_responder']['name']|e }}', '{{ r['location']|e }}')">
+                        🗺️ View Live Map
                     </button>
                     {% endif %}
                 </div>
@@ -242,13 +208,10 @@
                     {% endfor %}
                 </div>
 
-                <!-- ADDED (Phase 4): lazy-loaded map container per case -->
                 {% if r['assigned_responder'] and r['incident_lat'] is not none %}
                 <div class="case-map-container" id="map-container-{{ r['id'] }}">
                     <div class="case-map" id="case-map-{{ r['id'] }}"></div>
-                    {% if not r['location_precise'] %}
-                    <p class="approx-note-inline">⚠️ Approximate incident location (no precise GPS captured).</p>
-                    {% endif %}
+                    {% if not r['location_precise'] %}<p class="approx-note-inline">⚠️ Approximate incident location (no precise GPS captured).</p>{% endif %}
                 </div>
                 {% endif %}
             </div>
@@ -260,10 +223,6 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
-        // ADDED (Phase 4): lazy per-case map initialization. Each map
-        // is only created the first time its "View Map" button is
-        // clicked, keyed by case ID, so dozens of cases on one page
-        // don't all initialize Leaflet maps at once.
         const initializedMaps = {};
 
         function toggleCaseMap(caseId, incidentLat, incidentLon, responderLat, responderLon, responderName, locationLabel) {
@@ -273,29 +232,22 @@
             if (container.classList.contains('is-open') && !initializedMaps[caseId]) {
                 const midLat = (incidentLat + responderLat) / 2;
                 const midLon = (incidentLon + responderLon) / 2;
-
                 const map = L.map('case-map-' + caseId).setView([midLat, midLon], 11);
 
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                    maxZoom: 19,
-                    subdomains: 'abcd'
+                    maxZoom: 19, subdomains: 'abcd'
                 }).addTo(map);
 
                 L.marker([incidentLat, incidentLon]).addTo(map).bindPopup('Incident: ' + locationLabel);
-                L.marker([responderLat, responderLon]).addTo(map).bindPopup(responderName);
+                L.marker([responderLat, responderLon]).addTo(map).bindPopup(responderName + ' (current position)');
 
                 L.polyline([[incidentLat, incidentLon], [responderLat, responderLon]], {
                     color: '#2e7d32', weight: 2, dashArray: '6, 8'
                 }).addTo(map);
 
                 map.fitBounds(L.latLngBounds([[incidentLat, incidentLon], [responderLat, responderLon]]), {padding: [30, 30]});
-
                 initializedMaps[caseId] = map;
             } else if (initializedMaps[caseId]) {
-                // Leaflet needs a size recalculation if it was
-                // initialized while hidden (display:none at init time
-                // isn't the case here since we init only when opened,
-                // but this keeps things robust if toggled repeatedly).
                 setTimeout(() => initializedMaps[caseId].invalidateSize(), 50);
             }
         }
