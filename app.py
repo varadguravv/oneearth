@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import sqlite3
 import os
 import time
@@ -8,13 +8,19 @@ from datetime import datetime
 from risk_assessment import calculate_risk_assessment
 
 # Phase 2 — unchanged
-from responder_matching import recommend_responders
+from responder_matching import recommend_responders, haversine_km
 
 # Phase 3 — unchanged
 from escalation import needs_escalation
 
-# Phase 4 — new, separate module
+# Phase 4 — unchanged
 from location_utils import parse_incident_coordinates, estimate_eta_minutes
+
+# Phase 5 — new
+from live_tracking import (
+    get_live_position, compute_live_distance_eta,
+    simulate_responder_movement, simplify_stage_label
+)
 
 app = Flask(__name__)
 
@@ -24,17 +30,13 @@ REPORTS_PASSWORD = os.environ.get('REPORTS_PASSWORD', 'oneearth2026')
 DB_PATH = os.path.join(os.path.dirname(__file__), 'reports.db')
 
 STATUS_STAGES = [
-    'Report Received',
-    'Rescue Team Assigned',
-    'Team En Route',
-    'Animal Rescued',
-    'Under Treatment',
-    'Recovering'
+    'Report Received', 'Rescue Team Assigned', 'Team En Route',
+    'Animal Rescued', 'Under Treatment', 'Recovering'
 ]
 
 RESCUE_LIFECYCLE = [
-    'Reported', 'Assessed', 'Assigned', 'Accepted',
-    'En Route', 'Arrived', 'Rescue Completed', 'Case Closed',
+    'Reported', 'Assessed', 'Assigned', 'Accepted', 'En Route',
+    'Arrived', 'Rescue In Progress', 'Rescue Completed', 'Case Closed',
 ]
 
 DEMO_RESPONDERS = [
@@ -51,67 +53,57 @@ DEMO_RESPONDERS = [
 ]
 
 
+def _ensure_column(c, conn, table, col, coltype):
+    c.execute(f"PRAGMA table_info({table})")
+    existing = [row[1] for row in c.fetchall()]
+    if col not in existing:
+        c.execute(f"ALTER TABLE {table} ADD COLUMN {col} {coltype}")
+        conn.commit()
+
+
 def init_db():
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute('''
         CREATE TABLE IF NOT EXISTS reports (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            species TEXT,
-            urgency TEXT,
-            reporter_name TEXT,
-            phone TEXT,
-            location TEXT,
-            description TEXT,
-            submitted_at TEXT,
+            species TEXT, urgency TEXT, reporter_name TEXT, phone TEXT,
+            location TEXT, description TEXT, submitted_at TEXT,
             status TEXT DEFAULT 'Report Received'
         )
     ''')
     conn.commit()
 
-    def ensure_column(col, coltype):
-        c.execute("PRAGMA table_info(reports)")
-        existing = [row[1] for row in c.fetchall()]
-        if col not in existing:
-            c.execute(f"ALTER TABLE reports ADD COLUMN {col} {coltype}")
-            conn.commit()
-
-    ensure_column('status', "TEXT DEFAULT 'Report Received'")
-    # Phase 1
-    ensure_column('risk_score', 'INTEGER')
-    ensure_column('severity', 'TEXT')
-    ensure_column('priority', 'TEXT')
-    ensure_column('recommended_action', 'TEXT')
-    # Phase 2
-    ensure_column('required_responder_type', 'TEXT')
-    ensure_column('assigned_responder_id', 'INTEGER')
-    ensure_column('assignment_time', 'TEXT')
-    ensure_column('response_status', "TEXT DEFAULT 'Unassigned'")
-    ensure_column('escalation_count', 'INTEGER DEFAULT 0')
-    # Phase 3
-    ensure_column('rescue_stage', "TEXT DEFAULT 'Reported'")
-    # ADDED (Phase 4): incident location + distance/ETA columns
-    ensure_column('incident_lat', 'REAL')
-    ensure_column('incident_lon', 'REAL')
-    ensure_column('location_precise', 'INTEGER DEFAULT 0')
-    ensure_column('distance_km', 'REAL')
-    ensure_column('eta_minutes', 'INTEGER')
+    for col, coltype in [
+        ('status', "TEXT DEFAULT 'Report Received'"),
+        ('risk_score', 'INTEGER'), ('severity', 'TEXT'), ('priority', 'TEXT'),
+        ('recommended_action', 'TEXT'),
+        ('required_responder_type', 'TEXT'), ('assigned_responder_id', 'INTEGER'),
+        ('assignment_time', 'TEXT'), ('response_status', "TEXT DEFAULT 'Unassigned'"),
+        ('escalation_count', 'INTEGER DEFAULT 0'),
+        ('rescue_stage', "TEXT DEFAULT 'Reported'"),
+        ('incident_lat', 'REAL'), ('incident_lon', 'REAL'),
+        ('location_precise', 'INTEGER DEFAULT 0'),
+        ('distance_km', 'REAL'), ('eta_minutes', 'INTEGER'),
+    ]:
+        _ensure_column(c, conn, 'reports', col, coltype)
 
     c.execute('''
         CREATE TABLE IF NOT EXISTS responders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            responder_type TEXT,
-            phone TEXT,
-            location TEXT,
-            latitude REAL,
-            longitude REAL,
-            available INTEGER DEFAULT 1,
-            active_cases INTEGER DEFAULT 0,
-            capabilities TEXT
+            name TEXT, responder_type TEXT, phone TEXT, location TEXT,
+            latitude REAL, longitude REAL, available INTEGER DEFAULT 1,
+            active_cases INTEGER DEFAULT 0, capabilities TEXT
         )
     ''')
     conn.commit()
+
+    for col, coltype in [
+        ('current_lat', 'REAL'),
+        ('current_lon', 'REAL'),
+        ('last_location_update', 'TEXT'),
+    ]:
+        _ensure_column(c, conn, 'responders', col, coltype)
 
     c.execute("SELECT COUNT(*) FROM responders")
     if c.fetchone()[0] == 0:
@@ -125,14 +117,10 @@ def init_db():
     c.execute('''
         CREATE TABLE IF NOT EXISTS case_events (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            report_id INTEGER,
-            event_type TEXT,
-            event_detail TEXT,
-            event_time TEXT
+            report_id INTEGER, event_type TEXT, event_detail TEXT, event_time TEXT
         )
     ''')
     conn.commit()
-
     conn.close()
 
 
@@ -145,10 +133,8 @@ MIN_SECONDS_BETWEEN_SUBMISSIONS = 20
 def log_event(conn, report_id, event_type, event_detail=''):
     c = conn.cursor()
     now_str = time.strftime('%Y-%m-%d %H:%M:%S')
-    c.execute('''
-        INSERT INTO case_events (report_id, event_type, event_detail, event_time)
-        VALUES (?, ?, ?, ?)
-    ''', (report_id, event_type, event_detail, now_str))
+    c.execute('INSERT INTO case_events (report_id, event_type, event_detail, event_time) VALUES (?, ?, ?, ?)',
+              (report_id, event_type, event_detail, now_str))
     conn.commit()
 
 
@@ -166,17 +152,14 @@ def human_elapsed(timestamp_str):
         dt = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
     except (TypeError, ValueError):
         return '—'
-    seconds = int((datetime.now() - dt).total_seconds())
-    if seconds < 0:
-        seconds = 0
+    seconds = max(0, int((datetime.now() - dt).total_seconds()))
     if seconds < 60:
         return f"{seconds}s"
     minutes = seconds // 60
     if minutes < 60:
         return f"{minutes}m"
     hours = minutes // 60
-    remaining_minutes = minutes % 60
-    return f"{hours}h {remaining_minutes}m"
+    return f"{hours}h {minutes % 60}m"
 
 
 def get_all_responders(conn):
@@ -195,14 +178,15 @@ def get_responder_by_id(conn, responder_id):
     return c.fetchone()
 
 
+def get_report_by_id(conn, report_id):
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute('SELECT * FROM reports WHERE id = ?', (report_id,))
+    return c.fetchone()
+
+
 def assign_best_responder(conn, report_id, species, severity, priority, description,
                            incident_lat=None, incident_lon=None, is_reassignment=False):
-    """
-    Unchanged Phase 2/3 pipeline, now also accepts the incident's real
-    coordinates (Phase 4) so distance/ETA are computed against the
-    actual reported location instead of always falling back to the
-    default city-center point.
-    """
     c = conn.cursor()
     all_responders = get_all_responders(conn)
 
@@ -213,30 +197,28 @@ def assign_best_responder(conn, report_id, species, severity, priority, descript
     required_type_str = ', '.join(required_types)
 
     if not ranked:
-        c.execute('''
-            UPDATE reports
-            SET required_responder_type = ?, response_status = 'No Suitable Responder'
-            WHERE id = ?
-        ''', (required_type_str, report_id))
+        c.execute("UPDATE reports SET required_responder_type = ?, response_status = 'No Suitable Responder' WHERE id = ?",
+                  (required_type_str, report_id))
         conn.commit()
         log_event(conn, report_id, 'No Suitable Responder Found', f'Required: {required_type_str}')
         return None
 
     best_responder, score, distance_km = ranked[0]
     now_str = time.strftime('%Y-%m-%d %H:%M:%S')
-
-    # ADDED (Phase 4): store distance + estimated ETA alongside the assignment
     eta_minutes = estimate_eta_minutes(distance_km)
 
     c.execute('''
         UPDATE reports
-        SET required_responder_type = ?, assigned_responder_id = ?,
-            assignment_time = ?, response_status = 'Pending Response',
-            rescue_stage = 'Assigned', distance_km = ?, eta_minutes = ?
+        SET required_responder_type = ?, assigned_responder_id = ?, assignment_time = ?,
+            response_status = 'Pending Response', rescue_stage = 'Assigned',
+            distance_km = ?, eta_minutes = ?
         WHERE id = ?
     ''', (required_type_str, best_responder['id'], now_str, distance_km, eta_minutes, report_id))
 
     c.execute('UPDATE responders SET active_cases = active_cases + 1 WHERE id = ?', (best_responder['id'],))
+
+    c.execute('UPDATE responders SET current_lat = NULL, current_lon = NULL, last_location_update = NULL WHERE id = ?',
+              (best_responder['id'],))
     conn.commit()
 
     detail = f"{best_responder['name']} ({best_responder['responder_type']}), {distance_km} km away, ~{eta_minutes} min ETA"
@@ -257,24 +239,19 @@ def run_escalation_check(conn):
         if needs_escalation(report):
             old_responder_id = report['assigned_responder_id']
             old_responder = get_responder_by_id(conn, old_responder_id)
-
             log_event(conn, report['id'], 'Escalated',
                       f"No response from {old_responder['name'] if old_responder else 'assigned responder'} in time")
 
-            all_responders = [r for r in get_all_responders(conn) if r['id'] != old_responder_id]
-
             if old_responder_id:
-                c.execute('UPDATE responders SET active_cases = MAX(active_cases - 1, 0) WHERE id = ?',
-                          (old_responder_id,))
+                c.execute('UPDATE responders SET active_cases = MAX(active_cases - 1, 0) WHERE id = ?', (old_responder_id,))
                 conn.commit()
 
             c.execute('UPDATE reports SET escalation_count = escalation_count + 1 WHERE id = ?', (report['id'],))
             conn.commit()
 
             assign_best_responder(
-                conn, report['id'], report['species'], report['severity'],
-                report['priority'], report['description'],
-                incident_lat=report['incident_lat'], incident_lon=report['incident_lon'],
+                conn, report['id'], report['species'], report['severity'], report['priority'],
+                report['description'], incident_lat=report['incident_lat'], incident_lon=report['incident_lon'],
                 is_reassignment=True
             )
 
@@ -286,21 +263,38 @@ def handle_decline(conn, report_id):
     report = c.fetchone()
     if not report:
         return
-
     old_responder_id = report['assigned_responder_id']
     old_responder = get_responder_by_id(conn, old_responder_id)
-    log_event(conn, report_id, 'Declined',
-              f"Declined by {old_responder['name'] if old_responder else 'responder'}")
+    log_event(conn, report_id, 'Declined', f"Declined by {old_responder['name'] if old_responder else 'responder'}")
 
     if old_responder_id:
-        c.execute('UPDATE responders SET active_cases = MAX(active_cases - 1, 0) WHERE id = ?',
-                  (old_responder_id,))
+        c.execute('UPDATE responders SET active_cases = MAX(active_cases - 1, 0) WHERE id = ?', (old_responder_id,))
         conn.commit()
 
     assign_best_responder(
         conn, report_id, report['species'], report['severity'], report['priority'], report['description'],
         incident_lat=report['incident_lat'], incident_lon=report['incident_lon']
     )
+
+
+def get_live_tracking_data(conn, report):
+    simulate_responder_movement(conn, report)
+    responder = get_responder_by_id(conn, report['assigned_responder_id']) if report else None
+    live_lat, live_lon, is_live = get_live_position(responder)
+    live_distance, live_eta = compute_live_distance_eta(
+        report['incident_lat'] if report else None,
+        report['incident_lon'] if report else None,
+        live_lat, live_lon
+    )
+    return {
+        'responder': responder,
+        'live_lat': live_lat,
+        'live_lon': live_lon,
+        'is_live': is_live,
+        'live_distance_km': live_distance,
+        'live_eta_minutes': live_eta,
+        'simple_status': simplify_stage_label(report['rescue_stage']) if report else None,
+    }
 
 
 @app.route('/')
@@ -311,14 +305,12 @@ def home():
 @app.route('/report', methods=['GET', 'POST'])
 def report_rescue():
     if request.method == 'POST':
-        honeypot = request.form.get('website', '')
-        if honeypot:
+        if request.form.get('website', ''):
             return redirect(url_for('success'))
 
         ip = request.remote_addr or 'unknown'
         now = time.time()
-        last_time = last_submission_by_ip.get(ip, 0)
-        if now - last_time < MIN_SECONDS_BETWEEN_SUBMISSIONS:
+        if now - last_submission_by_ip.get(ip, 0) < MIN_SECONDS_BETWEEN_SUBMISSIONS:
             return redirect(url_for('success'))
         last_submission_by_ip[ip] = now
 
@@ -329,53 +321,38 @@ def report_rescue():
         location = request.form.get('location', '').strip()
         description = request.form.get('description', '').strip()
 
-        required_fields = [species, urgency, reporter_name, phone, location, description]
-        if not all(required_fields):
+        if not all([species, urgency, reporter_name, phone, location, description]):
             return redirect(url_for('report_rescue'))
-
         if len(phone) < 7 or len(description) < 5:
             return redirect(url_for('report_rescue'))
 
         submitted_at = time.strftime('%Y-%m-%d %H:%M:%S')
-
-        # Phase 1 — unchanged
         assessment = calculate_risk_assessment(species, urgency, description, location)
-
-        # ADDED (Phase 4): extract real coordinates from the location
-        # text if the reporter used the existing map picker. Falls
-        # back gracefully to an approximate point otherwise.
         incident_lat, incident_lon, location_precise = parse_incident_coordinates(location)
 
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute('''
             INSERT INTO reports (
-                species, urgency, reporter_name, phone, location, description,
-                submitted_at, status, risk_score, severity, priority, recommended_action,
-                rescue_stage, incident_lat, incident_lon, location_precise
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                species, urgency, reporter_name, phone, location, description, submitted_at,
+                status, risk_score, severity, priority, recommended_action, rescue_stage,
+                incident_lat, incident_lon, location_precise
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
-            species, urgency, reporter_name, phone, location, description,
-            submitted_at, 'Report Received',
-            assessment['risk_score'], assessment['severity'],
-            assessment['priority'], assessment['recommended_action'],
-            'Assessed', incident_lat, incident_lon, int(location_precise)
+            species, urgency, reporter_name, phone, location, description, submitted_at,
+            'Report Received', assessment['risk_score'], assessment['severity'],
+            assessment['priority'], assessment['recommended_action'], 'Assessed',
+            incident_lat, incident_lon, int(location_precise)
         ))
         conn.commit()
         case_id = c.lastrowid
 
         log_event(conn, case_id, 'Report Received', f'Reported by {reporter_name}')
-        log_event(conn, case_id, 'Risk Assessed',
-                  f"{assessment['severity']} severity, risk score {assessment['risk_score']}/100")
+        log_event(conn, case_id, 'Risk Assessed', f"{assessment['severity']} severity, risk score {assessment['risk_score']}/100")
 
-        assign_best_responder(
-            conn, case_id, species, assessment['severity'],
-            assessment['priority'], description,
-            incident_lat=incident_lat, incident_lon=incident_lon
-        )
+        assign_best_responder(conn, case_id, species, assessment['severity'], assessment['priority'],
+                               description, incident_lat=incident_lat, incident_lon=incident_lon)
         conn.close()
-
         return redirect(url_for('success', case_id=case_id))
     return render_template('report.html')
 
@@ -388,15 +365,10 @@ def directory():
 @app.route('/success')
 def success():
     case_id = request.args.get('case_id')
-    report = None
-    assigned_responder = None
-    elapsed = None
+    report, assigned_responder, elapsed = None, None, None
     if case_id and case_id.isdigit():
         conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
-        c = conn.cursor()
-        c.execute('SELECT * FROM reports WHERE id = ?', (case_id,))
-        report = c.fetchone()
+        report = get_report_by_id(conn, case_id)
         if report:
             if report['assigned_responder_id']:
                 assigned_responder = get_responder_by_id(conn, report['assigned_responder_id'])
@@ -433,44 +405,116 @@ def get_involved():
 
 @app.route('/check-status', methods=['GET', 'POST'])
 def check_status():
-    result = None
-    error = None
-    assigned_responder = None
-    elapsed = None
-    events = []
+    result, error, elapsed, events = None, None, None, []
+    live = None
     if request.method == 'POST':
         case_id = request.form.get('case_id', '').strip()
         if case_id.isdigit():
             conn = sqlite3.connect(DB_PATH)
-            conn.row_factory = sqlite3.Row
-            c = conn.cursor()
-            c.execute('SELECT * FROM reports WHERE id = ?', (case_id,))
-            result = c.fetchone()
+            result = get_report_by_id(conn, case_id)
             if result:
-                if result['assigned_responder_id']:
-                    assigned_responder = get_responder_by_id(conn, result['assigned_responder_id'])
                 elapsed = human_elapsed(result['submitted_at'])
                 events = get_case_events(conn, result['id'])
+                live = get_live_tracking_data(conn, result)
             conn.close()
             if not result:
                 error = "No case found with that number. Please check and try again."
         else:
             error = "Please enter a valid case number (numbers only)."
-    return render_template('check_status.html', result=result, error=error,
-                            stages=STATUS_STAGES, assigned_responder=assigned_responder,
-                            elapsed=elapsed, events=events)
+    return render_template('check_status.html', result=result, error=error, stages=STATUS_STAGES,
+                            elapsed=elapsed, events=events, live=live)
+
+
+@app.route('/api/case/<int:report_id>/live')
+def api_case_live(report_id):
+    conn = sqlite3.connect(DB_PATH)
+    report = get_report_by_id(conn, report_id)
+    if not report:
+        conn.close()
+        return jsonify({'error': 'not found'}), 404
+
+    live = get_live_tracking_data(conn, report)
+    conn.close()
+
+    return jsonify({
+        'rescue_stage': report['rescue_stage'],
+        'simple_status': live['simple_status'],
+        'responder_lat': live['live_lat'],
+        'responder_lon': live['live_lon'],
+        'is_live': live['is_live'],
+        'distance_km': live['live_distance_km'],
+        'eta_minutes': live['live_eta_minutes'],
+    })
+
+
+@app.route('/responder-location/<int:report_id>')
+def responder_location_page(report_id):
+    conn = sqlite3.connect(DB_PATH)
+    report = get_report_by_id(conn, report_id)
+    responder = get_responder_by_id(conn, report['assigned_responder_id']) if report else None
+    live = get_live_tracking_data(conn, report) if report else None
+    conn.close()
+    return render_template('responder_location.html', report=report, responder=responder, live=live)
+
+
+@app.route('/responder-location/<int:report_id>/update-location', methods=['POST'])
+def update_responder_location(report_id):
+    conn = sqlite3.connect(DB_PATH)
+    report = get_report_by_id(conn, report_id)
+    if not report or not report['assigned_responder_id']:
+        conn.close()
+        return redirect(url_for('responder_location_page', report_id=report_id))
+
+    try:
+        lat = float(request.form.get('lat', ''))
+        lon = float(request.form.get('lon', ''))
+    except (TypeError, ValueError):
+        conn.close()
+        return redirect(url_for('responder_location_page', report_id=report_id))
+
+    now_str = time.strftime('%Y-%m-%d %H:%M:%S')
+    c = conn.cursor()
+    c.execute('UPDATE responders SET current_lat = ?, current_lon = ?, last_location_update = ? WHERE id = ?',
+              (lat, lon, now_str, report['assigned_responder_id']))
+    conn.commit()
+    log_event(conn, report_id, 'Location Updated', f'Responder shared live position ({lat:.4f}, {lon:.4f})')
+    conn.close()
+    return redirect(url_for('responder_location_page', report_id=report_id))
+
+
+@app.route('/responder-location/<int:report_id>/set-stage', methods=['POST'])
+def responder_set_stage(report_id):
+    stage = request.form.get('stage', '')
+    allowed = ['En Route', 'Arrived', 'Rescue In Progress', 'Rescue Completed']
+    if stage not in allowed:
+        return redirect(url_for('responder_location_page', report_id=report_id))
+
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    if stage == 'Rescue Completed':
+        report = get_report_by_id(conn, report_id)
+        c.execute("UPDATE reports SET rescue_stage = ?, status = 'Animal Rescued' WHERE id = ?", (stage, report_id))
+        conn.commit()
+        if report and report['assigned_responder_id']:
+            c.execute('UPDATE responders SET active_cases = MAX(active_cases - 1, 0) WHERE id = ?',
+                      (report['assigned_responder_id'],))
+            conn.commit()
+    else:
+        c.execute('UPDATE reports SET rescue_stage = ? WHERE id = ?', (stage, report_id))
+        conn.commit()
+    log_event(conn, report_id, stage, 'Updated by responder')
+    conn.close()
+    return redirect(url_for('responder_location_page', report_id=report_id))
 
 
 @app.route('/reports-login', methods=['GET', 'POST'])
 def reports_login():
     error = None
     if request.method == 'POST':
-        entered_password = request.form.get('password', '')
-        if entered_password == REPORTS_PASSWORD:
+        if request.form.get('password', '') == REPORTS_PASSWORD:
             session['reports_authenticated'] = True
             return redirect(url_for('view_reports'))
-        else:
-            error = "Incorrect password. Please try again."
+        error = "Incorrect password. Please try again."
     return render_template('reports_login.html', error=error)
 
 
@@ -502,10 +546,16 @@ def view_reports():
         d['assigned_responder'] = responders_by_id.get(r['assigned_responder_id'])
         d['elapsed'] = human_elapsed(r['submitted_at'])
         d['events'] = get_case_events(conn, r['id'])
+        live = get_live_tracking_data(conn, r)
+        d['live_lat'] = live['live_lat']
+        d['live_lon'] = live['live_lon']
+        d['is_live'] = live['is_live']
+        d['live_distance_km'] = live['live_distance_km']
+        d['live_eta_minutes'] = live['live_eta_minutes']
+        d['simple_status'] = live['simple_status']
         enriched_reports.append(d)
 
     conn.close()
-
     return render_template('reports.html', reports=enriched_reports, stages=STATUS_STAGES,
                             responders=responders, lifecycle=RESCUE_LIFECYCLE)
 
@@ -514,7 +564,6 @@ def view_reports():
 def update_status(report_id):
     if not session.get('reports_authenticated'):
         return redirect(url_for('reports_login'))
-
     new_status = request.form.get('status', '')
     if new_status in STATUS_STAGES:
         conn = sqlite3.connect(DB_PATH)
@@ -522,7 +571,6 @@ def update_status(report_id):
         c.execute('UPDATE reports SET status = ? WHERE id = ?', (new_status, report_id))
         conn.commit()
         conn.close()
-
     return redirect(url_for('view_reports'))
 
 
@@ -530,27 +578,17 @@ def update_status(report_id):
 def reassign_responder(report_id):
     if not session.get('reports_authenticated'):
         return redirect(url_for('reports_login'))
-
     conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    c = conn.cursor()
-    c.execute('SELECT * FROM reports WHERE id = ?', (report_id,))
-    report = c.fetchone()
-
+    report = get_report_by_id(conn, report_id)
     if report:
-        old_responder_id = report['assigned_responder_id']
-        if old_responder_id:
-            c.execute('UPDATE responders SET active_cases = MAX(active_cases - 1, 0) WHERE id = ?',
-                      (old_responder_id,))
+        old_id = report['assigned_responder_id']
+        if old_id:
+            c = conn.cursor()
+            c.execute('UPDATE responders SET active_cases = MAX(active_cases - 1, 0) WHERE id = ?', (old_id,))
             conn.commit()
-
-        assign_best_responder(
-            conn, report_id, report['species'], report['severity'],
-            report['priority'], report['description'],
-            incident_lat=report['incident_lat'], incident_lon=report['incident_lon'],
-            is_reassignment=True
-        )
-
+        assign_best_responder(conn, report_id, report['species'], report['severity'], report['priority'],
+                               report['description'], incident_lat=report['incident_lat'],
+                               incident_lon=report['incident_lon'], is_reassignment=True)
     conn.close()
     return redirect(url_for('view_reports'))
 
@@ -559,11 +597,9 @@ def reassign_responder(report_id):
 def confirm_response(report_id):
     if not session.get('reports_authenticated'):
         return redirect(url_for('reports_login'))
-
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
-    c.execute("UPDATE reports SET response_status = 'Responded', rescue_stage = 'Accepted' WHERE id = ?",
-              (report_id,))
+    c.execute("UPDATE reports SET response_status = 'Responded', rescue_stage = 'Accepted' WHERE id = ?", (report_id,))
     conn.commit()
     log_event(conn, report_id, 'Accepted', 'Confirmed via admin dashboard')
     conn.close()
@@ -576,8 +612,7 @@ def accept_case(report_id):
         return redirect(url_for('reports_login'))
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
-    c.execute("UPDATE reports SET response_status = 'Responded', rescue_stage = 'Accepted' WHERE id = ?",
-              (report_id,))
+    c.execute("UPDATE reports SET response_status = 'Responded', rescue_stage = 'Accepted' WHERE id = ?", (report_id,))
     conn.commit()
     log_event(conn, report_id, 'Accepted', '')
     conn.close()
@@ -620,21 +655,31 @@ def arrived_case(report_id):
     return redirect(url_for('view_reports'))
 
 
+@app.route('/case/<int:report_id>/start-rescue', methods=['POST'])
+def start_rescue_case(report_id):
+    if not session.get('reports_authenticated'):
+        return redirect(url_for('reports_login'))
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("UPDATE reports SET rescue_stage = 'Rescue In Progress' WHERE id = ?", (report_id,))
+    conn.commit()
+    log_event(conn, report_id, 'Rescue In Progress', '')
+    conn.close()
+    return redirect(url_for('view_reports'))
+
+
 @app.route('/case/<int:report_id>/complete', methods=['POST'])
 def complete_case(report_id):
     if not session.get('reports_authenticated'):
         return redirect(url_for('reports_login'))
     conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
+    report = get_report_by_id(conn, report_id)
     c = conn.cursor()
-    c.execute('SELECT assigned_responder_id FROM reports WHERE id = ?', (report_id,))
-    row = c.fetchone()
-    c.execute("UPDATE reports SET rescue_stage = 'Rescue Completed', status = 'Animal Rescued' WHERE id = ?",
-              (report_id,))
+    c.execute("UPDATE reports SET rescue_stage = 'Rescue Completed', status = 'Animal Rescued' WHERE id = ?", (report_id,))
     conn.commit()
-    if row and row['assigned_responder_id']:
+    if report and report['assigned_responder_id']:
         c.execute('UPDATE responders SET active_cases = MAX(active_cases - 1, 0) WHERE id = ?',
-                  (row['assigned_responder_id'],))
+                  (report['assigned_responder_id'],))
         conn.commit()
     log_event(conn, report_id, 'Rescue Completed', '')
     conn.close()
@@ -647,10 +692,9 @@ def close_case(report_id):
         return redirect(url_for('reports_login'))
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
-    c.execute("UPDATE reports SET rescue_stage = 'Case Closed', status = 'Recovering' WHERE id = ?",
-              (report_id,))
+    c.execute("UPDATE reports SET rescue_stage = 'Case Closed', status = 'Recovering' WHERE id = ?", (report_id,))
     conn.commit()
-    log_event(conn, report_id, 'Case Closed', 'Full history preserved in reports table')
+    log_event(conn, report_id, 'Case Closed', 'Resolved — full history preserved')
     conn.close()
     return redirect(url_for('view_reports'))
 
