@@ -128,7 +128,7 @@ def rank_responders(all_responders, required_types, priority, incident_lat=None,
 
 
 def recommend_responders(all_responders, species, severity, priority, description,
-                          incident_lat=None, incident_lon=None):
+                          incident_lat=None, incident_lon=None, disaster_mode=False):
     """
     Full pipeline: determine required type(s), rank all matching
     responders, return the top N per the existing priority level.
@@ -138,9 +138,20 @@ def recommend_responders(all_responders, species, severity, priority, descriptio
         P3/Moderate  -> 1 recommendation
         P2/High      -> up to 3 recommendations
         P1/Critical  -> up to 4 recommendations
+
+    ADDED (Final Phase, Part 3 — Disaster Mode): when disaster_mode is
+    True (only ever passed as True during detected high-volume
+    conditions — see disaster_mode.py), P1/P2 cases get a WIDER pool
+    of recommended responders considered, so more specialists/vets are
+    surfaced when resources are under strain. Default is False, so
+    every existing call site that doesn't pass this parameter behaves
+    exactly as before — fully backward compatible.
     """
     required_types = determine_required_responder_types(species, severity, description)
     ranked = rank_responders(all_responders, required_types, priority, incident_lat, incident_lon)
 
     top_n = {'P1': 4, 'P2': 3, 'P3': 1, 'P4': 1}.get(priority, 1)
+    if disaster_mode and priority in ('P1', 'P2'):
+        top_n = {'P1': 6, 'P2': 5}.get(priority, top_n)
+
     return required_types, ranked[:top_n]
