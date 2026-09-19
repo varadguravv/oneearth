@@ -16,11 +16,17 @@ from escalation import needs_escalation
 # Phase 4 — unchanged
 from location_utils import parse_incident_coordinates, estimate_eta_minutes
 
-# Phase 5 — new
+# Phase 5 — unchanged
 from live_tracking import (
     get_live_position, compute_live_distance_eta,
     simulate_responder_movement, simplify_stage_label
 )
+
+# ADDED (Final Phase): new modules for dashboard, disaster mode,
+# notifications, and duplicate detection
+from notifications import log_notification, get_notifications, unread_count, mark_all_read
+from disaster_mode import is_disaster_mode_active
+from duplicate_detection import check_possible_duplicate
 
 app = Flask(__name__)
 
@@ -85,6 +91,7 @@ def init_db():
         ('incident_lat', 'REAL'), ('incident_lon', 'REAL'),
         ('location_precise', 'INTEGER DEFAULT 0'),
         ('distance_km', 'REAL'), ('eta_minutes', 'INTEGER'),
+        ('possible_duplicate_of', 'INTEGER'),
     ]:
         _ensure_column(c, conn, 'reports', col, coltype)
 
@@ -102,6 +109,7 @@ def init_db():
         ('current_lat', 'REAL'),
         ('current_lon', 'REAL'),
         ('last_location_update', 'TEXT'),
+        ('verified', 'INTEGER DEFAULT 0'),
     ]:
         _ensure_column(c, conn, 'responders', col, coltype)
 
@@ -113,11 +121,27 @@ def init_db():
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', DEMO_RESPONDERS)
         conn.commit()
+        # ADDED (Final Phase, Part 5): mark the veterinarians and the
+        # first wildlife specialist as verified out of the box, for a
+        # realistic-looking demo state (not all-or-nothing).
+        c.execute("UPDATE responders SET verified = 1 WHERE responder_type = 'Veterinarian'")
+        c.execute("UPDATE responders SET verified = 1 WHERE id = (SELECT MIN(id) FROM responders WHERE responder_type = 'Wildlife Specialist')")
+        conn.commit()
 
     c.execute('''
         CREATE TABLE IF NOT EXISTS case_events (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             report_id INTEGER, event_type TEXT, event_detail TEXT, event_time TEXT
+        )
+    ''')
+    conn.commit()
+
+    # ADDED (Final Phase, Part 4): notifications table
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS notifications (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            message TEXT, event_type TEXT, report_id INTEGER,
+            created_at TEXT, is_read INTEGER DEFAULT 0
         )
     ''')
     conn.commit()
@@ -136,6 +160,14 @@ def log_event(conn, report_id, event_type, event_detail=''):
     c.execute('INSERT INTO case_events (report_id, event_type, event_detail, event_time) VALUES (?, ?, ?, ?)',
               (report_id, event_type, event_detail, now_str))
     conn.commit()
+
+    # ADDED (Final Phase, Part 4): every timeline event already logged
+    # for the case history also becomes a notification, automatically.
+    # No new call sites needed anywhere else in the app.
+    message = f"Case #{report_id}: {event_type}"
+    if event_detail:
+        message += f" — {event_detail}"
+    log_notification(conn, message, event_type=event_type, report_id=report_id)
 
 
 def get_case_events(conn, report_id):
@@ -190,9 +222,14 @@ def assign_best_responder(conn, report_id, species, severity, priority, descript
     c = conn.cursor()
     all_responders = get_all_responders(conn)
 
+    # ADDED (Final Phase, Part 3): check disaster mode live at
+    # assignment time, so it always reflects current conditions.
+    disaster_active, disaster_reason, _ = is_disaster_mode_active(conn)
+
     required_types, ranked = recommend_responders(
         all_responders, species, severity, priority, description,
-        incident_lat=incident_lat, incident_lon=incident_lon
+        incident_lat=incident_lat, incident_lon=incident_lon,
+        disaster_mode=disaster_active
     )
     required_type_str = ', '.join(required_types)
 
@@ -221,9 +258,22 @@ def assign_best_responder(conn, report_id, species, severity, priority, descript
               (best_responder['id'],))
     conn.commit()
 
-    detail = f"{best_responder['name']} ({best_responder['responder_type']}), {distance_km} km away, ~{eta_minutes} min ETA"
+    # ADDED (Final Phase, Part 2): plain-language explanation of why
+    # this responder was chosen, built from the same factors already
+    # used in responder_matching.py's scoring — not a new algorithm,
+    # just a readable summary of the existing one.
+    reasons = ['capability match']
+    reasons.append('available' if best_responder['available'] else 'currently unavailable')
+    workload = best_responder['active_cases'] or 0
+    reasons.append('low workload' if workload == 0 else f'{workload} active case(s)')
+    reasons.append(f'{distance_km} km / ~{eta_minutes} min practical ETA')
+    explanation = ' + '.join(reasons)
+
+    detail = f"{best_responder['name']} ({best_responder['responder_type']}) — {explanation}"
     if is_reassignment:
         detail += ' — reassigned'
+    if disaster_active:
+        detail += f' [Disaster Mode active: {disaster_reason}]'
     log_event(conn, report_id, 'Responder Assigned', detail)
 
     return best_responder
@@ -314,16 +364,22 @@ def report_rescue():
             return redirect(url_for('success'))
         last_submission_by_ip[ip] = now
 
-        species = request.form.get('species', '').strip()
-        urgency = request.form.get('urgency', '').strip()
-        reporter_name = request.form.get('reporter_name', '').strip()
-        phone = request.form.get('phone', '').strip()
-        location = request.form.get('location', '').strip()
-        description = request.form.get('description', '').strip()
+        species = request.form.get('species', '').strip()[:50]
+        urgency = request.form.get('urgency', '').strip()[:50]
+        reporter_name = request.form.get('reporter_name', '').strip()[:100]
+        phone = request.form.get('phone', '').strip()[:30]
+        location = request.form.get('location', '').strip()[:300]
+        description = request.form.get('description', '').strip()[:2000]
 
+        # ADDED (Final Phase, Part 8): basic input validation hardening.
+        # Length caps above prevent oversized payloads; this rejects
+        # obviously-invalid phone characters without being overly
+        # strict about real-world phone number formats.
         if not all([species, urgency, reporter_name, phone, location, description]):
             return redirect(url_for('report_rescue'))
         if len(phone) < 7 or len(description) < 5:
+            return redirect(url_for('report_rescue'))
+        if not any(ch.isdigit() for ch in phone):
             return redirect(url_for('report_rescue'))
 
         submitted_at = time.strftime('%Y-%m-%d %H:%M:%S')
@@ -332,23 +388,36 @@ def report_rescue():
 
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
+
+        # ADDED (Final Phase, Part 6): check for a likely duplicate
+        # BEFORE inserting, so we can store the reference. This NEVER
+        # blocks submission — it only flags the new report for admin
+        # review; the animal still gets a real response either way.
+        duplicate_of = check_possible_duplicate(conn, species, location, incident_lat, incident_lon, submitted_at)
+
         c.execute('''
             INSERT INTO reports (
                 species, urgency, reporter_name, phone, location, description, submitted_at,
                 status, risk_score, severity, priority, recommended_action, rescue_stage,
-                incident_lat, incident_lon, location_precise
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                incident_lat, incident_lon, location_precise, possible_duplicate_of
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             species, urgency, reporter_name, phone, location, description, submitted_at,
             'Report Received', assessment['risk_score'], assessment['severity'],
             assessment['priority'], assessment['recommended_action'], 'Assessed',
-            incident_lat, incident_lon, int(location_precise)
+            incident_lat, incident_lon, int(location_precise), duplicate_of
         ))
         conn.commit()
         case_id = c.lastrowid
 
         log_event(conn, case_id, 'Report Received', f'Reported by {reporter_name}')
         log_event(conn, case_id, 'Risk Assessed', f"{assessment['severity']} severity, risk score {assessment['risk_score']}/100")
+        if duplicate_of:
+            log_event(conn, case_id, 'Possible Duplicate Flagged', f'Similar to existing Case #{duplicate_of} — flagged for admin review')
+
+        disaster_active, disaster_reason, _ = is_disaster_mode_active(conn)
+        if disaster_active:
+            log_notification(conn, f'⚠️ Disaster Mode active — {disaster_reason}', event_type='Disaster Mode', report_id=case_id)
 
         assign_best_responder(conn, case_id, species, assessment['severity'], assessment['priority'],
                                description, incident_lat=incident_lat, incident_lon=incident_lon)
@@ -472,6 +541,12 @@ def update_responder_location(report_id):
         conn.close()
         return redirect(url_for('responder_location_page', report_id=report_id))
 
+    # ADDED (Final Phase, Part 8): sanity-check coordinate ranges
+    # rather than trusting raw client input blindly.
+    if not (-90 <= lat <= 90) or not (-180 <= lon <= 180):
+        conn.close()
+        return redirect(url_for('responder_location_page', report_id=report_id))
+
     now_str = time.strftime('%Y-%m-%d %H:%M:%S')
     c = conn.cursor()
     c.execute('UPDATE responders SET current_lat = ?, current_lon = ?, last_location_update = ? WHERE id = ?',
@@ -490,12 +565,18 @@ def responder_set_stage(report_id):
         return redirect(url_for('responder_location_page', report_id=report_id))
 
     conn = sqlite3.connect(DB_PATH)
+    # ADDED (Final Phase, Part 8): verify the case actually exists
+    # before writing anything — previously this ran blindly.
+    report = get_report_by_id(conn, report_id)
+    if not report:
+        conn.close()
+        return redirect(url_for('home'))
+
     c = conn.cursor()
     if stage == 'Rescue Completed':
-        report = get_report_by_id(conn, report_id)
         c.execute("UPDATE reports SET rescue_stage = ?, status = 'Animal Rescued' WHERE id = ?", (stage, report_id))
         conn.commit()
-        if report and report['assigned_responder_id']:
+        if report['assigned_responder_id']:
             c.execute('UPDATE responders SET active_cases = MAX(active_cases - 1, 0) WHERE id = ?',
                       (report['assigned_responder_id'],))
             conn.commit()
@@ -555,9 +636,159 @@ def view_reports():
         d['simple_status'] = live['simple_status']
         enriched_reports.append(d)
 
+    # ADDED (Final Phase, Parts 3 & 4)
+    disaster_active, disaster_reason, disaster_stats = is_disaster_mode_active(conn)
+    notif_unread = unread_count(conn)
+
     conn.close()
     return render_template('reports.html', reports=enriched_reports, stages=STATUS_STAGES,
-                            responders=responders, lifecycle=RESCUE_LIFECYCLE)
+                            responders=responders, lifecycle=RESCUE_LIFECYCLE,
+                            disaster_active=disaster_active, disaster_reason=disaster_reason,
+                            disaster_stats=disaster_stats, notif_unread=notif_unread)
+
+
+# ============================================================
+# ADDED (Final Phase, Part 1): Rescue Intelligence Dashboard.
+# Every number here is computed live from the existing reports/
+# responders tables — nothing fabricated, and it degrades
+# gracefully to zeros/empty states if the database has no data yet.
+# ============================================================
+@app.route('/dashboard')
+def dashboard():
+    if not session.get('reports_authenticated'):
+        return redirect(url_for('reports_login'))
+
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    c.execute('SELECT * FROM reports')
+    all_reports = c.fetchall()
+    total_reports = len(all_reports)
+
+    active_cases = [r for r in all_reports if r['rescue_stage'] != 'Case Closed']
+    closed_cases = [r for r in all_reports if r['rescue_stage'] == 'Case Closed']
+    completed_cases = [r for r in all_reports if r['rescue_stage'] in ('Rescue Completed', 'Case Closed')]
+
+    severity_counts = {'Critical': 0, 'High': 0, 'Moderate': 0, 'Low': 0}
+    for r in all_reports:
+        if r['severity'] in severity_counts:
+            severity_counts[r['severity']] += 1
+
+    escalated_cases = [r for r in all_reports if (r['escalation_count'] or 0) > 0]
+    duplicate_flagged = [r for r in all_reports if r['possible_duplicate_of']]
+
+    # Average time from submission to first responder assignment
+    response_times = []
+    for r in all_reports:
+        events = get_case_events(conn, r['id'])
+        submitted_evt = next((e for e in events if e['event_type'] == 'Report Received'), None)
+        assigned_evt = next((e for e in events if e['event_type'] == 'Responder Assigned'), None)
+        if submitted_evt and assigned_evt:
+            try:
+                t1 = datetime.strptime(submitted_evt['event_time'], '%Y-%m-%d %H:%M:%S')
+                t2 = datetime.strptime(assigned_evt['event_time'], '%Y-%m-%d %H:%M:%S')
+                response_times.append((t2 - t1).total_seconds())
+            except (TypeError, ValueError):
+                pass
+    avg_response_seconds = round(sum(response_times) / len(response_times)) if response_times else None
+
+    # Average time from submission to rescue completion
+    completion_times = []
+    for r in completed_cases:
+        events = get_case_events(conn, r['id'])
+        submitted_evt = next((e for e in events if e['event_type'] == 'Report Received'), None)
+        completed_evt = next((e for e in events if e['event_type'] == 'Rescue Completed'), None)
+        if submitted_evt and completed_evt:
+            try:
+                t1 = datetime.strptime(submitted_evt['event_time'], '%Y-%m-%d %H:%M:%S')
+                t2 = datetime.strptime(completed_evt['event_time'], '%Y-%m-%d %H:%M:%S')
+                completion_times.append((t2 - t1).total_seconds())
+            except (TypeError, ValueError):
+                pass
+    avg_completion_seconds = round(sum(completion_times) / len(completion_times)) if completion_times else None
+
+    responders = get_all_responders(conn)
+    available_responders = [r for r in responders if r['available']]
+    busy_responders = [r for r in responders if not r['available'] or (r['active_cases'] or 0) > 0]
+    total_workload = sum(r['active_cases'] or 0 for r in responders)
+
+    location_counts = {}
+    for r in all_reports:
+        loc_key = (r['location'] or 'Unknown')[:40]
+        location_counts[loc_key] = location_counts.get(loc_key, 0) + 1
+    top_locations = sorted(location_counts.items(), key=lambda x: x[1], reverse=True)[:8]
+
+    disaster_active, disaster_reason, disaster_stats = is_disaster_mode_active(conn)
+    conn.close()
+
+    def fmt_duration(seconds):
+        if seconds is None:
+            return '—'
+        if seconds < 60:
+            return f'{int(seconds)}s'
+        minutes = seconds / 60
+        if minutes < 60:
+            return f'{minutes:.1f}m'
+        return f'{minutes/60:.1f}h'
+
+    return render_template('dashboard.html',
+        total_reports=total_reports,
+        active_count=len(active_cases),
+        closed_count=len(closed_cases),
+        completed_count=len(completed_cases),
+        severity_counts=severity_counts,
+        escalated_count=len(escalated_cases),
+        duplicate_count=len(duplicate_flagged),
+        avg_response=fmt_duration(avg_response_seconds),
+        avg_completion=fmt_duration(avg_completion_seconds),
+        total_responders=len(responders),
+        available_count=len(available_responders),
+        busy_count=len(busy_responders),
+        total_workload=total_workload,
+        top_locations=top_locations,
+        disaster_active=disaster_active,
+        disaster_reason=disaster_reason,
+        disaster_stats=disaster_stats,
+    )
+
+
+# ADDED (Final Phase, Part 4): notifications feed
+@app.route('/notifications')
+def notifications_page():
+    if not session.get('reports_authenticated'):
+        return redirect(url_for('reports_login'))
+    conn = sqlite3.connect(DB_PATH)
+    notifs = get_notifications(conn, limit=50)
+    conn.close()
+    return render_template('notifications.html', notifications=notifs)
+
+
+@app.route('/notifications/mark-read', methods=['POST'])
+def notifications_mark_read():
+    if not session.get('reports_authenticated'):
+        return redirect(url_for('reports_login'))
+    conn = sqlite3.connect(DB_PATH)
+    mark_all_read(conn)
+    conn.close()
+    return redirect(url_for('notifications_page'))
+
+
+# ADDED (Final Phase, Part 5): responder verification toggle (admin only)
+@app.route('/responder/<int:responder_id>/toggle-verified', methods=['POST'])
+def toggle_verified(responder_id):
+    if not session.get('reports_authenticated'):
+        return redirect(url_for('reports_login'))
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute('SELECT verified FROM responders WHERE id = ?', (responder_id,))
+    row = c.fetchone()
+    if row is not None:
+        new_val = 0 if row[0] else 1
+        c.execute('UPDATE responders SET verified = ? WHERE id = ?', (new_val, responder_id))
+        conn.commit()
+    conn.close()
+    return redirect(url_for('view_reports'))
 
 
 @app.route('/update-status/<int:report_id>', methods=['POST'])
