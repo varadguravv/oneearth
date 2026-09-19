@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications | OneEarth</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        :root { --primary-color: #2e7d32; --primary-dark: #1b5e20; --dark-slate: #263238; --text-muted: #666666; --border-color: #e0e0e0; --radius-md: 8px; --shadow-sm: 0 2px 4px rgba(0,0,0,0.05); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: #f4f7f5; color: #333; line-height: 1.6; }
+        .main-header { background-color: var(--primary-dark); color: #fff; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .main-header a { color: #fff; text-decoration: none; font-weight: 700; font-size: 0.9rem; }
+        .header-links { display: flex; gap: 1rem; }
+        .wrap { max-width: 800px; margin: 2rem auto; padding: 0 1.5rem; }
+        .top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; }
+        h1 { color: var(--primary-dark); }
+        .mark-read-btn { background: var(--primary-color); color: #fff; border: none; padding: 0.6rem 1.1rem; border-radius: 6px; font-size: 0.82rem; font-weight: 700; cursor: pointer; }
+        .mark-read-btn:hover { background: var(--primary-dark); }
+
+        .notif-list { background: #fff; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); overflow: hidden; }
+        .notif-item { padding: 1rem 1.3rem; border-bottom: 1px solid #f0f0f0; font-size: 0.88rem; display: flex; justify-content: space-between; gap: 1rem; }
+        .notif-item:last-child { border-bottom: none; }
+        .notif-item.unread { background: #f1f8e9; border-left: 3px solid var(--primary-color); }
+        .notif-message { color: var(--dark-slate); }
+        .notif-time { color: var(--text-muted); font-size: 0.75rem; white-space: nowrap; }
+        .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <a href="{{ url_for('home') }}">← OneEarth</a>
+        <div class="header-links">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('view_reports') }}">Cases</a>
+            <a href="{{ url_for('reports_logout') }}">Log out</a>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="top-row">
+            <h1>🔔 Notifications</h1>
+            <form action="{{ url_for('notifications_mark_read') }}" method="POST">
+                <button type="submit" class="mark-read-btn">Mark All Read</button>
+            </form>
+        </div>
+
+        {% if notifications %}
+        <div class="notif-list">
+            {% for n in notifications %}
+            <div class="notif-item {{ 'unread' if not n['is_read'] else '' }}">
+                <span class="notif-message">
+                    {% if n['report_id'] %}
+                    <a href="{{ url_for('view_reports') }}" style="color: inherit; text-decoration: none; font-weight: 600;">{{ n['message'] }}</a>
+                    {% else %}
+                    {{ n['message'] }}
+                    {% endif %}
+                </span>
+                <span class="notif-time">{{ n['created_at'] }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="notif-list"><p class="empty-state">No notifications yet.</p></div>
+        {% endif %}
+    </div>
+</body>
+</html>
